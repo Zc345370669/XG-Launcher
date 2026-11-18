@@ -1,0 +1,41 @@
+name: Windows x64 build
+on:
+  workflow_dispatch:
+  pull_request:
+
+env:
+  AVALONIA_TELEMETRY_OPTOUT: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: python scripts/scan-public-source.py . --report public-scan.json --strict-layout
+      - run: python tests/license_integrity_tests.py
+      - run: python tests/xgcl_scope_tests.py
+      - run: python tests/provenance_review_tests.py
+      - run: python tests/license_final_audit_tests.py
+      - run: python tests/mit_transition_tests.py
+      - run: python tests/lucide_license_tests.py
+      - run: dotnet restore XG-Launcher.sln --locked-mode
+      - run: dotnet build XG-Launcher.sln -c Release --no-restore
+      - run: dotnet run --project tests/XG.Tests -c Release --no-build
+      - run: dotnet run --project tests/XG.UI.Tests -c Release --no-build
+      - run: choco install nsis --version=3.11.0 --yes --no-progress
+      - shell: pwsh
+        run: ./build-windows.ps1 -MakeNsis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XGLauncher-v0.1.0-alpha-win-x64
+          path: |
+            dist/XGLauncher-Setup-win-x64.exe
+            dist/XGLauncher-portable-win-x64.zip
+          if-no-files-found: error

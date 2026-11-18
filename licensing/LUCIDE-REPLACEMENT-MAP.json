@@ -1,0 +1,148 @@
+[
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 20,
+    "old_sha256": "f69b87afe0d2c6c63a8d31bf0a36efa8ed931fc2430b3c541c692e07c4808da4",
+    "lucide": "house"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 21,
+    "old_sha256": "7b7de3dbc41c80324349c42b601cd3d85ed79f86e0b540dbd65be746432f22e4",
+    "lucide": "gamepad-2"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 22,
+    "old_sha256": "64881b4cab2dfed596e42727eeedbc5e0e124b177876a8b60ad13204841f980e",
+    "lucide": "layers"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 23,
+    "old_sha256": "e52787a2ea6b76260b3995b4c2ee50573f3329b0ccf2d787339c24cd2addb120",
+    "lucide": "package"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 24,
+    "old_sha256": "3f3bc8afda53a4b4ccfc4eb68e7009081c328c617f528807da09a2e575c8c2cb",
+    "lucide": "download"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 25,
+    "old_sha256": "624cfe758506e233168cdd097ae2fd03d4f929ab93b0c32eb02cb192179a8da3",
+    "lucide": "settings"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 233,
+    "old_sha256": "2148fddfece3e5bb98cde0832e3369f9497af076a1c2598d46f281754ce5ca88",
+    "lucide": "plus"
+  },
+  {
+    "page": "navigation/toolbar",
+    "modified_file": "src/XGLauncher/MainWindow.cs",
+    "old_kind": "manual geometry",
+    "old_line": 233,
+    "old_sha256": "5caf7076d8814f254a5807df6982031d878ba137d46cdd4af839fbc9f9ea60e2",
+    "lucide": "folder-input"
+  },
+  {
+    "page": "titlebar",
+    "modified_file": "src/XGLauncher/TitleBar.cs",
+    "old_kind": "manual geometry",
+    "old_line": 38,
+    "old_sha256": "eeb9fdf5386419c3e1387f9a0d6a6747f80275753e1b590481dc0d465718105e",
+    "lucide": "minus"
+  },
+  {
+    "page": "titlebar",
+    "modified_file": "src/XGLauncher/TitleBar.cs",
+    "old_kind": "manual geometry",
+    "old_line": 39,
+    "old_sha256": "9f6f2b0ece4f7b927d526cc402b76891aab5c809a7e9027352277cc0a305cb62",
+    "lucide": "square"
+  },
+  {
+    "page": "titlebar",
+    "modified_file": "src/XGLauncher/TitleBar.cs",
+    "old_kind": "manual geometry",
+    "old_line": 40,
+    "old_sha256": "a70c5784013cb592085da02172595d84b66f75178062f87bfcae2a57bc2d56a2",
+    "lucide": "x"
+  },
+  {
+    "page": "titlebar",
+    "modified_file": "src/XGLauncher/TitleBar.cs",
+    "old_kind": "manual geometry",
+    "old_line": 46,
+    "old_sha256": "d486135070ce6f004d2e3fdba838be4e7659eede4f9473bc74dd350a9af2ba1c",
+    "lucide": "copy"
+  },
+  {
+    "page": "titlebar",
+    "modified_file": "src/XGLauncher/TitleBar.cs",
+    "old_kind": "manual geometry",
+    "old_line": 47,
+    "old_sha256": "9f6f2b0ece4f7b927d526cc402b76891aab5c809a7e9027352277cc0a305cb62",
+    "lucide": "square"
+  },
+  {
+    "page": "download stages",
+    "modified_file": "src/XGLauncher/StageRail.cs",
+    "old_kind": "Ellipse + check/exclamation text",
+    "lucide": "circle / circle-check / circle-exclamation-point"
+  },
+  {
+    "page": "unified selection (game/Java/account/language)",
+    "modified_file": "src/XGLauncher/UnifiedExpandableSelect.cs",
+    "old_kind": "text check / title affordance",
+    "lucide": "check / chevron-up / chevron-down"
+  },
+  {
+    "page": "settings themes",
+    "modified_file": "src/XGLauncher/AppearanceSettings.cs",
+    "old_kind": "text check",
+    "lucide": "check"
+  },
+  {
+    "page": "dialogs",
+    "modified_file": "src/XGLauncher/LauncherDialog.cs",
+    "old_kind": "text close",
+    "lucide": "x"
+  },
+  {
+    "page": "online catalog",
+    "modified_file": "src/XGLauncher/OnlineCatalog.cs",
+    "old_kind": "manual fallback + close",
+    "lucide": "layers / package / x"
+  },
+  {
+    "page": "instance context menus",
+    "modified_file": "src/XGLauncher/InstanceActions.cs",
+    "old_kind": "text menu actions (new icon column)",
+    "lucide": "play / pencil / copy / archive / folder-archive / file-text / trash / folder-open / download"
+  },
+  {
+    "page": "legal navigation and project license entry",
+    "modified_file": "src/XGLauncher/LegalBrowser.cs",
+    "old_kind": "text arrows and letter marks",
+    "lucide": "chevron-left / chevron-right / project semantic mapping"
+  }
+]

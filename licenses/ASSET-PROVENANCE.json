@@ -1,0 +1,46 @@
+[
+  {
+    "path": "src/XGLauncher/Assets/XG-light.png",
+    "sha256": "7b4894477768b2b918ecd3d3bd0675b15f84da6f37c373e4be8e2f3048d9c3c3",
+    "format": "PNG",
+    "size": [
+      1212,
+      1212
+    ],
+    "metadata_keys": [],
+    "origin": "Maintainer states the formal XG logo was generated directly by ChatGPT; generation record/input material not supplied in this review.",
+    "rights_status": "maintainer-declared-ai-origin-not-independently-verified",
+    "publication": "qualified-origin-statement-no-blanket-rights-clearance",
+    "maintainer_description": "Formal black minimalist connected XG logo generated directly by ChatGPT; first sharp geometric line design selected. No exclusive copyright or trademark clearance claimed."
+  },
+  {
+    "path": "src/XGLauncher/Assets/XG.ico",
+    "sha256": "7cc501fdb4a85737ab2e4f05e9315aa5e18119ade79fd7c5ee1d17462ef05919",
+    "format": "ICO",
+    "size": [
+      256,
+      256
+    ],
+    "metadata_keys": [
+      "sizes"
+    ],
+    "origin": "Maintainer states the formal XG logo was generated directly by ChatGPT; generation record/input material not supplied in this review.",
+    "rights_status": "maintainer-declared-ai-origin-not-independently-verified",
+    "publication": "qualified-origin-statement-no-blanket-rights-clearance",
+    "maintainer_description": "Formal black minimalist connected XG logo generated directly by ChatGPT; first sharp geometric line design selected. No exclusive copyright or trademark clearance claimed."
+  },
+  {
+    "path": "src/XGLauncher/Assets/XG.png",
+    "sha256": "ec4b430e156a7a783b92922cdea83633b16f1baf9a64bedc70d2d57f73f1c06c",
+    "format": "PNG",
+    "size": [
+      1212,
+      1212
+    ],
+    "metadata_keys": [],
+    "origin": "Maintainer states the formal XG logo was generated directly by ChatGPT; generation record/input material not supplied in this review.",
+    "rights_status": "maintainer-declared-ai-origin-not-independently-verified",
+    "publication": "qualified-origin-statement-no-blanket-rights-clearance",
+    "maintainer_description": "Formal black minimalist connected XG logo generated directly by ChatGPT; first sharp geometric line design selected. No exclusive copyright or trademark clearance claimed."
+  }
+]

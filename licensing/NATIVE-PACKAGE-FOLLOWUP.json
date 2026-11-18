@@ -1,0 +1,488 @@
+[
+  {
+    "package": "SkiaSharp.NativeAssets.Win32-2.88.9",
+    "metadata_repository_commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+    "exact_binary_build_reproduced": false,
+    "binary_sbom_available": false,
+    "references": [
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/cake/externals.cake",
+        "path": "cake/externals.cake",
+        "sha256": "a7cdab4883a25b64d47b4259957cbda679689ff0d075e4fea1178ba57f7f2123",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/windows/build.cake",
+        "path": "native/windows/build.cake",
+        "sha256": "96bbe15f85394c415a84b6400666f8cb29b2404ae0ffb6d30bb3607f40328e62",
+        "indicator_lines": [
+          {
+            "line": 66,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 78,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 82,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 83,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 89,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/windows/libHarfBuzzSharp/libHarfBuzzSharp.sln",
+        "path": "native/windows/libHarfBuzzSharp/libHarfBuzzSharp.sln",
+        "sha256": "8768758997bbf2f56ffa8bed139d9e5e76b0336fa9d404f356d25f26ee9aec4a",
+        "indicator_lines": [
+          {
+            "line": 6,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/windows/libHarfBuzzSharp/libHarfBuzzSharp.vcxproj",
+        "path": "native/windows/libHarfBuzzSharp/libHarfBuzzSharp.vcxproj",
+        "sha256": "fce3b93fcd3ae1f97dd2304ee4d34f958640956b552297a34db405fbafb7168b",
+        "indicator_lines": [
+          {
+            "line": 30,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 36,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 126,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 131,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 132,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 133,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 134,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 135,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 143,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 144,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 160,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 161,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 176,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 177,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 194,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 195,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 214,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 215,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 234,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 235,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.props",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.props",
+        "sha256": "cf50ec72468944af714ae1bc620ce72cd435712e7720d17f86c88a12719afb30",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.targets",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.targets",
+        "sha256": "26247720d00becc3a96e51fcf21664d6ec48db56c6b4c519aef62548309dcd24",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/SkiaSharp.Views.WinUI.Native.Projection.csproj",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/SkiaSharp.Views.WinUI.Native.Projection.csproj",
+        "sha256": "cfc1554899a0a848d43bd2e11d2fbe75ad8826ee19caba4c6b05772eb209a800",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.sln",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.sln",
+        "sha256": "a5d81d608763882ce6aca5480e20eac9f22ba58effc00f84684c1ff69f194ad5",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.cpp",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.cpp",
+        "sha256": "ade561464588841d79089e4f10ce3c2a8ba81e89e0f7c4e9074d34b057baa532",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.h",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.h",
+        "sha256": "4915189147e8328034a09c66ceefcfda0255c9e1fc83fa799053431f6942a346",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.idl",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.idl",
+        "sha256": "0a0a49248c51ae68255a0e3d13ec4781c3a0a5f2fe1526829d04655f8fae1812",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.cpp",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.cpp",
+        "sha256": "9e18437bc27899a5b08a97658dcdd426572900016a818a5039968c30b1256491",
+        "indicator_lines": []
+      }
+    ],
+    "tree_truncated": false
+  },
+  {
+    "package": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.1",
+    "metadata_repository_commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+    "exact_binary_build_reproduced": false,
+    "binary_sbom_available": false,
+    "references": [
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/windows/build.cake",
+        "path": "native/windows/build.cake",
+        "sha256": "85838aadb2781dd53e0dc7669dc65a0d082f3f82d382493dafb348993d27e372",
+        "indicator_lines": [
+          {
+            "line": 47,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 72,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 84,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 88,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 89,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 95,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/windows/libHarfBuzzSharp/libHarfBuzzSharp.sln",
+        "path": "native/windows/libHarfBuzzSharp/libHarfBuzzSharp.sln",
+        "sha256": "8768758997bbf2f56ffa8bed139d9e5e76b0336fa9d404f356d25f26ee9aec4a",
+        "indicator_lines": [
+          {
+            "line": 6,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/windows/libHarfBuzzSharp/libHarfBuzzSharp.vcxproj",
+        "path": "native/windows/libHarfBuzzSharp/libHarfBuzzSharp.vcxproj",
+        "sha256": "59bcaca1dff8e707eca52bc7efb747ca4913d78ecb94800f3b3d8f0761d81e0c",
+        "indicator_lines": [
+          {
+            "line": 30,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 36,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 126,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 131,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 132,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 133,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 134,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 135,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 143,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 144,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 160,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 161,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 176,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 177,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 194,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 195,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 214,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 215,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 234,
+            "terms": [
+              "harfbuzz"
+            ]
+          },
+          {
+            "line": 235,
+            "terms": [
+              "harfbuzz"
+            ]
+          }
+        ]
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.props",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.props",
+        "sha256": "cf50ec72468944af714ae1bc620ce72cd435712e7720d17f86c88a12719afb30",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.targets",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/Directory.Build.targets",
+        "sha256": "26247720d00becc3a96e51fcf21664d6ec48db56c6b4c519aef62548309dcd24",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/SkiaSharp.Views.WinUI.Native.Projection.csproj",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.Projection/SkiaSharp.Views.WinUI.Native.Projection.csproj",
+        "sha256": "d9da50a73a0a59be94d006a38c346032facf4637456efecb7b10dd3264979821",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.sln",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native.sln",
+        "sha256": "a5d81d608763882ce6aca5480e20eac9f22ba58effc00f84684c1ff69f194ad5",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.cpp",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.cpp",
+        "sha256": "ade561464588841d79089e4f10ce3c2a8ba81e89e0f7c4e9074d34b057baa532",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.h",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.h",
+        "sha256": "4915189147e8328034a09c66ceefcfda0255c9e1fc83fa799053431f6942a346",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.idl",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/BufferExtensions.idl",
+        "sha256": "0a0a49248c51ae68255a0e3d13ec4781c3a0a5f2fe1526829d04655f8fae1812",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.cpp",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.cpp",
+        "sha256": "9e18437bc27899a5b08a97658dcdd426572900016a818a5039968c30b1256491",
+        "indicator_lines": []
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mono/SkiaSharp/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.h",
+        "path": "native/winui/SkiaSharp.Views.WinUI.Native/SkiaSharp.Views.WinUI.Native/PropertySetExtensions.h",
+        "sha256": "6a5fcb77f9cc0db34bd53f166364a9e6327fb40d17ebc956f8cba0b067cd0bda",
+        "indicator_lines": []
+      }
+    ],
+    "tree_truncated": false
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "requested_license": "MIT",
+  "requested_short_name": "MIT",
+  "active_application_license": "MIT",
+  "application_relicense_status": "completed_for_project_owned_scope",
+  "entire_repository_relicensed": false,
+  "independent_new_document_scope": [],
+  "blocked_scopes": [],
+  "third_party_relicensed": false,
+  "past_gpl_grants_revoked": false,
+  "publication_clearance": "project_owned_mit_with_documented_third_party_obligations",
+  "java_discovery_revision": "native-reimplementation-with-qualified-provenance",
+  "final_review_decision": "A",
+  "final_review_details": "licensing/FINAL-REVIEW.json",
+  "requested_license_is_osi_approved": true,
+  "historical_document_scope_record": "licensing/history/v14-status.json",
+  "former_target_license": "LicenseRef-XGCL-1.0",
+  "former_target_withdrawn": true,
+  "public_copyright_notice": "Copyright (c) 2026 XG Launcher",
+  "personal_legal_identity_asserted": false,
+  "historical_document_grants": "Old independently granted document permissions remain valid; historical XGCL texts are preserved as history only. The maintained project-owned document versions are additionally MIT, excluding third-party legal text."
+}

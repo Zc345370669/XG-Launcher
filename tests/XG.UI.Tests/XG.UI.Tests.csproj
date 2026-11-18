@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" Version="11.3.23" />
+    <ProjectReference Include="../../src/XGLauncher/XGLauncher.csproj" />
+  </ItemGroup>
+</Project>

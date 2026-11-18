@@ -1,0 +1,1017 @@
+[
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "dc13e5208b8061b814c0375f81ee65b6f7fdbe94db837a49720126000c844734",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3b4a73b0928f2b76511ba9a721722959c949aaab762df61092133e3cb5302109",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9db599a7508b48e5aaae50a785d052fb48f678389685c362556a298e7e452a48",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "5a31107457d03ab2974911bf6bf672babba54fea4ff02e718c78c7828bf89be5",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "f984eaf1dfbcba5f35ae0639e511ab368078f4be07f5b25769fb5407f676f932",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "dc13e5208b8061b814c0375f81ee65b6f7fdbe94db837a49720126000c844734",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3b4a73b0928f2b76511ba9a721722959c949aaab762df61092133e3cb5302109",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9db599a7508b48e5aaae50a785d052fb48f678389685c362556a298e7e452a48",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "5a31107457d03ab2974911bf6bf672babba54fea4ff02e718c78c7828bf89be5",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "f984eaf1dfbcba5f35ae0639e511ab368078f4be07f5b25769fb5407f676f932",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "dc13e5208b8061b814c0375f81ee65b6f7fdbe94db837a49720126000c844734",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3b4a73b0928f2b76511ba9a721722959c949aaab762df61092133e3cb5302109",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9db599a7508b48e5aaae50a785d052fb48f678389685c362556a298e7e452a48",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "5a31107457d03ab2974911bf6bf672babba54fea4ff02e718c78c7828bf89be5",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "f984eaf1dfbcba5f35ae0639e511ab368078f4be07f5b25769fb5407f676f932",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "1d3e1f1bd56db6a10c4a4783a0eb9b186778e8495277e19570ad825236883186",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c65c5c7dcc362bacdf1949e394a481ca3a6e7f3e0bb0bd8a408b90ba1d89c2bc",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "94691f5b99ab8c54bc0d6ffc3d99436f661faf993cb787da3cffc8865235ff67",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b99d5ab97f6b8f2fafdfa9215bf2dc2661dfdd68b6ef8b71c0cb584157731619",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "59190f05e806055fb80ba57d062baab64c23be17986e0706de9b4b65638e6b23",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3c51116159b668a48b0d2fefd4e6e8ccad2d59450069253d7ff7b5424617f867",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "59190f05e806055fb80ba57d062baab64c23be17986e0706de9b4b65638e6b23",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3c51116159b668a48b0d2fefd4e6e8ccad2d59450069253d7ff7b5424617f867",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Tmds.DBus.Protocol-LICENSE.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "5367b73f1bb2598314e084847e4f45c303514c7fd192cfa9aa3c3437511567cd",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/Tmds.DBus.Protocol-LICENSE.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "b5407ad45b002f8e4645b6ea969a8195a49d0373d5af5700ce8769ea8b724c10",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "0794ca94ae63e7e9336f3e693108930a88d7f21b2ae9ee6cc366c2236723292c",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9b75a698d66e98516406f112ca02482e41a515dc6eda2c0caf8f14a82574cbb3",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "dc13e5208b8061b814c0375f81ee65b6f7fdbe94db837a49720126000c844734",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "3b4a73b0928f2b76511ba9a721722959c949aaab762df61092133e3cb5302109",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "9db599a7508b48e5aaae50a785d052fb48f678389685c362556a298e7e452a48",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "5a31107457d03ab2974911bf6bf672babba54fea4ff02e718c78c7828bf89be5",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "licenses/dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "f984eaf1dfbcba5f35ae0639e511ab368078f4be07f5b25769fb5407f676f932",
+    "reason": "Retained upstream public copyright/contact attribution in original license/NOTICE; not launcher user data"
+  },
+  {
+    "path": "tests/XG.Tests/AuthenticationSecurityTests.cs",
+    "rule": "credential-literal",
+    "encoding": "utf-8",
+    "digest": "121bf35c0f4ee4310c5a8780589504f9b3f71145b1701b3c228ce2a3fdf639fc",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/MinecraftAuthenticationTests.cs",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "c5e0dd28f47d8bd6e8a5eaba67022795a402b5e731438166515dbc0263f73ecc",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/MinecraftAuthenticationTests.cs",
+    "rule": "credential-literal",
+    "encoding": "utf-8",
+    "digest": "76809df3e746975121af4cb50be2507b889e1ca022e9262051178684060b9042",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/Program.cs",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "cc6d96611cffa9f02c3626f0b9ee897dc171e2d540a5cae349d4ec316104997b",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/Program.cs",
+    "rule": "credential-literal",
+    "encoding": "utf-8",
+    "digest": "5f5b2157b8d91248abc20aada69a26f2dd318e04c17863288053aab1f11ca18d",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "cf722b17574b3532ad8a354669587c5732de046ff7ca046c78006d5ebf890ea6",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "cf722b17574b3532ad8a354669587c5732de046ff7ca046c78006d5ebf890ea6",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "personal-path",
+    "encoding": "utf-8",
+    "digest": "5a7603ab87de33d9c628d13b0268163a79e591f2206fb4509adfc043a3af0310",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "personal-path",
+    "encoding": "utf-8",
+    "digest": "e9fb50ea801651fb57ee24a716b53325687491433cdc65141aef2cf33d6bf743",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "personal-path",
+    "encoding": "utf-8",
+    "digest": "2d35877e58e222fc111fc648a1632d58294bbd381b06180ec5620922f296ad19",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.Tests/PublicSecurityTests.cs",
+    "rule": "personal-path",
+    "encoding": "utf-8",
+    "digest": "23050563c1702c31fcc2fa95a02bdc8db1270279b5fd19d34eab41085c67eae7",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.UI.Tests/OAuthSecurityTests.cs",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "686de9273fa64ee2b5f293b6a754d709a55fcd61234209f326f79735e9ee95de",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.UI.Tests/OAuthSecurityTests.cs",
+    "rule": "personal-path",
+    "encoding": "utf-8",
+    "digest": "e9fb50ea801651fb57ee24a716b53325687491433cdc65141aef2cf33d6bf743",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.UI.Tests/OAuthSecurityTests.cs",
+    "rule": "credential-literal",
+    "encoding": "utf-8",
+    "digest": "fc72c68013f1bff69875a2d6e2cac4ed1b5440c58406e841119e4bbb86b2bd4f",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "tests/XG.UI.Tests/OAuthSecurityTests.cs",
+    "rule": "credential-literal",
+    "encoding": "utf-8",
+    "digest": "32b1d4209a1ec4f5da8eb5570722337e5b319ddff6f3fe6952d078b4e487e8fa",
+    "reason": "Reviewed synthetic test fixture; no real account or operational credential"
+  },
+  {
+    "path": "licenses/NSIS-COPYRIGHT.txt",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "4bafcb8c075f0e3a453fa946eae6b181db99327755cb54e092bbc332f86e3c14",
+    "reason": "Original public upstream NSIS 3.11 copyright/contact attribution; byte-identical pinned COPYING"
+  },
+  {
+    "path": "licenses/libgifcodec-LICENSE.md",
+    "rule": "email",
+    "encoding": "utf-8",
+    "digest": "012d6b2fab98c5e3cbecbd5e1f9758e8aa9db8bb72a7c7c2b48ba3190b977c2b",
+    "reason": "Exact upstream public contributor copyright email in unmodified pinned libgifcodec LICENSE.md, retained to satisfy attribution; not user account data"
+  }
+]
