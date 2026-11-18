@@ -1,87 +1,48 @@
-# XG Launcher
+# XG Launcher（瞎搞启动器）
 
-**An independent, open-source Minecraft: Java Edition launcher for Windows.**
+趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
 
-XG Launcher (瞎搞启动器) is a desktop application developed using C#/.NET 10 and Avalonia UI.
+代码基本全是 AI 写的，我主要负责提需求、测试、找 Bug，偶尔折腾一下界面设计。
 
-The project aims to provide a convenient, customizable, and reliable experience for managing Minecraft: Java Edition installations, game versions, Java runtimes, mods, modpacks, and player accounts.
+能用就用，有 Bug 就修，修不好就继续让 AI 修。
 
-## Project Status
+## 项目介绍
 
-**Version:** v0.1.0-alpha  
-**Platform:** Windows x64  
-**Development status:** Active development and testing  
-**License:** GNU General Public License v3.0
+- **项目名称：** XG Launcher（瞎搞启动器）
+- **运行平台：** Windows
+- **开发技术：** C# / .NET 10 / Avalonia UI
+- **开发方式：** AI 生成代码，人工提需求、测试和设计界面
+- **当前版本：** v0.1.0-alpha
+- **开发状态：** 随缘更新
 
-XG Launcher is currently under development. Some features are experimental or require further testing.
+## 目前折腾的功能
 
-## Features
+- Minecraft Java 版安装与版本管理
+- 多游戏实例管理
+- Java 环境管理
+- Forge、Fabric、NeoForge、Quilt 加载器支持
+- 模组与整合包管理
+- 多主题界面
+- Microsoft 账号登录（仍在完善中）
 
-- Minecraft: Java Edition version installation and management.
-- Multiple game instances with independent configurations.
-- Java runtime detection, selection, and management.
-- Forge, NeoForge, Fabric, and Quilt integration.
-- Mod and modpack management.
-- Game import and instance migration tools.
-- Download management and resource verification.
-- Customizable user interface themes.
-- Offline profile support for local use.
-- Microsoft account authentication integration.
+功能可能不完善，Bug 也可能不少，毕竟这是一个主要靠 AI 折腾的项目。
 
-Feature availability and compatibility may vary during alpha development.
+## 下载
 
-## Microsoft Authentication
+目前仍处于 Alpha 测试阶段，暂未正式发布稳定版本。
 
-XG Launcher is designed to use Microsoft's official OAuth authentication process, followed by Xbox Live, XSTS, and Minecraft Services authentication.
+后续如有公开测试版本，会放在 GitHub Releases。
 
-The intended authentication flow includes:
+## 许可证
 
-1. Microsoft account authorization.
-2. Xbox Live authentication.
-3. XSTS authorization.
-4. Minecraft Services authentication.
-5. Minecraft game ownership verification.
-6. Minecraft player profile retrieval.
+当前仓库采用 GPL-3.0 许可证。
 
-The launcher is designed to require valid authentication and game ownership verification before enabling authenticated Minecraft gameplay.
+项目正在评估改用 XG Launcher Community License 1.0（XGCL-1.0），计划允许免费使用、修改、分享，以及整合包和视频创作，但禁止单独出售启动器。
 
-XG Launcher does not intend to bypass Microsoft authentication, Minecraft ownership verification, licensing requirements, or server security mechanisms.
+正式授权以仓库中的 [LICENSE](LICENSE) 文件为准。
 
-**Microsoft account integration is currently under development. Minecraft Services AppID approval is being requested.**
+## 其他
 
-## Security and Privacy
+这是一个个人兴趣项目，不保证长期维护，也不保证所有功能都能正常运行。
 
-XG Launcher is designed to:
-
-- Use browser-based Microsoft authentication.
-- Avoid collecting Microsoft account passwords.
-- Protect authentication tokens and credentials.
-- Redact sensitive information from diagnostic logs.
-- Avoid exposing OAuth authorization codes on completion pages.
-- Use secure authentication and account verification procedures.
-
-Security features remain subject to ongoing testing and review.
-
-## Development and Source Code
-
-XG Launcher is an independently developed open-source project.
-
-The project is in its alpha development stage. Source code and development materials will be published as they are prepared for public release.
-
-## License
-
-XG Launcher is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
-
-See the [LICENSE](LICENSE) file for details.
-
-## Disclaimer
-
-XG Launcher is an independent third-party project.
-
-It is not affiliated with, endorsed by, sponsored by, or officially associated with Microsoft or Mojang Studios.
-
-Minecraft and related trademarks are the property of their respective owners.
-
-Users must comply with the Minecraft End User License Agreement and Usage Guidelines.
-
-XG Launcher is intended for legitimate use with Minecraft: Java Edition.
+Minecraft 及相关商标归其各自权利人所有。本项目与 Microsoft、Mojang Studios 无官方关联。
