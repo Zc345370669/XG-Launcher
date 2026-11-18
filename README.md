@@ -1,6 +1,6 @@
 # XG Launcher（瞎搞启动器）
 
-> 一个趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
+> 趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
 
 代码基本由 AI 生成。我主要负责提需求、测试、反馈和界面设计，再把这些东西拼起来慢慢改。这是个纯个人兴趣项目，没有打算和 PCL2、HMCL 这些成熟启动器竞争。
 
