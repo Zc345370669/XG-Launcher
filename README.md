@@ -1,6 +1,6 @@
 # XG Launcher（瞎搞启动器）
 
-> 一个趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
+> 趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
 
 面向 **Windows 10/11 x64** 的 Minecraft Java 版启动器，使用 C# / .NET 10 / Avalonia UI。当前版本 **v0.1.0-alpha**，仍在测试中，请备份重要存档。
 
