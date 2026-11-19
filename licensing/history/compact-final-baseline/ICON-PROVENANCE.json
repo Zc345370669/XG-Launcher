@@ -1,0 +1,30 @@
+{
+  "status": "old-inline-geometry-replaced-with-pinned-official-svg",
+  "lucide_package_declared": false,
+  "official_license": {
+    "commit": "de8d11aac831d519d2377ff516868244475fac06",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/LICENSE",
+    "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+    "bytes": 3208
+  },
+  "license_text_complete": true,
+  "actual_icon_version_confirmed": true,
+  "upstream_source_of_each_geometry_confirmed": true,
+  "notice_does_not_prove_provenance": true,
+  "reviewed_files": [
+    {
+      "path": "src/XGLauncher/MainWindow.cs",
+      "sha256": "8db3e1c4ced5489bf019cc6c75794031d6de0f8a422bcb35cb88a8acb3d8fa2b"
+    },
+    {
+      "path": "src/XGLauncher/TitleBar.cs",
+      "sha256": "c3855944f35f4e6de0c049eda28733a9768cc7972a7204dd2ad387bca6c3b281"
+    },
+    {
+      "path": "src/XGLauncher/GameImportWizard.cs",
+      "sha256": "9b0053df0d85b0f264bc7c477e06037895272360545456890ece13b302146418"
+    }
+  ],
+  "current_asset_manifest": "LUCIDE-ASSETS.json",
+  "phase17_snapshot_note": "Current file hash refresh after authorized phase17 edits; original snapshot preserved in licensing/history/phase17-baseline. No new independent provenance or rights verification is asserted."
+}

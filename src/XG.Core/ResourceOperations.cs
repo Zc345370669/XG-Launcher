@@ -8,8 +8,11 @@ public sealed record ResourceRecovery(string Type, Guid InstanceId, string? Conf
 
 public sealed record ResourceOperation(Guid Id, string Name, string Kind, string Source, string Instance,
     string State, string? Error = null, long Bytes = 0, long TotalBytes = 0, double BytesPerSecond = 0, string? CurrentFile = null,
-    int CompletedFiles = 0, int TotalFiles = 0, long FileBytes = 0, long FileTotalBytes = 0, ResourceRecovery? Recovery = null, Guid? ParentId = null, string? CurrentStage = null);
+    int CompletedFiles = 0, int TotalFiles = 0, long FileBytes = 0, long FileTotalBytes = 0, ResourceRecovery? Recovery = null, Guid? ParentId = null, string? CurrentStage = null, bool Skipped = false);
 
+/// <summary>
+/// 管理安装主任务及子阶段，聚合真实进度并持久化可恢复任务。
+/// </summary>
 public sealed class ResourceOperations
 {
     private readonly string index;
@@ -45,6 +48,7 @@ public sealed class ResourceOperations
     private readonly HashSet<Guid> deferredCancellation = [];
     public void Cancel(Guid id)
     {
+        // 加载器原子安装步骤不强行打断；先恢复当前步骤，待步骤结束后再取消父任务。
         if (HasInstaller(id))
         { deferredCancellation.Add(id); Resume(id); Pending(id, "等待当前安装步骤结束后取消"); return; }
         if (active.TryGetValue(id, out var job)) job.Cancel();
@@ -71,6 +75,9 @@ public sealed class ResourceOperations
             }
     }
 
+    /// <summary>
+    /// 登记真实安装计划；已缓存阶段以Skipped标识，尚未执行阶段不能据此视为完成。
+    /// </summary>
     public void PlanStages(IEnumerable<(string Kind, long Bytes, int Files, bool Ready)> stages, string instance)
     {
         if (current.Value is not { } owner) return;
@@ -78,9 +85,9 @@ public sealed class ResourceOperations
         {
             var i = operations.FindIndex(x => x.ParentId == owner.Id && x.Kind == stage.Kind);
             if (i < 0) operations.Add(new ResourceOperation(Guid.NewGuid(), stage.Kind, stage.Kind, "官方资源", instance,
-                stage.Ready ? "已完成" : "等待中", TotalBytes: stage.Bytes, CompletedFiles: stage.Ready ? stage.Files : 0, TotalFiles: stage.Files, ParentId: owner.Id));
+                stage.Ready ? "已完成" : "等待中", TotalBytes: stage.Bytes, CompletedFiles: stage.Ready ? stage.Files : 0, TotalFiles: stage.Files, ParentId: owner.Id, Skipped: stage.Ready));
             else operations[i] = operations[i] with { TotalBytes = stage.Bytes, TotalFiles = stage.Files,
-                State = stage.Ready ? "已完成" : operations[i].State,
+                State = stage.Ready ? "已完成" : operations[i].State, Skipped = stage.Ready,
                 Bytes = stage.Ready ? stage.Bytes : Math.Min(operations[i].Bytes, stage.Bytes > 0 ? stage.Bytes : long.MaxValue),
                 CompletedFiles = stage.Ready ? stage.Files : Math.Min(operations[i].CompletedFiles, stage.Files) };
         }
@@ -88,6 +95,17 @@ public sealed class ResourceOperations
         Changed?.Invoke();
     }
 
+    /// <summary>
+    /// 在当前异步任务上下文中创建或复用子阶段，再执行现有状态与持久化流程。
+    /// </summary>
+    /// <remarks>AsyncLocal只传递父子上下文，不为operations或active集合加锁；事件订阅者应自行切回UI线程。</remarks>
+    /// <param name="name">任务名称，不替换阶段Kind。</param>
+    /// <param name="kind">内部阶段标识，用于计划复用与进度聚合。</param>
+    /// <param name="source">资源来源；加载器开始时携带真实加载器名称。</param>
+    /// <param name="target">关联实例或目标名称。</param>
+    /// <param name="run">实际执行体，通过回调报告当前状态。</param>
+    /// <param name="recovery">可选的重启恢复描述。</param>
+    /// <returns>实际执行体的返回值；失败与取消按原流程传播。</returns>
     public async Task<T> RunAsync<T>(string name, string kind, string source, string target,
         Func<Action<string>, Task<T>> run, ResourceRecovery? recovery = null)
     {
@@ -97,6 +115,13 @@ public sealed class ResourceOperations
         item ??= new ResourceOperation(Guid.NewGuid(), name, kind, source, target, "等待中",
             Recovery: recovery, ParentId: current.Value?.Id);
         if (!operations.Any(x => x.Id == item.Id)) operations.Add(item);
+        // 计划加载器来源最初是通用值，仅在真实安装器开始执行时补齐实际名称，
+        // 保留内部标识、计数和状态，不制造加载器完成事件。
+        if (kind == "模组加载器" && item.Source != source)
+        {
+            item = item with { Source = source };
+            operations[operations.FindIndex(x => x.Id == item.Id)] = item;
+        }
         return await ExecuteAsync(item, run);
     }
 

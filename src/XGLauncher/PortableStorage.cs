@@ -3,6 +3,9 @@ using XG.Core;
 
 namespace XGLauncher;
 
+/// <summary>
+/// 从程序位置及已有工作区配置解析数据根，避免依赖不可靠的当前工作目录。
+/// </summary>
 internal static class PortableStorage
 {
     private static string Preference => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

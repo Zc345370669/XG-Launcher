@@ -81,6 +81,7 @@ internal sealed class SettingsSurface : Grid
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
+        ScrollViewer.SetBringIntoViewOnFocusChange(scroll, false);
         scroll.TemplateApplied += (_, args) => ConnectBar(args.NameScope.Find<ScrollBar>("PART_VerticalScrollBar"));
         scroll.ScrollChanged += (_, args) =>
         {

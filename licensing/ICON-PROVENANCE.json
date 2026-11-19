@@ -14,16 +14,22 @@
   "reviewed_files": [
     {
       "path": "src/XGLauncher/MainWindow.cs",
-      "sha256": "b17c597392facb791d0317c84b94ad64f4363e57f2934223e84b42435371f060"
+      "sha256": "5e40d6e2d8d7734ef2d8dbecbd6e9035db27254dd421aee3d967df380e3aa2d3"
     },
     {
       "path": "src/XGLauncher/TitleBar.cs",
-      "sha256": "5d14358f4b809a1ad38522521459f7eeab36ef71780a294c4f00671fa906d9b4"
+      "sha256": "64ef3645f8cc76bc6ed491fc7c513f2da5458b9353ca13e643ef9f08903d6f53"
     },
     {
       "path": "src/XGLauncher/GameImportWizard.cs",
       "sha256": "9b0053df0d85b0f264bc7c477e06037895272360545456890ece13b302146418"
     }
   ],
-  "current_asset_manifest": "LUCIDE-ASSETS.json"
+  "current_asset_manifest": "LUCIDE-ASSETS.json",
+  "phase17_snapshot_note": "Current file hash refresh after authorized phase17 edits; original snapshot preserved in licensing/history/phase17-baseline. No new independent provenance or rights verification is asserted.",
+  "compact_final_snapshot_note": "Active hashes updated for compact final implementation; phase17 originals retained in licensing/history/compact-final-baseline. No new provenance clearance is asserted.",
+  "window_rounding_snapshot_note": "Current source hash refresh only; no geometry or icon asset replaced; previous evidence retained in history/window-rounding-baseline.",
+  "adaptive_combo_snapshot_note": "Active source hashes only; pinned SVG assets unchanged; trash-2 resolves to the canonical trash asset per pinned upstream aliases metadata in LUCIDE-ASSETS.json.",
+  "global_ui_snapshot_note": "Source hashes updated; pinned wrench/shapes SVG sources and hashes in LUCIDE-ASSETS.json, existing SVGs and original licenses unchanged.",
+  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance."
 }

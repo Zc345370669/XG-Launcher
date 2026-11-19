@@ -18,17 +18,23 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - run: python scripts/scan-public-source.py . --report public-scan.json --strict-layout
-      - run: python tests/license_integrity_tests.py
-      - run: python tests/xgcl_scope_tests.py
-      - run: python tests/provenance_review_tests.py
-      - run: python tests/license_final_audit_tests.py
-      - run: python tests/mit_transition_tests.py
-      - run: python tests/lucide_license_tests.py
+      - name: 扫描已跟踪的公开源码快照
+        shell: pwsh
+        run: |
+          $snapshot = Join-Path $env:RUNNER_TEMP 'xg-public-source'
+          $archive = Join-Path $env:RUNNER_TEMP 'xg-public-source.zip'
+          git archive --format=zip --output=$archive HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to export tracked source.' }
+          Expand-Archive -LiteralPath $archive -DestinationPath $snapshot -Force
+          python "$snapshot/scripts/scan-public-source.py" $snapshot --report "$env:RUNNER_TEMP/xg-public-scan.json" --strict-layout
+      - name: 许可证与安全扫描回归
+        run: python -m unittest discover -s tests -p '*tests.py' -v
       - run: dotnet restore XG-Launcher.sln --locked-mode
       - run: dotnet build XG-Launcher.sln -c Release --no-restore
-      - run: dotnet run --project tests/XG.Tests -c Release --no-build
-      - run: dotnet run --project tests/XG.UI.Tests -c Release --no-build
+      - name: 执行核心与无头UI测试
+        run: dotnet test XG-Launcher.sln -c Release --no-build --no-restore
+      - name: 校验XML文档
+        run: dotnet build XG-Launcher.sln -c Release --no-restore -p:GenerateDocumentationFile=true -p:NoWarn=1591 -warnaserror
       - run: choco install nsis --version=3.11.0 --yes --no-progress
       - shell: pwsh
         run: ./build-windows.ps1 -MakeNsis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"

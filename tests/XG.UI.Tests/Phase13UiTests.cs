@@ -26,7 +26,7 @@ internal static class Phase13UiTests
         var language = settings.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Title == "语言");
         var original = language.Bounds.Height; var theme = ThemePalette.Current.Name;
         language.Open(); Pump();
-        Check(language.IsOpen && language.Bounds.Height > original + 30, "language options did not expand in place");
+        Check(language.IsOpen && Math.Abs(language.Bounds.Height - original) < .1, "language joined overlay changed anchor layout");
         Check(window.OwnedWindows.Count() == 0 && !language.GetVisualAncestors().OfType<Avalonia.Controls.Primitives.Popup>().Any(), "language opened a floating popup");
         Capture("phase13-language-inline-cn");
         window.KeyPressQwerty(PhysicalKey.ArrowDown, RawInputModifiers.None);

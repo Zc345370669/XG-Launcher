@@ -36,7 +36,14 @@ internal static class Phase12Tests
         {
             await File.WriteAllTextAsync(evidence, "symlink target fixture");
             var link = Path.Combine(folder, "java-link"); File.CreateSymbolicLink(link, evidence);
-            await InstallationReceipt.WriteAsync(store, a, new[] { link }, default, a.Version, link);
+            // Creation notifications may arrive after the symlink is already stable. Keep the
+            // production fail-closed check; only retry this controlled, no-writer fixture.
+            for (var attempt = 0; ; attempt++)
+            {
+                try { await InstallationReceipt.WriteAsync(store, a, new[] { link }, default, a.Version, link); break; }
+                catch (IOException error) when (attempt < 4 && error.Message == "文件在校验时发生变化，请重试。")
+                { await Task.Delay(25); }
+            }
             Check(await InstallationReceipt.InspectAsync(store, a) == "已安装", "Java symlink target mismatches length");
         }
         await File.WriteAllTextAsync(Path.Combine(folder, ".xg-installation.json"), "{\"Files\":null}");

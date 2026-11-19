@@ -4,7 +4,9 @@ using System.Text.Json;
 
 namespace XG.Core;
 
-/// <summary>Local evidence only: never infers readiness from download percentages.</summary>
+/// <summary>
+/// 通过配置、必要文件和Java证据判断安装状态，不以下载百分比代替本地校验。
+/// </summary>
 public static class InstallationReceipt
 {
     public sealed record FileEvidence(string Path, long Size, string Sha256);

@@ -7,6 +7,9 @@ namespace XG.Core;
 
 public sealed record Download(Guid Id, ModFile File, string Target, string State = "已暂停", string? Error = null, string Category = "模组", string? Instance = null, int Priority = 0, Guid? InstanceId = null, string? InstanceConfiguration = null);
 
+/// <summary>
+/// 维护模组文件队列、优先级和持久化状态，校验完成后才提交目标文件。
+/// </summary>
 public sealed class Downloads
 {
     private readonly HttpClient http;
@@ -144,6 +147,15 @@ public sealed class Downloads
         }
     }
 
+    /// <summary>
+    /// 等待队列准入，下载并校验暂存文件，提交前再次检查实例是否允许写入。
+    /// </summary>
+    /// <remarks>任务查找或文件预检异常仍可向调用方传播。队列集合未提供通用并发读写保证；调用方需保持既有调度上下文。底层门控锁不等于整个服务线程安全。</remarks>
+    /// <param name="id">已有下载任务标识。</param>
+    /// <param name="changed">任务状态更新通知。</param>
+    /// <param name="progress">已传输字节和总字节通知。</param>
+    /// <param name="mayCommit">提交前的实例状态检查；返回false时保留错误状态。</param>
+    /// <returns>提交成功返回true；未执行或已处理的暂停、取消、传输失败返回false。</returns>
     public async Task<bool> RunAsync(Guid id, Action changed, Action<long, long> progress, Func<bool> mayCommit)
     {
         var job = items.Single(x => x.Id == id);
@@ -194,6 +206,7 @@ public sealed class Downloads
             else Update("已暂停");
         }
         catch (Exception ex) { Update("失败", VerifiedTransfer.Describe(ex)); }
+        // 只归还真正获得的队列名额，随后唤醒等待任务；using负责释放当前取消源。
         finally
         {
             if (acquired) running--;

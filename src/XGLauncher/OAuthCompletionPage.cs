@@ -5,8 +5,11 @@ using System.Text;
 
 namespace XGLauncher;
 
-// Separate, loopback-only presentation server. It NEVER receives an OAuth code,
-// state, token or redirect destination. MSAL owns the authentication listener.
+// 独立回环展示服务不承担认证参数接收，
+// 授权回调仍由MSAL的认证监听器处理。
+/// <summary>
+/// 提供仅回环地址可用的非敏感完成页面；认证回调监听仍由MSAL持有。
+/// </summary>
 internal sealed class OAuthCompletionPage : IAsyncDisposable
 {
     private readonly TcpListener listener = new(IPAddress.Loopback, 0);
@@ -48,8 +51,8 @@ internal sealed class OAuthCompletionPage : IAsyncDisposable
         worker = RunAsync();
     }
 
-    // Keep the non-sensitive completion page available for refresh after MSAL
-    // returns. Bound the lifetime, including cancellation and failed attempts.
+    // 认证返回后短时保留非敏感完成页以支持刷新，
+    // 同时限制生命周期，覆盖取消及失败路径，避免遗留监听器。
     internal void ExpireSoon()
     {
         try { lifetime.CancelAfter(TimeSpan.FromSeconds(45)); }
@@ -75,7 +78,7 @@ internal sealed class OAuthCompletionPage : IAsyncDisposable
 
     private async Task RespondAsync(NetworkStream stream, CancellationToken token)
     {
-        // Bounded HTTP header reader; never log request lines, headers or bodies.
+        // 限制HTTP头读取长度，禁止记录请求行、头或正文中的潜在敏感内容。
         using var readDeadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         readDeadline.CancelAfter(TimeSpan.FromSeconds(2));
         var buffer = new byte[8192];

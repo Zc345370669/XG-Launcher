@@ -34,6 +34,9 @@ public sealed partial class MainWindow
         return stored;
     }
 
+    /// <summary>
+    /// 建立Modrinth目录视图；查询世代、取消和分页防止迟到结果覆盖最新筛选。
+    /// </summary>
     private CatalogSurface CreateCatalog(bool pack)
     {
         var query = Input(pack ? "搜索整合包或项目 ID" : "搜索模组或项目 ID");

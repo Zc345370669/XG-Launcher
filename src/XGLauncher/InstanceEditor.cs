@@ -10,11 +10,11 @@ namespace XGLauncher;
 
 public sealed partial class MainWindow
 {
-    private async Task EditAsync(Instance? existing)
+    private async Task EditAsync(Instance? existing, string? createTitle = null)
     {
         using var lifetime = new CancellationTokenSource();
         CancellationTokenSource? loaderJob = null;
-        var dialog = Dialog(existing is null ? "创建实例" : "编辑实例", editor: true);
+        var dialog = Dialog(existing is null ? createTitle ?? "创建实例" : "编辑实例", editor: true);
         var name = Input("实例名称", existing?.Name);
         var versionPicker = new MinecraftVersionPicker("Minecraft 版本", false);
         var versions = versionPicker.Select;

@@ -10,6 +10,9 @@ using CmlLib.Core.Installer.NeoForge;
 
 namespace XG.Core;
 
+/// <summary>
+/// 协调官方版本、Java、依赖与加载器准备，并构造隔离实例的游戏进程。
+/// </summary>
 public sealed partial class GameService(HttpClient http, InstanceStore store)
 {
     private readonly SemaphoreSlim versionsLock = new(1);
@@ -118,10 +121,22 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
     public Task<Process> PrepareAsync(Instance instance, string player, MSession? online, Action<string> progress) =>
         PrepareWithSessionAsync(instance, player, () => Task.FromResult(online), progress);
 
+    /// <summary>
+    /// 准备资源并构造游戏进程；不会在此方法中启动返回的进程。
+    /// </summary>
+    /// <param name="instance">已选择的实例配置，用于确定版本、加载器和隔离目录。</param>
+    /// <param name="player">离线会话所用玩家名，仍需通过原名称验证。</param>
+    /// <param name="resolveSession">准备结束后获取会话；正版认证失败应抛出异常，不伪装为离线成功。</param>
+    /// <param name="progress">面向调用方的安装状态通知。</param>
+    /// <param name="resources">可选的共享安装任务服务，负责真实阶段及恢复信息。</param>
+    /// <param name="stage">可选的主任务状态回调。</param>
+    /// <param name="verifyManagedJava">是否重新验证受管理Java安装。</param>
+    /// <returns>尚未启动、由调用方负责启动和释放的进程对象。</returns>
     public async Task<Process> PrepareWithSessionAsync(Instance instance, string player,
         Func<Task<MSession?>> resolveSession, Action<string> progress, ResourceOperations? resources = null, Action<string>? stage = null, bool verifyManagedJava = false)
     {
         instance.Validate();
+        // 解析既有Java绑定；后续仍校验实际运行时和版本要求，不能只信配置路径。
         var manualJava = store.ResolveJavaPath(instance.Java);
         
         var directory = store.EnsureLocalDirectory(instance);
@@ -346,7 +361,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
             var requiredFiles = (await launcher.ExtractFiles(finalMetadata))
                 .Where(file => !IsIn(paths.Runtime, file.Path)).Select(file => file.Path!)
                 .Where(path => !string.IsNullOrWhiteSpace(path)).ToList();
-            // Launch metadata and the actual executable are part of the readiness evidence.
+            // 启动配置和实际Java可执行文件均纳入安装就绪证据。
             requiredFiles.Add(process.StartInfo.FileName);
             if (IsIn(paths.Runtime, process.StartInfo.FileName) && Path.GetDirectoryName(Path.GetDirectoryName(process.StartInfo.FileName)) is { } javaHome)
                 requiredFiles.AddRange(Directory.EnumerateFiles(javaHome, "*", new EnumerationOptions {
@@ -360,7 +375,14 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
         }
         finally { if (lockHeld) installationLock.Release(); }
     }
-    /// <summary>Launch construction for an audited installation; deliberately never calls an installer.</summary>
+    /// <summary>
+    /// 强制复查安装凭据后仅构造启动进程，不隐式调用安装器。
+    /// </summary>
+    /// <param name="instance">准备启动的隔离实例。</param>
+    /// <param name="player">没有正版会话时使用的离线玩家名。</param>
+    /// <param name="resolveSession">启动前获取或刷新会话的异步委托。</param>
+    /// <returns>配置了工作目录和输出重定向、尚未启动的进程。</returns>
+    /// <exception cref="InvalidOperationException">实例资源缺失、损坏或缺少启动元数据。</exception>
     public async Task<Process> BuildInstalledAsync(Instance instance, string player, Func<Task<MSession?>> resolveSession)
     {
         if (await InspectInstallationAsync(instance, force: true) != "已安装")
@@ -378,6 +400,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
             if (instance.Loader == "原版") paths.Versions = Path.Combine(shared, "versions");
         }
         _ = InstanceStore.SafeFile(paths.Versions, receipt.Profile);
+        // 回调失败直接中止；仅回调明确返回null时才构造离线会话，不用离线会话掩盖正版认证错误。
         var session = await resolveSession();
         var options = new MLaunchOption {
             Session = session ?? MSession.CreateOfflineSession(Instance.ValidatePlayer(player)),

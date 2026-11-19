@@ -4,10 +4,16 @@ using System.Text.Json;
 
 namespace XG.Core;
 
+/// <summary>
+/// 验证并导入整合包，受限解压覆盖文件并通过可信哈希提交下载资源。
+/// </summary>
 public sealed class PackImporter(HttpClient http, InstanceStore store)
 {
     private readonly SemaphoreSlim[] cacheLocks = Enumerable.Range(0, 32).Select(_ => new SemaphoreSlim(1)).ToArray();
 
+    /// <summary>
+    /// 在受限路径中导入整合包；已有恢复目标先验证一致性，避免重复创建实例。
+    /// </summary>
     public async Task<Instance> ImportAsync(string archive, Action<string> progress,
         ResourceOperations? resources = null, Action<string>? stage = null, Guid? destinationId = null)
     {
@@ -87,7 +93,7 @@ public sealed class PackImporter(HttpClient http, InstanceStore store)
                     overrideBytes = checked(overrideBytes + entry.Length);
                     if (overrideBytes > 512L * 1024 * 1024) throw new InvalidDataException("整合包覆盖文件过大。");
                     Directory.CreateDirectory(Path.GetDirectoryName(safe)!);
-                    // Extract as a regular file. Never recreate archive link attributes.
+                    // 按普通文件解压，不恢复压缩包中的链接属性。
                     entry.ExtractToFile(safe, overwrite: true);
                 }
             Directory.Move(staging, destination);
@@ -114,7 +120,7 @@ public sealed class PackImporter(HttpClient http, InstanceStore store)
                 progress ?? ((_, _) => { }), stage ?? (_ => { }), token);
             token.ThrowIfCancellationRequested();
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            // A portable cache and the target can be on different volumes. Stage inside the target directory first.
+            // 便携缓存与目标可能跨磁盘，先在目标目录暂存，再执行同卷提交。
             var ready = path + "." + Guid.NewGuid().ToString("N") + ".ready";
             try
             {

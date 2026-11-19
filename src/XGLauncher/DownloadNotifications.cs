@@ -21,6 +21,8 @@ public sealed partial class MainWindow
     private void ResourceJobsChanged()
     {
         if (!Dispatcher.UIThread.CheckAccess()) { Dispatcher.UIThread.Post(ResourceJobsChanged); return; }
+        if (windowClosed) return;
+        UpdateCompact();
         UpdateBadge();
         foreach (var job in model.Resources.MainJobs.Where(x => x.State == "已完成" && x.Recovery?.Type == "game"))
         {
@@ -33,11 +35,11 @@ public sealed partial class MainWindow
                 ShowCompletion(message);
             }
         }
-        if (section is 0 or 1 or 2 or 4) Refresh();
+        if (IsCompact || section is 0 or 1 or 2 or 4) Refresh();
     }
     private void ShowCompletion(string message)
     {
-        if (completionToast == null) return;
+        if (completionToast == null || IsCompact) return;
         completionToast.Content = new Border { Background = ThemePalette.Accent, CornerRadius = new(9), Padding = new(14, 10), MaxWidth = 500,
             Child = new TextBlock { Text = message, Foreground = ThemePalette.OnAccent, TextWrapping = Avalonia.Media.TextWrapping.Wrap } };
         completionToast.IsVisible = true;

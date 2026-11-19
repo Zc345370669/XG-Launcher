@@ -22,6 +22,9 @@ public sealed record SyncSelection(bool Mods, bool Config, bool ResourcePacks, b
 public sealed record SyncProgress(int Percent, string Message);
 public sealed record SyncResult(int FilesAdded, string BackupDirectory);
 
+/// <summary>
+/// 在兼容实例间同步选定目录，并为目标内容建立备份和路径校验。
+/// </summary>
 public static class InstanceSynchronization
 {
     private sealed record Planned(string Source, string Relative, string Destination);

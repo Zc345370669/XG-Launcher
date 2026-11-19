@@ -234,6 +234,69 @@
       "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/folder-open.svg",
       "sha256": "ee57452b40e71df310214091dd9da1941a397c83197b8ff8d7ae66dd4242578b",
       "bytes": 401
+    },
+    {
+      "name": "user-round-plus",
+      "path": "src/XGLauncher/Assets/Lucide/user-round-plus.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/user-round-plus.svg",
+      "sha256": "03c10a74bcc653585368a82cc565c6f153d0174c52daad052d63fd30ce11d588",
+      "bytes": 331
+    },
+    {
+      "name": "wrench",
+      "path": "src/XGLauncher/Assets/Lucide/wrench.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/wrench.svg",
+      "sha256": "b5f3bf792743edb9e81b543dd1b13ccc26d3afe1d33500a1cd8dee2e052d6197",
+      "bytes": 417
+    },
+    {
+      "name": "shapes",
+      "path": "src/XGLauncher/Assets/Lucide/shapes.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/shapes.svg",
+      "sha256": "480e2301a977f7f2fc7133c330f48d8318b5fd3761b27a9c582997eb5aa47f1f",
+      "bytes": 405
+    }
+  ],
+  "aliases": [
+    {
+      "name": "trash-2",
+      "canonical": "trash",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/trash.json",
+      "metadata_sha256": "d7a4fc18a4cb414b948cf472d973d89a24a48f97465a03eb93602090ceed0236",
+      "upstream_metadata": {
+        "$schema": "../icon.schema.json",
+        "contributors": [
+          "colebemis",
+          "csandman",
+          "ericfennis",
+          "karsa-mistmere"
+        ],
+        "use-cases": [],
+        "tags": [
+          "$group:minus",
+          "empty",
+          "deletion",
+          "cleanup",
+          "junk",
+          "garbage",
+          "bin",
+          "waste",
+          "recycle",
+          "discard",
+          "rubbish"
+        ],
+        "categories": [
+          "files",
+          "mail"
+        ],
+        "aliases": [
+          {
+            "name": "trash-2",
+            "deprecated": true,
+            "deprecationReason": "alias.duplicate"
+          }
+        ]
+      }
     }
   ]
 }

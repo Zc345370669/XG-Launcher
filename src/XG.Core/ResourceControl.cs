@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 namespace XG.Core;
 
+/// <summary>
+/// 将父任务取消与当前文件传输关联，暂停保留部分文件以供继续。
+/// </summary>
 public sealed class ResourceControl : IDisposable
 {
     private readonly CancellationTokenSource lifetime;
@@ -20,6 +23,7 @@ public sealed class ResourceControl : IDisposable
     {
         if (resume != null || lifetime.IsCancellationRequested) return;
         resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        // 暂停仅中断当前文件传输；lifetime保持有效，因此继续时可以利用保留的部分文件。
         transfer?.Cancel();
         update("已暂停");
     }
@@ -50,7 +54,7 @@ public sealed class ResourceControl : IDisposable
             transfer = file;
             try { await action(file.Token); return; }
             catch (OperationCanceledException) when (file.IsCancellationRequested && !Token.IsCancellationRequested)
-            { /* The partial file stays on disk for the next transfer. */ }
+            { /* 保留磁盘上的部分文件，供继续传输使用。 */ }
             finally { transfer = null; }
         }
     }

@@ -19,7 +19,7 @@ internal static class Phase12UiTests
     {
         var model = (LauncherModel)typeof(MainWindow).GetField("model", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(window)!;
         window.Width = 1130; window.Height = 850; Pump();
-        Click("个人游戏");
+        Click("个人游玩");
         var card = window.GetVisualDescendants().OfType<Border>().First(x => x.Name?.StartsWith("InstanceCard_") == true);
         var menu = card.ContextMenu!;
         var title = card.GetVisualDescendants().OfType<TextBlock>().First();
@@ -59,12 +59,12 @@ internal static class Phase12UiTests
             {
                 var show = window.ErrorAsync(window, "主题与统一弹窗真实渲染检查"); Pump();
                 var dialog = window.OwnedWindows.OfType<LauncherDialog>().Single(x => x.Title == "操作失败");
-                Check(ReferenceEquals(dialog.Background, ThemePalette.Panel), "dialog not globally themed"); Capture("phase12-dark-dialog", dialog);
+                Check(ReferenceEquals(dialog.Background, ThemePalette.Background), "dialog not globally themed"); Capture("phase12-dark-dialog", dialog);
                 Invoke(dialog.GetVisualDescendants().OfType<Button>().First(x => Equals(x.Content, "关闭"))); Pump();
             }
         }
         var slider = settings.GetVisualDescendants().OfType<Slider>().Single(); slider.Value = 85; Pump();
-        Check(ThemePalette.WindowBackground.Color.A == (byte)Math.Round(.85 * 255) && window.Opacity == 1, "opacity reduced child readability");
+        Check(ThemePalette.WindowBackground.Color.A == (byte)Math.Round(.85 * 255) && window.Opacity == 1, "opacity preference/effective fallback mismatch");
         slider.Value = 100; Pump(); Check(ThemePalette.WindowBackground.Color.A == 255, "opacity 100 not opaque");
         var blur = settings.GetVisualDescendants().OfType<CheckBox>().Single(x => Equals(x.Content, "轻微毛玻璃效果"));
         blur.IsChecked = true; Pump();

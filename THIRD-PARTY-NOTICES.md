@@ -6,7 +6,7 @@ XG Launcher 项目自有代码/文档采用 MIT，不对第三方依赖、图标
 
 ## Lucide / Feather
 
-使用官方仓库固定提交 de8d11aac831d519d2377ff516868244475fac06 的 33 个 SVG，源码与每文件 SHA256 在 licensing/LUCIDE-ASSETS.json。原文在 licenses/Lucide-LICENSE.txt：完整 ISC，以及所用 Feather 派生图标的 MIT、版权和图标清单都保留。图标不是 XG Launcher 自有 MIT 代码；不能删除 Feather 声明。应用原十二内联几何已被替换，不靠外观猜测来源。
+使用官方仓库固定提交 de8d11aac831d519d2377ff516868244475fac06 的 34 个 SVG，源码与每文件 SHA256 在 licensing/LUCIDE-ASSETS.json。原文在 licenses/Lucide-LICENSE.txt：完整 ISC，以及所用 Feather 派生图标的 MIT、版权和图标清单都保留。图标不是 XG Launcher 自有 MIT 代码；不能删除 Feather 声明。应用原十二内联几何已被替换，不靠外观猜测来源。
 
 ## 原生 Skia/HarfBuzz 与 GIF
 

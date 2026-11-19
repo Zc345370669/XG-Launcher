@@ -1,0 +1,2 @@
+# Preserve exact upstream license bytes and evidence hashes; do not normalize or whitespace-rewrite them.
+licenses/* -text -diff

@@ -51,8 +51,8 @@ internal static class JavaLocations
             var file = new FileInfo(path);
             if (!file.Exists) return null;
             path = file.ResolveLinkTarget(true)?.FullName ?? file.FullName;
-            // Resolve directory aliases as well as executable symlinks. Explicit
-            // locations may be links; recursive search never follows child links.
+            // 同时规范化目录别名和可执行文件符号链接；显式位置可以是链接，
+            // 但递归搜索不跟随子目录链接，避免越界遍历。
             for (var attempt = 0; attempt < 16; attempt++)
             {
                 var changed = false;
@@ -77,8 +77,8 @@ internal static class JavaLocations
         var found = new List<string>(); var seenFiles = new HashSet<string>(PathComparer);
         var roots = new List<string>(); var visited = new HashSet<string>(PathComparer);
         var clock = Stopwatch.StartNew(); var reported = false; var remaining = deep ? 50000 : 4096;
-        // Explicit values are direct candidates before any traversal. Deep traversal
-        // is restricted to user-supplied roots; never enumerate drive roots at startup.
+        // 显式路径先作为直接候选检查；深度遍历仅限用户指定根目录，
+        // 启动时不枚举整个磁盘根目录。
         foreach (var value in input.Additional.Concat(cached)) Add(value, deep);
         if (!deep)
         {

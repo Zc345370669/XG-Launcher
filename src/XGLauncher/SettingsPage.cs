@@ -65,7 +65,7 @@ public sealed partial class MainWindow
         var sections = new Control[] { general, appearance, notifications, backup, security, legal, about }
             .Select((item, index) => (Control)new Border
             {
-                Name = $"SettingsSection{index}", Child = item, MinHeight = 120, Padding = new(19, 14),
+                Name = $"SettingsSection{index}", Child = item, Background = Brushes.Transparent, MinHeight = 120, Padding = new(19, 14),
                 BorderBrush = Line, BorderThickness = new(0, 0, 0, index == 6 ? 0 : 1)
             }).ToArray();
         return new SettingsSurface(names, sections);

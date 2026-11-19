@@ -9,19 +9,19 @@
   "files": [
     {
       "path": "src/XG.Core/JavaDiscovery.cs",
-      "sha256": "5e90aafe663e09ba1555d87d26655beccfe56a163e8071aa71865336a500024f"
+      "sha256": "ba73dec2ebd6c18186b1c7da69c86cdb7b26b41b9550b959a7311136145192f3"
     },
     {
       "path": "src/XG.Core/JavaCatalog.cs",
-      "sha256": "0f2f37428f9e73295904706a02cdbcfad4e2a12ca7a562501c845180c39e3626"
+      "sha256": "3aad70b6521b1e7f287ed4903c1204b37cd70a3a373512fefa09e49e018d7e08"
     },
     {
       "path": "src/XG.Core/JavaLocations.cs",
-      "sha256": "44d738e673d3533fedb26cd26c09e0f15918386e1f57479c7a0b5eb689b9ba17"
+      "sha256": "a9b3474d8e92166f7f0a8dfc74b47bf5103a611d516f7dfc2ac2d199d5d65a76"
     },
     {
       "path": "src/XG.Core/JavaProbe.cs",
-      "sha256": "970063b1782c4cdd4003eb6e0f03cc36e5ed9c52adf87b5c16b5b0f64bc02c99"
+      "sha256": "fde7970e6f6328f5c6a3e2bd7050b87378e059dc543582358f3ee8778b6240de"
     },
     {
       "path": "src/XG.Core/JavaDiscoveryTestAccess.cs",
@@ -35,5 +35,6 @@
   "historical_reference_date_maintainer_reported": "2026-11-17",
   "native_rewrite_preserved_in_v15": true,
   "current_module_old_python_reference_required": false,
-  "maintainer_confirms_current_module_not_old_python": true
+  "maintainer_confirms_current_module_not_old_python": true,
+  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance."
 }

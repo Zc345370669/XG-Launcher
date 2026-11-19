@@ -10,7 +10,7 @@ using Avalonia.VisualTree;
 
 namespace XGLauncher;
 
-// Draw only pinned official SVG primitives; no network access or external SVG engine.
+// 仅绘制固定来源SVG的基础图形；不联网加载，也不引入外部SVG执行引擎。
 internal sealed class LucideIcon : Control
 {
     internal static readonly string[] Navigation = ["house", "gamepad-2", "layers", "package", "download", "settings"];
@@ -49,6 +49,8 @@ internal sealed class LucideIcon : Control
     }
     internal static IReadOnlyList<Geometry> Shapes(string name)
     {
+        // 固定上游元数据将trash-2标记为trash的旧别名，兼容现有资源键。
+        if (name == "trash-2") name = "trash";
         lock (Cache)
         {
             if (Cache.TryGetValue(name, out var existing)) return existing;
@@ -80,7 +82,7 @@ internal sealed class LucideIcon : Control
     }
     internal static string Project(string name) => name switch
     {
-        "Mojang Studios" or "Microsoft" => "building", "Modrinth" => "package", "NeoForge" or "Forge" => "anvil",
+        "Mojang Studios" => "building", "Microsoft" => "building", "Modrinth" => "package", "NeoForge" => "anvil", "Forge" => "wrench", "Lucide" => "shapes",
         "Fabric" or "Quilt" => "layers", ".NET" => "code-xml", "Avalonia UI" => "panels-top-left", "OpenJDK" => "coffee", _ => "library"
     };
     internal static string Operation(string title) => title switch

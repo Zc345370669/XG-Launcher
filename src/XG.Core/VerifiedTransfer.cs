@@ -19,6 +19,7 @@ internal static class VerifiedTransfer
         Action<long, long> progress, Action<string> state, CancellationToken token)
     {
         var identity = Path.GetFullPath(partial) + "|" + uri.AbsoluteUri + "|" + size + "|" + checksum;
+        // 同一可信资源共享传输；等待者取消仅停止等待，底层操作继续供其他使用者复用。
         await SharedResourceCoordinator.RunAsync(identity, async () => {
             using var commit = await JavaInstallGate.EnterAsync(partial + ".transfer");
             var record = partial + ".identity.json";
@@ -47,6 +48,7 @@ internal static class VerifiedTransfer
 
     private sealed record TransferIdentity(string Identity,string State);
 
+    // sync只保护此门控的并发计数、速率时间线与唤醒信号，不保护上层队列集合。
     private sealed class TransferGate
     {
         private readonly object sync = new();
@@ -144,6 +146,7 @@ internal static class VerifiedTransfer
                     response.EnsureSuccessStatusCode();
                     if (response.RequestMessage?.RequestUri != uri)
                         throw new InvalidDataException("下载地址发生重定向。");
+                    // 服务器忽略Range而返回完整文件时必须重置暂存，不能把完整响应追加到旧片段。
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         if (offset > 0) { Reset(partial); CheckSpace(parent, size); }
@@ -188,6 +191,7 @@ internal static class VerifiedTransfer
                 }
                 progress(size, size);
                 state("校验中");
+                // 只有声明大小和可信哈希均匹配才可提交；不把收到最后一个字节视为校验成功。
                 if (!await MatchesAsync(partial, size, checksum, token))
                 {
                     Reset(partial);

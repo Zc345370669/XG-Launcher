@@ -7,7 +7,10 @@ using XG.Core;
 
 namespace XGLauncher;
 
-internal sealed partial class LauncherModel
+/// <summary>
+/// 持有窗口共享的账号、实例、安装、下载与启动服务；切换模式不创建第二份业务状态。
+/// </summary>
+internal sealed partial class LauncherModel : IDisposable
 {
     private readonly HttpClient http = new(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.All })
     { Timeout = TimeSpan.FromMinutes(3) };
@@ -21,8 +24,15 @@ internal sealed partial class LauncherModel
     public Downloads Downloads { get; }
     public ResourceOperations Resources { get; }
     public PackImporter Packs { get; }
-    public Instance? Selected { get; set; }
-    public string Player { get; set; } = "Player";
+    private sealed record Selection(Guid? Instance, string Player = "Player");
+    private Selection selection = new(null);
+    private Instance? selected;
+    private string SelectionPath => Path.Combine(Store.Root, "selection.json");
+    public Instance? Selected { get => selected; set { selected = value; selection = selection with { Instance = value?.Id }; SaveSelection(); } }
+    public string Player { get => Accounts.SelectedProfile is { Kind: "Offline" } profile ? profile.Name : selection.Player; set { selection = selection with { Player = Instance.ValidatePlayer(value) }; SaveSelection(); } }
+    private void SaveSelection() => InstanceStore.WriteJson(SelectionPath, selection);
+    internal bool IsDisposed { get; private set; }
+    public void Dispose() { if (IsDisposed) return; IsDisposed = true; http.Dispose(); }
     public MicrosoftAccounts Accounts { get; }
     public HashSet<Guid> Busy { get; } = [];
     public LauncherModel(string? root = null, Modrinth? catalog = null, HttpClient? gameMetadata = null)
@@ -43,7 +53,10 @@ internal sealed partial class LauncherModel
         Downloads = new(http, root, portable);
         Resources = new(root);
         Packs = new(http, Store);
-        Selected = Store.Entries.FirstOrDefault();
+        try { if (File.Exists(SelectionPath)) selection = System.Text.Json.JsonSerializer.Deserialize<Selection>(File.ReadAllText(SelectionPath)) ?? new(null); }
+        catch (Exception e) when (e is IOException or System.Text.Json.JsonException) { selection = new(null); }
+        try { Instance.ValidatePlayer(selection.Player); } catch (ArgumentException) { selection = selection with { Player = "Player" }; }
+        selected = Store.Entries.FirstOrDefault(x => x.Id == selection.Instance) ?? Store.Entries.FirstOrDefault();
     }
 
     public string ModsFolder(Instance instance) => Path.Combine(Store.DirectoryFor(instance), "mods");
@@ -51,6 +64,9 @@ internal sealed partial class LauncherModel
         ? Directory.GetFiles(ModsFolder(instance)).Where(p => p.EndsWith(".jar", StringComparison.OrdinalIgnoreCase)
             || p.EndsWith(".jar.disabled", StringComparison.OrdinalIgnoreCase)).ToArray() : [];
 
+    /// <summary>
+    /// 阻止同一实例重复启动，等待游戏退出后释放进程和日志，并恢复Busy状态。
+    /// </summary>
     public async Task LaunchAsync(Instance instance, Action<string> status)
     {
         if (!Busy.Add(instance.Id)) return;

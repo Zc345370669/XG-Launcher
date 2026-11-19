@@ -19,7 +19,7 @@ internal static class ResponsiveUiTests
     {
         if (!OperatingSystem.IsWindows()) window.FontFamily = new FontFamily("Noto Sans CJK SC");
         var title = window.GetVisualDescendants().OfType<Grid>().Single(grid => grid.Name == "LauncherTitleBar");
-        Check(title.GetVisualDescendants().OfType<Button>().Count() == 4, "title bar must contain account and three caption buttons");
+        Check(title.GetVisualDescendants().OfType<Button>().Count() == 5, "title bar must contain account, mode switch and three caption buttons");
         Check(title.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text == "瞎搞启动器"), "Chinese title missing");
         Check(!title.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text is "XG Launcher" or "v0.1.0"), "duplicate title text");
         Click("最大化");
@@ -196,12 +196,12 @@ internal static class ResponsiveUiTests
         WaitFor(() => bar.Opacity < .01);
         window.Height = 510;
         WaitFor(() => window.ClientSize.Height < 550);
-        foreach (var page in new[] { "首页", "个人游戏", "整合包", "模组管理", "下载管理", "设置" })
+        foreach (var page in new[] { "首页", "个人游玩", "整合包", "模组管理", "下载管理", "设置" })
         {
             Click(page);
             Check(!Buttons().Any(button => button.Content is string label && label == "▶  启动游戏"),
                 $"global launch toolbar still displayed: {page}");
-            if (page == "个人游戏")
+            if (page == "个人游玩")
                 Check(Buttons().Any(button => button.Content is string label && label is "启动" or "下载" or "校验中"),
                     "narrow Personal page lost the instance launch button");
         }
@@ -213,7 +213,7 @@ internal static class ResponsiveUiTests
         Check(concurrencySelect.IsOpen, "download concurrency select could not open");
         Capture("11-download-settings-narrow");
         concurrencySelect.Close();
-        Click("个人游戏");
+        Click("个人游玩");
         Click("创建实例");
         WaitFor(() => window.OwnedWindows.OfType<Window>().Any(x => x.Title == "创建实例"));
         var create = window.OwnedWindows.OfType<Window>().Single(x => x.Title == "创建实例");

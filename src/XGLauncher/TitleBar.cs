@@ -11,15 +11,27 @@ namespace XGLauncher;
 
 public sealed partial class MainWindow
 {
+    private Image? captionLogo;
+    private Border? captionFrame;
+    private Button? modeButton;
+    private Button? maximizeButton;
+    private Button? minimizeButton;
+
+    private void UpdateCaptionMode()
+    {
+        if (modeButton == null) return;
+        var text = IsCompact ? "切换完整模式" : "切换精简模式";
+        ToolTip.SetTip(modeButton, text);
+        AutomationProperties.SetName(modeButton, text);
+        account.IsVisible = !IsCompact;
+        if (captionLogo != null) captionLogo.IsVisible = !IsCompact;
+        if (captionFrame != null) { captionFrame.BorderThickness = IsCompact ? new(0) : new(0, 0, 0, 1); captionFrame.Background = IsCompact ? Brushes.Transparent : ThemePalette.Panel; }
+        maximizeButton!.IsVisible = minimizeButton!.IsVisible = !IsCompact;
+    }
+
     private Control CreateTitleBar(Image logo)
     {
-        if (OperatingSystem.IsWindows())
-        {
-            ExtendClientAreaToDecorationsHint = true;
-            ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
-            ExtendClientAreaTitleBarHeightHint = 0;
-        }
-
+        captionLogo = logo;
         var caption = new Border
         {
             Background = Brushes.Transparent, Padding = new(14, 0, 0, 0),
@@ -31,14 +43,17 @@ public sealed partial class MainWindow
         caption.PointerPressed += (_, args) =>
         {
             if (!args.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-            if (args.ClickCount == 2) ToggleMaximized();
+            if (args.ClickCount == 2 && !IsCompact) ToggleMaximized();
             else if (args.ClickCount == 1) BeginMoveDrag(args);
             args.Handled = true;
         };
 
         var minimize = CaptionButton("最小化", "minus", () => WindowState = WindowState.Minimized);
         var maximize = CaptionButton("最大化", "square", ToggleMaximized);
-        var close = CaptionButton("关闭", "x", Close);
+        minimizeButton = minimize; maximizeButton = maximize;
+        modeButton = CaptionButton("切换精简模式", "panels-top-left", ToggleMode);
+        modeButton.Name = "SwitchMode";
+        var close = CaptionButton("关闭", "x", () => { exitRequested = true; Close(); });
         PropertyChanged += (_, args) =>
         {
             if (args.Property != WindowStateProperty) return;
@@ -54,12 +69,13 @@ public sealed partial class MainWindow
         account.VerticalAlignment = VerticalAlignment.Center;
         account.Margin = new(0, 0, 8, 0);
         var actions = new StackPanel { Orientation = Orientation.Horizontal };
-        foreach (var button in new[] { account, minimize, maximize, close }) actions.Children.Add(button);
-        var grid = new Grid { Name = "LauncherTitleBar", Height = 44, ColumnDefinitions = new("*,Auto") };
+        foreach (var button in new[] { account, modeButton, minimize, maximize, close }) actions.Children.Add(button);
+        var grid = new Grid { Name = "LauncherTitleBar", Height = WindowChrome.CaptionHeight, ColumnDefinitions = new("*,Auto") };
         grid.Children.Add(caption);
         Grid.SetColumn(actions, 1);
         grid.Children.Add(actions);
-        return Frame(grid, new(0), new(0, 0, 0, 1));
+        captionFrame = Frame(grid, new(0), new(0, 0, 0, 1));
+        return captionFrame;
     }
 
     private void ToggleMaximized() =>

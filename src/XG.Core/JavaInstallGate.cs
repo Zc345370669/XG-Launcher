@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
 using System.Collections.Concurrent;
 namespace XG.Core;
-// Serializes commits to the shared runtime root. Each waiter re-probes the actual
-// required runtime after admission; no assumption that all Java 21 packages match.
+// 共享运行时根按提交门控串行化；获得准入后仍需重新探测实际所需运行时，
+// 不能假定所有Java 21安装包内容相同。
+/// <summary>
+/// 按规范化运行时根目录串行化提交，调用方持有的租约必须释放。
+/// </summary>
 public static class JavaInstallGate {
  static readonly ConcurrentDictionary<string,SemaphoreSlim> gates=new(StringComparer.OrdinalIgnoreCase);
  public static async Task<IDisposable> EnterAsync(string runtimeRoot,CancellationToken token=default) {

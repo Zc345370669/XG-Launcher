@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace XG.Core;
 
-// Only explicitly selected scalar error fields cross the diagnostics boundary.
-// No raw response, request URL, exception text or arbitrary headers are retained.
+// 只允许明确选择的标量错误字段越过诊断边界，
+// 不保留原始响应、请求地址、异常全文或任意响应头。
 internal static partial class AuthSafeFields
 {
     internal static string Read(JsonElement body, IEnumerable<string> secrets)
@@ -22,14 +22,14 @@ internal static partial class AuthSafeFields
             {
                 if (!value.TryGetProperty(key, out var item) || item.ValueKind != JsonValueKind.String) continue;
                 var text = item.GetString()!;
-                // Discard oversized fields, rather than truncating ahead of redaction.
+                // 过大字段整体丢弃，避免先截断再脱敏留下敏感尾段。
                 if (text.Length > 1024) { fields.Add(key + "=[omitted: length]"); continue; }
                 foreach (var secret in secrets.Where(s => s.Length > 0).OrderByDescending(s => s.Length))
                     text = text.Replace(secret, "[redacted]", StringComparison.Ordinal)
                         .Replace(Uri.EscapeDataString(secret), "[redacted]", StringComparison.Ordinal);
                 text = Url().Replace(text, "[URL omitted]");
-                // A credential-bearing field is wholly omitted; partially redacting
-                // arbitrary JSON/HTML/quoted descriptions can miss trailing secrets.
+                // 包含凭据的字段整体省略；对任意JSON、HTML或引用片段只做局部替换，
+                // 可能遗漏后续敏感内容，不能当作安全保证。
                 if (Credential().IsMatch(text)) text = "[omitted: credential-bearing field]";
                 else
                 {

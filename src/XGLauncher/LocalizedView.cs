@@ -7,7 +7,7 @@ using Avalonia.Threading;
 
 namespace XGLauncher;
 
-/// <summary>Presentation-boundary localization keeps persisted state values and domain identifiers language neutral.</summary>
+/// <summary>本地化只发生在显示边界，不改写持久化状态值或领域标识。</summary>
 internal static class LocalizedView
 {
     private sealed class Entry(string raw, Action<AvaloniaObject, string> write) { internal string Raw = raw; internal Action<AvaloniaObject, string> Write = write; internal bool Updating; }

@@ -39,3 +39,18 @@ public-scan.json
 **/__pycache__/
 *.pyc
 .pytest_cache/
+
+# 发布前整理：本地验证输出和实际用户数据不进入源码提交
+**/.avalonia-build-tasks/
+/TestResults/
+/downloads/
+/crash-reports/
+*.dmp
+*.snk
+**/accounts.json
+**/resource-operations.json
+**/downloads.json
+**/window-session.json
+**/selection.json
+.DS_Store
+Thumbs.db

@@ -4,6 +4,9 @@ using System.Text.Json;
 
 namespace XG.Core;
 
+/// <summary>
+/// 备份允许的用户数据范围，恢复到新实例，避免覆盖原存档及跟随目录链接。
+/// </summary>
 public static class Backups
 {
     private static readonly string[] Folders = ["saves", "mods", "config", "resourcepacks", "shaderpacks"];

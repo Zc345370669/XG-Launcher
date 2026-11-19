@@ -49,7 +49,7 @@ public static class GameImport {
   if(store.Entries.Any(x=>x.Name.Equals(name,StringComparison.OrdinalIgnoreCase)))throw new InvalidDataException("An instance with this name exists; choose another name.");
   var destination=store.DirectoryFor(instance);
   try {await VerifiedDirectoryMigration.CopyVerifiedAsync(source,destination,progress,token);token.ThrowIfCancellationRequested();
-   // Imported receipts must never assert readiness for a newly assigned configuration.
+   // 导入后配置已变化，旧安装凭据不能继续宣称新实例就绪。
    File.Delete(Path.Combine(destination,".xg-installation.json"));store.Save(instance);return instance;
   }catch{if(Directory.Exists(destination))Directory.Delete(destination,true);throw;}
  }

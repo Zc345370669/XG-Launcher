@@ -10,7 +10,10 @@ using XG.Core;
 
 namespace XGLauncher;
 
-internal sealed class MicrosoftAccounts(string dataRoot,
+/// <summary>
+/// 串行化账号操作，复用MSAL系统浏览器授权和Windows安全缓存。
+/// </summary>
+internal sealed partial class MicrosoftAccounts(string dataRoot,
     Func<IAccount?, CancellationToken, Task<(IAccount Account, MinecraftLogin Login)>>? authenticate = null,
     TimeProvider? time = null, Func<IAccount, Task>? removeAccount = null)
 {
@@ -42,11 +45,20 @@ internal sealed class MicrosoftAccounts(string dataRoot,
         try
         {
             var app = await GetApplicationAsync();
-            return (await app.GetAccountsAsync()).ToArray();
+            var accounts = (await app.GetAccountsAsync()).ToArray();
+            var added = false;
+            foreach (var account in accounts)
+                if (!Profiles.Any(x => x.MicrosoftId == account.HomeAccountId.Identifier))
+                { registry.AddMicrosoft(account.HomeAccountId.Identifier, account.Username, false); added = true; }
+            if (added) Changed?.Invoke();
+            return accounts;
         }
         finally { gate.Release(); }
     }
 
+    /// <summary>
+    /// 完成全部正版验证后再更新所选账号；失败时保留真实阶段错误。
+    /// </summary>
     public async Task<MinecraftIdentity> SignInAsync(IAccount? account, CancellationToken cancellationToken,
         AuthDiagnosticTrace? diagnostic = null)
     {
@@ -61,9 +73,11 @@ internal sealed class MicrosoftAccounts(string dataRoot,
             var verified = await VerifyAccountAsync(account, cancellationToken, trace);
             cancellationToken.ThrowIfCancellationRequested();
             trace.Record(LoginStage.Cache, AuthStepState.Started);
+            registry.AddMicrosoft(verified.Account.HomeAccountId.Identifier, verified.Login.Identity.Name, true);
             current = verified;
             selectionRevision++;
             trace.Record(LoginStage.Cache, AuthStepState.Passed);
+            Changed?.Invoke();
             return verified.Login.Identity;
         }
         catch (LoginException error)
@@ -169,7 +183,7 @@ internal sealed class MicrosoftAccounts(string dataRoot,
                 try { await app.RemoveAsync(result.Account); }
                 catch (Exception ex) when (ex is MsalException or IOException or UnauthorizedAccessException)
                 {
-                    // Preserve the original service stage, status, and explanation.
+                    // 保留服务原有失败阶段、状态和解释，不用缓存错误掩盖原始认证错误。
                     trace.Record(LoginStage.Cache, AuthStepState.Failed);
                 }
             }
@@ -177,8 +191,13 @@ internal sealed class MicrosoftAccounts(string dataRoot,
         }
     }
 
+    /// <summary>
+    /// 捕获账号选择版本，启动准备期间若切换账号则拒绝继续使用旧身份。
+    /// </summary>
     public async Task<Func<Task<MSession?>>> CaptureLaunchSessionAsync()
     {
+        if (current is null && SelectedProfile is { Kind: "Microsoft" } selectedProfile)
+            await SelectProfileAsync(selectedProfile);
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         try
         {
@@ -194,6 +213,9 @@ internal sealed class MicrosoftAccounts(string dataRoot,
         { throw new LoginException(LoginStage.Microsoft, "账号操作仍在进行，请完成后重新启动游戏。"); }
     }
 
+    /// <summary>
+    /// 在门控内检查账号选择及有效期，必要时刷新并复核Minecraft档案身份。
+    /// </summary>
     public async Task<MSession?> GetGameSessionAsync(long? expectedRevision = null)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
@@ -202,6 +224,7 @@ internal sealed class MicrosoftAccounts(string dataRoot,
             await gate.WaitAsync(timeout.Token);
             try
             {
+                // 准备游戏期间的账号切换会使旧会话捕获失效，防止界面显示身份与实际启动身份不一致。
                 if (expectedRevision.HasValue && expectedRevision.Value != selectionRevision)
                     throw new LoginException(LoginStage.Microsoft, "准备游戏期间账号已更换，请重新点击启动。");
                 if (current is not { } selected) return null;
@@ -241,7 +264,7 @@ internal sealed class MicrosoftAccounts(string dataRoot,
     public async Task UseOfflineAsync()
     {
         await gate.WaitAsync();
-        try { Deselect(); }
+        try { registry.Deselect(); Deselect(); Changed?.Invoke(); }
         finally { gate.Release(); }
     }
 
@@ -262,8 +285,10 @@ internal sealed class MicrosoftAccounts(string dataRoot,
                     await app.RemoveAsync(cached);
                 }
             }
+            registry.Remove("microsoft:" + account.HomeAccountId.Identifier);
             if (current?.Account.HomeAccountId.Identifier == account.HomeAccountId.Identifier)
                 Deselect();
+            Changed?.Invoke();
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or MsalException)
         {
@@ -284,7 +309,10 @@ internal sealed class MicrosoftAccounts(string dataRoot,
                 cache = null;
                 application = null;
             }
+            registry.ClearMicrosoft();
+            if (registry.Selected == null && registry.Items.FirstOrDefault() is { } offline) registry.Select(offline.Id);
             Deselect();
+            Changed?.Invoke();
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -305,6 +333,7 @@ internal sealed class MicrosoftAccounts(string dataRoot,
         if (application is { } existing) return existing;
         var id = ClientId ?? throw new LoginException(LoginStage.Configuration,
             "此版本尚未配置开发者的微软应用 ID。离线账号仍可使用。");
+        // 这是桌面Public Client的公开应用标识，不是Client Secret；不要在客户端引入机密凭据。
         var app = CreatePublicClient(id);
         if (OperatingSystem.IsWindows())
         {
@@ -312,6 +341,7 @@ internal sealed class MicrosoftAccounts(string dataRoot,
             {
                 var helper = await MsalCacheHelper.CreateAsync(
                     new StorageCreationPropertiesBuilder(Path.GetFileName(CachePath), dataRoot).Build());
+                // 缓存持久化必须通过验证；Windows加密缓存不可用时报告失败，不静默回退成明文文件。
                 helper.VerifyPersistence();
                 helper.RegisterCache(app.UserTokenCache);
                 cache = helper;
@@ -333,6 +363,9 @@ internal sealed class MicrosoftAccounts(string dataRoot,
         return builder.Build();
     }
 
+    /// <summary>
+    /// 调用MSAL系统浏览器流程；授权关联和回调验证继续由既有MSAL流程完成。
+    /// </summary>
     internal static Task<AuthenticationResult> RequestBrowserAuthorization(IPublicClientApplication application,
         Func<Uri, Task> openBrowser, CancellationToken cancellationToken)
     {
@@ -351,8 +384,8 @@ internal sealed class MicrosoftAccounts(string dataRoot,
                     .WithSystemWebViewOptions(new SystemWebViewOptions
                     {
                         OpenBrowserAsync = openBrowser,
-                        // MSAL 4.61.3 owns the callback and emits 302. The separate
-                        // presentation server follows with 303 to a clean page.
+                        // MSAL 4.61.3负责认证回调并返回302；独立完成页随后使用303跳转，
+                        // 使用户停留在不含认证参数的页面，展示服务不承担令牌交换。
                         BrowserRedirectSuccess = page.Arrival,
                         BrowserRedirectError = page.Arrival,
                         HtmlMessageError = "Authorization ended. Return to XG Launcher."

@@ -5,7 +5,7 @@
     <ApplicationIcon>Assets/XG.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Public Entra application ID registered for XG Launcher. Minecraft API access must be verified separately. -->
+    <!-- XG Launcher注册的公开Entra应用ID，不是机密凭据；Minecraft API资格仍需独立验证。 -->
     <XGMicrosoftClientId Condition="'$(XGMicrosoftClientId)' == ''">dbccdda9-9c7d-4435-9309-1e84eb908462</XGMicrosoftClientId>
   </PropertyGroup>
   <ItemGroup>

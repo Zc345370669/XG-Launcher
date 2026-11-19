@@ -6,6 +6,9 @@ namespace XG.Core;
 public sealed record InstalledMod(string Path, ProjectVersion? Version);
 public sealed record ModInstallPlan(ProjectVersion[] Files, string[] Optional);
 
+/// <summary>
+/// 解析兼容版本与依赖关系，生成安装计划并检查冲突，不直接写入模组目录。
+/// </summary>
 public sealed class ModInstallPlanner(Modrinth catalog)
 {
     public static bool Compatible(ProjectVersion value, Instance instance) =>
@@ -30,6 +33,15 @@ public sealed class ModInstallPlanner(Modrinth catalog)
         return paths.Select(x => new InstalledMod(x.Path, metadata.GetValueOrDefault(x.Hash))).ToArray();
     }
 
+    /// <summary>
+    /// 递归解析必要依赖并检查已有模组冲突，可选依赖作为提示返回。
+    /// </summary>
+    /// <param name="root">用户选择的项目。</param>
+    /// <param name="chosen">用户选择且待检查的项目版本。</param>
+    /// <param name="instance">用于游戏版本及加载器兼容检查的实例。</param>
+    /// <param name="installed">已识别的本地模组文件与版本信息。</param>
+    /// <param name="token">取消查询与依赖遍历的令牌。</param>
+    /// <returns>按依赖解析顺序排列的文件计划及可选依赖提示。</returns>
     public async Task<ModInstallPlan> PlanAsync(Project root, ProjectVersion chosen, Instance instance,
         IReadOnlyList<InstalledMod> installed, CancellationToken token)
     {

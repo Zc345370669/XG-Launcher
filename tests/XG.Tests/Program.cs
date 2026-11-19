@@ -7,6 +7,7 @@ using XG.Core;
 using CmlLib.Core.Auth;
 
 PublicSecurityTests.Run();
+DualModeProgressTests.Run();
 await MinecraftAuthenticationTests.RunAsync();
 await AuthenticationSecurityTests.RunAsync();
 var fakeGameSession = new MSession("FixturePlayer", "fixture-game-secret", "1f37c31e94e34000b131e73fea962b2b") { UserType = "msa" };

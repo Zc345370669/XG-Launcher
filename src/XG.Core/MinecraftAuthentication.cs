@@ -9,6 +9,9 @@ namespace XG.Core;
 
 public enum LoginStage { Configuration, Browser, Microsoft, Xbox, Xsts, Minecraft, Ownership, Profile, Cache, Callback, Refresh, Launch }
 
+/// <summary>
+/// 携带登录失败阶段和可用的HTTP状态，供界面展示真实服务错误。
+/// </summary>
 public sealed class LoginException(LoginStage stage, string message, HttpStatusCode? status = null) : Exception(message)
 {
     public LoginStage Stage { get; } = stage;
@@ -16,6 +19,9 @@ public sealed class LoginException(LoginStage stage, string message, HttpStatusC
 }
 
 public sealed record MinecraftIdentity(string Name, Guid Id, Uri? Skin);
+/// <summary>
+/// 在内存中携带已验证身份与有效期；令牌不得进入普通日志或账号元数据。
+/// </summary>
 public sealed class MinecraftLogin(MinecraftIdentity identity, string accessToken, DateTimeOffset expires)
 {
     public MinecraftIdentity Identity { get; } = identity;
@@ -23,6 +29,9 @@ public sealed class MinecraftLogin(MinecraftIdentity identity, string accessToke
     public DateTimeOffset Expires { get; } = expires;
 }
 
+/// <summary>
+/// 依次完成Xbox、XSTS、Minecraft令牌、Java所有权与玩家档案验证。
+/// </summary>
 public sealed class MinecraftAuthentication(HttpClient http, TimeSpan? requestTimeout = null)
 {
     private static readonly JsonSerializerOptions RequestJson = new();
@@ -32,6 +41,14 @@ public sealed class MinecraftAuthentication(HttpClient http, TimeSpan? requestTi
         "game_minecraft", "product_minecraft", "game_minecraft_java", "product_minecraft_java"
     };
 
+    /// <summary>
+    /// 将微软访问令牌交换为经所有权和档案验证的Minecraft会话。
+    /// </summary>
+    /// <param name="microsoftToken">正规Microsoft授权取得的访问令牌，只用于认证请求。</param>
+    /// <param name="cancellationToken">取消整条认证链的令牌。</param>
+    /// <param name="trace">可选脱敏诊断器，接收阶段状态而非明文凭据。</param>
+    /// <returns>已验证身份、Minecraft访问令牌及有效期。</returns>
+    /// <exception cref="LoginException">服务拒绝、所有权不足或响应不符合既有验证规则。</exception>
     public async Task<MinecraftLogin> ExchangeAsync(string microsoftToken, CancellationToken cancellationToken,
         AuthDiagnosticTrace? trace = null)
     {
@@ -221,7 +238,7 @@ public sealed class MinecraftAuthentication(HttpClient http, TimeSpan? requestTi
             text = "账号没有 Minecraft Java 玩家档案，请先通过官方启动器创建玩家名称。";
         else if ((stage is LoginStage.Xbox or LoginStage.Xsts) || (stage == LoginStage.Minecraft && status == HttpStatusCode.Forbidden))
         {
-            // Only classify fixed error codes/messages. Never store raw service bodies.
+            // 只识别固定服务错误代码和消息，不保存原始服务响应正文。
             if (stage is LoginStage.Xbox or LoginStage.Xsts)
             {
                 var number = ReadXboxError(body);
@@ -268,8 +285,8 @@ public sealed class MinecraftAuthentication(HttpClient http, TimeSpan? requestTi
 
     private static void CheckExpiry(JsonElement response, LoginStage stage)
     {
-        // Xbox services normally return NotAfter. Reject a supplied invalid or
-        // expired value without decoding or trusting JWT claims ourselves.
+        // Xbox服务通常提供NotAfter；若提供的值无效或已过期则拒绝，
+        // 不自行解码并信任JWT载荷来代替服务验证。
         if (response.TryGetProperty("NotAfter", out var end) &&
             (end.ValueKind != JsonValueKind.String || !DateTimeOffset.TryParse(end.GetString(),
                 System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal,

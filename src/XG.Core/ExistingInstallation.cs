@@ -10,6 +10,13 @@ namespace XG.Core;
 public sealed partial class GameService
 {
     private readonly SemaphoreSlim adoptionLock = new(1);
+    /// <summary>
+    /// 检查安装凭据；没有凭据的已登记旧实例可经纯本地审计后接纳。
+    /// </summary>
+    /// <param name="instance">待检查的受管理实例。</param>
+    /// <param name="token">取消本地检查的令牌。</param>
+    /// <param name="force">是否绕过已有文件校验缓存。</param>
+    /// <returns>现有安装状态文字；目录存在本身不会得到“已安装”。</returns>
     public async Task<string> InspectInstallationAsync(Instance instance, CancellationToken token = default, bool force = false)
     {
         var state = await InstallationReceipt.InspectAsync(store, instance, token, force);
@@ -22,7 +29,7 @@ public sealed partial class GameService
         finally { adoptionLock.Release(); }
     }
 
-    // No downloads and no mutations of old directories: only a new readiness receipt after a successful local audit.
+    // 不下载或改写旧游戏资源；仅在本地审计成功后为受管理实例写入新安装凭据。
     private async Task<bool> TryAdoptExistingAsync(Instance instance, CancellationToken token)
     {
         try {
@@ -32,6 +39,7 @@ public sealed partial class GameService
                 paths.Library = Path.Combine(shared, "libraries"); paths.Assets = Path.Combine(shared, "assets"); paths.Runtime = store.ManagedJavaRoot;
                 if (instance.Loader == "原版") paths.Versions = Path.Combine(shared, "versions");
             }
+            // 目录只是查找起点；还需版本继承、加载器、Java和必要文件检查，不能据此直接判定安装成功。
             if (!Directory.Exists(paths.Versions)) return false;
             string? profile = null;
             var metadataFiles = Directory.EnumerateFiles(paths.Versions, "*.json", SearchOption.AllDirectories)

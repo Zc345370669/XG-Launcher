@@ -28,12 +28,18 @@ public sealed record ProjectVersion(string Id, string Number, ModFile File, stri
 
 public sealed record ProjectPage(Project[] Results, int? TotalHits);
 
+/// <summary>
+/// 调用Modrinth接口查询项目、版本、许可及文件哈希对应信息。
+/// </summary>
 public sealed class Modrinth(HttpClient http)
 {
     private const string Api = "https://api.modrinth.com/v2/";
     public async Task<Project[]> SearchAsync(string query, bool pack, string version, string loader, string category, string sort, CancellationToken cancellationToken = default) =>
         (await SearchPageAsync(query, pack, version, loader, category, sort, 0, 30, cancellationToken)).Results;
 
+    /// <summary>
+    /// 按现有查询、筛选与分页参数读取一页项目，不把返回条数推测为全部结果。
+    /// </summary>
     public async Task<ProjectPage> SearchPageAsync(string query, bool pack, string version, string loader, string category,
         string sort, int offset, int limit, CancellationToken cancellationToken = default)
     {

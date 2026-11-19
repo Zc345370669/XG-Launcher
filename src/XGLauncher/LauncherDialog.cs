@@ -14,11 +14,11 @@ internal sealed class LauncherDialog : Window
 {
     private readonly ScrollViewer scroller;
     private Border? messageHost;
+    private readonly Border footerFrame;
 
     internal LauncherDialog(string title, Window owner, bool editor)
     {
         Title = title;
-        SystemDecorations = SystemDecorations.None;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         CanResize = editor;
         var screen = owner.Screens.ScreenFromWindow(owner) ?? owner.Screens.Primary;
@@ -36,15 +36,17 @@ internal sealed class LauncherDialog : Window
         Background = ThemePalette.Panel;
         FontFamily = owner.FontFamily;
 
-        var close = new Button { Content = new LucideIcon("x", 14), Background = Brushes.Transparent, HorizontalAlignment = HorizontalAlignment.Right };
+        var close = new Button { Content = new LucideIcon("x", 15), Width = 43, Height = 42, Padding = new(0), CornerRadius = new(7),
+            BorderThickness = new(0), Background = Brushes.Transparent, HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center };
+        close.Classes.Add("xg-caption");
         Avalonia.Automation.AutomationProperties.SetName(close, "关闭弹窗");
         close.Click += (_, _) => Close();
         var titleLabel = new TextBlock
         {
-            Text = title, FontSize = 17, FontWeight = FontWeight.SemiBold,
+            Text = title, FontSize = 16, FontWeight = FontWeight.SemiBold,
             VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis
         };
-        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), Margin = new(14, 6) };
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), Margin = new(14, 0, 0, 0), Height = WindowChrome.CaptionHeight };
         header.Children.Add(titleLabel);
         Grid.SetColumn(close, 1);
         header.Children.Add(close);
@@ -59,7 +61,7 @@ internal sealed class LauncherDialog : Window
         };
         IdleScrollbar.Attach(scroller);
         Footer = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right, ItemSpacing = 12 };
-        var footerFrame = new Border { Name = "DialogFooter", Child = Footer, Padding = new(14, 8),
+        footerFrame = new Border { Name = "DialogFooter", Child = Footer, Padding = new(14, 8),
             BorderBrush = ThemePalette.Line, BorderThickness = new(0) };
         var layout = new Grid { RowDefinitions = new RowDefinitions(editor ? "Auto,*,Auto" : "Auto,Auto,Auto") };
         layout.Children.Add(header);
@@ -68,8 +70,9 @@ internal sealed class LauncherDialog : Window
         else { messageHost = new Border(); Grid.SetRow(messageHost,1); layout.Children.Add(messageHost); }
         Grid.SetRow(footerFrame, 2);
         layout.Children.Add(footerFrame);
-        Content = new Border { Background = ThemePalette.Panel, BorderBrush = ThemePalette.Line, BorderThickness = new(1),
-            CornerRadius = new(10), ClipToBounds = true, Child = layout };
+        var surface = new Border { Name = "DialogSurface", Child = layout };
+        Content = surface;
+        WindowChrome.Attach(this, surface);
         AddHandler(KeyDownEvent, (_, e) =>
         {
             if (e.Key != Key.Escape || this.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.IsOpen)) return;
@@ -79,6 +82,15 @@ internal sealed class LauncherDialog : Window
     }
 
     internal WrapPanel Footer { get; }
+
+    internal void FitContent(Control content, double preferredWidth = 420)
+    {
+        Width = Math.Min(preferredWidth, MaxWidth); MinHeight = Math.Min(220, MaxHeight);
+        content.Measure(new Size(Math.Max(100, Width - 36), double.PositiveInfinity));
+        Height = Math.Clamp(content.DesiredSize.Height + WindowChrome.CaptionHeight + 26,
+            MinHeight, Math.Min(MaxHeight, 620));
+        SizeToContent = SizeToContent.Manual;
+    }
 
     internal void SetBody(Control content, params Control[] actions)
     {
@@ -95,8 +107,8 @@ internal sealed class LauncherDialog : Window
             scroller.VerticalAlignment = VerticalAlignment.Stretch;
             text.TextWrapping = TextWrapping.Wrap;
         }
-        // Keep notification/confirmation dialogs compact, but allow long localized
-        // messages to grow without clipping. Editors retain their own fixed layout.
+        // 通知和确认对话框按内容保持紧凑，长本地化消息允许增加高度，
+        // 避免裁切；编辑窗口仍使用原有布局规则。
         if (!CanResize && content is TextBlock message)
         {
             var complete = message.Text ?? "";
@@ -123,6 +135,7 @@ internal sealed class LauncherDialog : Window
         Footer.Children.Clear();
         foreach (var action in actions) Footer.Children.Add(action);
         Footer.IsVisible = actions.Length > 0;
+        footerFrame.IsVisible = Footer.IsVisible;
         if (!CanResize) {
             body.Measure(new Size(Math.Max(100,Width - 2),double.PositiveInfinity));
             Footer.Measure(new Size(Math.Max(100,Width - 30),double.PositiveInfinity));

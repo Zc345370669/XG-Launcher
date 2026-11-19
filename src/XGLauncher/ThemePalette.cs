@@ -18,7 +18,7 @@ internal static class ThemePalette
         new("深海蓝", "深色、沉稳", "#111D30", "#1C2B42", "#15243A", "#EDF4FF", "#B0C2DA", "#3C526F", "#91BCEE", "#12223A", "#304764", true),
         new("经典黑白", "原有黑白灰风格", "#FFFFFF", "#FFFFFF", "#FBFBFB", "#181818", "#646464", "#DCDCDC", "#181818", "#FFFFFF", "#EEEEEE")
     ];
-    // Shared mutable brushes are also registered globally. Existing controls, popups and dialogs update in place.
+    // 共享可变画刷同时注册到全局资源，使既有控件、浮层和弹窗原地更新。
     internal static readonly SolidColorBrush Background = new();
     internal static readonly SolidColorBrush WindowBackground = new();
     internal static readonly SolidColorBrush Panel = new();
@@ -31,6 +31,9 @@ internal static class ThemePalette
     internal static readonly SolidColorBrush Hover = new();
     internal static Palette Current { get; private set; } = All[0];
     static ThemePalette() => Select(All[0]);
+    /// <summary>
+    /// 原地更新共享画刷，使既有控件、弹层和两种模式同步响应主题。
+    /// </summary>
     internal static void Select(Palette palette, double opacity = .96)
     {
         Current = palette;
@@ -44,6 +47,16 @@ internal static class ThemePalette
         app.RequestedThemeVariant = palette.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
         foreach (var (key, brush) in new[] { ("XgBackground", Background), ("XgPanel", Panel), ("XgText", Text),
             ("XgAccent", Accent), ("XgOnAccent", OnAccent), ("XgLine", Line), ("XgHover", Hover), ("XgNavigation", Navigation) }) app.Resources[key] = brush;
+        foreach (var key in new[] { "ButtonBackgroundPointerOver", "ButtonBackgroundPressed", "TextControlBackgroundPointerOver", "TextControlBackgroundFocused",
+            "SystemControlHighlightListLowBrush", "SystemControlHighlightListMediumBrush", "SystemControlHighlightListAccentLowBrush", "SystemControlHighlightListAccentMediumBrush", "SystemControlHighlightListAccentHighBrush" }) app.Resources[key] = Hover;
+        foreach (var key in new[] { "ButtonForegroundPointerOver", "ButtonForegroundPressed", "TextControlForeground", "TextControlForegroundFocused", "MenuFlyoutItemForeground", "MenuFlyoutItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush" }) app.Resources[key] = Text;
+        foreach (var key in new[] { "ButtonBorderBrushPointerOver", "ButtonBorderBrushPressed", "TextControlBorderBrushPointerOver" }) app.Resources[key] = Line;
+        foreach (var key in new[] { "ScrollBarThumbFillPointerOver", "ScrollBarThumbFillPressed", "SliderThumbBackground", "SliderTrackFill" }) app.Resources[key] = Accent;
+        app.Resources["TextControlBackground"] = Panel; app.Resources["TextControlBorderBrush"] = Line;
+        app.Resources["MenuFlyoutPresenterBackground"] = Panel; app.Resources["MenuFlyoutPresenterBorderBrush"] = Line;
+        app.Resources["MenuFlyoutItemForegroundPressed"] = Text;
+        app.Resources["ScrollBarSize"] = 8d;
+        app.Resources["MenuFlyoutItemBackgroundPointerOver"] = Hover; app.Resources["MenuFlyoutItemBackgroundPressed"] = Hover;
         app.Resources["SystemAccentColor"] = Accent.Color;
         foreach (var shade in new[] { "Light1", "Light2", "Light3", "Dark1", "Dark2", "Dark3" }) app.Resources["SystemAccentColor" + shade] = Accent.Color;
     }

@@ -3,6 +3,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Zc345370669</Authors>
+    <RepositoryUrl>https://github.com/Zc345370669/XG-Launcher</RepositoryUrl>
     <Copyright>Copyright (c) 2026 XG Launcher</Copyright>
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.1.0-alpha</Version>

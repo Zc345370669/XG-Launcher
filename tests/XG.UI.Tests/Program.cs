@@ -28,6 +28,13 @@ Directory.CreateDirectory(temp);
 try
 {
     AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
+    if (args.Contains("--dual-mode-only")) { DualModeUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--compact-final-only")) { CompactFinalUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--window-chrome-only")) { WindowChromeUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--adaptive-only")) { AdaptiveComboUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--global-ui-only")) { GlobalUiFixTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--rail-baseline")) { StageRailAlignmentTests.Baseline(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    if (args.Contains("--stage-rail-only")) { StageRailAlignmentTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); StageNodesFinalTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
     LucideUiTests.Run(Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     if (CatalogIcons.Decode([]) != null || CatalogIcons.Decode("invalid-icon"u8.ToArray()) != null)
         throw new Exception("Invalid catalogue icon was accepted.");
@@ -95,12 +102,12 @@ try
         b.Content is StackPanel row && row.Children.OfType<TextBlock>().Any(t => t.Text == name));
     void Click(string title) => ((IInvokeProvider)new ButtonAutomationPeer(Obtain(title))).Invoke();
 
-    foreach (var name in new[] { "首页", "个人游戏", "整合包", "模组管理", "下载管理", "设置", "首页" })
+    foreach (var name in new[] { "首页", "个人游玩", "整合包", "模组管理", "下载管理", "设置", "首页" })
     {
         Click(name);
         Avalonia.Threading.Dispatcher.UIThread.RunJobs();
     }
-    Click("个人游戏");
+    Click("个人游玩");
     Avalonia.Threading.Dispatcher.UIThread.RunJobs();
     if (!window.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "Test Survival"))
         throw new Exception("Saved instance did not appear in Personal.");
@@ -111,6 +118,13 @@ try
     Phase15UiTests.Run(window, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Phase18UiTests.Run(window, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     window.Close();
+    DualModeUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    CompactFinalUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    WindowChromeUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    AdaptiveComboUiTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    GlobalUiFixTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    StageRailAlignmentTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    StageNodesFinalTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     DirectDownloadTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Console.WriteLine("PASS headless window creation, six navigation pages, persisted instance and launch button");
 }

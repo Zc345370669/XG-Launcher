@@ -14,6 +14,9 @@ public enum AuthServiceReason
     XboxNoProfile, XboxRegion, XboxAge, XboxFamily, InvalidResponse, NoEntitlement
 }
 
+/// <summary>
+/// 记录白名单诊断字段和阶段结果，先登记秘密以在诊断边界脱敏。
+/// </summary>
 public sealed partial class AuthDiagnosticTrace
 {
     private readonly StringBuilder lines = new();
@@ -66,7 +69,7 @@ public sealed partial class AuthDiagnosticTrace
                 lines.Append("  服务分类=Unclassified  脱敏消息=服务端详情未能安全识别");
             if (knownServerCode is { } code && code != AuthServiceReason.Unclassified)
                 lines.Append("  服务端代码（标准化）=").Append(code);
-            // XErr is a numeric Xbox status from a well-known reserved error range.
+            // XErr仅接受Xbox已知保留错误范围内的数值状态，不记录任意服务字段。
             if ((stage is LoginStage.Xbox or LoginStage.Xsts) && xboxCode is >= 2148916200 and <= 2148916299)
                 lines.Append("  XErr=").Append(xboxCode.Value);
             if (headers != null)

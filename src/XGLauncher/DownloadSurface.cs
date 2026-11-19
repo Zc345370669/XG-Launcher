@@ -21,10 +21,10 @@ internal sealed class DownloadSurface : Grid
     {
         Name = "DownloadSurface"; RowDefinitions = new("Auto,*"); Margin = new(18, 14);
         Tasks.Classes.Add("xg-catalog-list");
-        // The default ListBoxItem selection/hover template can paint a second
-        // blue rectangle beneath a task card. The card itself owns its border.
-        // Suppress ListBoxItem chrome in normal, hover and selected states.
-        // Apply a common local style so the task card is the only painted surface.
+        // 默认列表项模板可能在任务卡片下再次绘制选中或悬停底色，
+        // 任务卡片本身已负责背景和边框，不能再叠加第二块蓝色矩形。
+        // 普通、悬停及选中状态均抑制列表项额外装饰，
+        // 统一局部样式保证卡片是唯一可见背景。
         var itemStyle = new Style(x => x.OfType<ListBoxItem>());
         itemStyle.Setters.Add(new Setter(ListBoxItem.TemplateProperty, new FuncControlTemplate<ListBoxItem>((item, scope) => new Avalonia.Controls.Presenters.ContentPresenter { [!Avalonia.Controls.Presenters.ContentPresenter.ContentProperty] = item[!ListBoxItem.ContentProperty], [!Avalonia.Controls.Presenters.ContentPresenter.ContentTemplateProperty] = item[!ListBoxItem.ContentTemplateProperty], HorizontalContentAlignment = HorizontalAlignment.Stretch })));
         itemStyle.Setters.Add(new Setter(ListBoxItem.BackgroundProperty, Brushes.Transparent));

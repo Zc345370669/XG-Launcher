@@ -4,16 +4,16 @@ using CmlLib.Core.Auth;
 
 namespace XG.Core;
 
-// Diagnostics only: never use this transformation on tokens, paths or settings
-// that are used for authentication, launching, import or migration themselves.
+// 此转换仅用于诊断；参与认证、启动、导入或迁移的令牌、路径及设置
+// 不得使用脱敏结果替代原始业务数据。
 public sealed partial class GameLogSanitizer(MSession? online)
 {
     private const string Hidden = "[已隐藏]";
 
     public string Redact(string line)
     {
-        // HTTP exception messages can contain percent-encoded callback URLs.
-        // Decode at most twice, before filtering, and do not trust embedded lines.
+        // HTTP异常文字可能包含百分号编码后的回调地址，
+        // 最多解码两次再过滤，且不信任嵌入的换行内容。
         for (var i = 0; i < 2 && line.Contains('%'); i++)
         {
             try { var decoded = Uri.UnescapeDataString(line); if (decoded == line) break; line = decoded; }
@@ -39,8 +39,8 @@ public sealed partial class GameLogSanitizer(MSession? online)
         line = CallbackParameter().Replace(line, "$1" + Hidden);
         line = Bearer().Replace(line, "$1" + Hidden);
         line = Jwt().Replace(line, Hidden);
-        // URLs with queries/fragments/userinfo are omitted as a whole, including
-        // unknown parameter names. Fixed auth route diagnostics are separate.
+        // 带查询、片段或用户信息的地址整体省略，包括未知参数名；
+        // 固定认证路由诊断通过独立白名单提供。
         line = Url().Replace(line, match => Uri.TryCreate(match.Value, UriKind.Absolute, out var uri) &&
             (uri.Query.Length > 0 || uri.Fragment.Length > 0 || uri.UserInfo.Length > 0) ? Hidden : match.Value);
         line = WindowsUserPath().Replace(line, Hidden);

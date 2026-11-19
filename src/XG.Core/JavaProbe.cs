@@ -57,6 +57,9 @@ internal static class JavaProbe
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException) { return null; }
     }
 
+    /// <summary>
+    /// 在超时和取消约束下运行Java属性探测，退出后收集输出并释放进程资源。
+    /// </summary>
     internal static async Task<JavaInstallation?> ExecuteAsync(string executable, TimeSpan limit, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -86,7 +89,7 @@ internal static class JavaProbe
         finally
         {
             deadline.Cancel();
-            // Observe pipe reader cancellation/errors, including timeout after process exit.
+            // 观察管道读取的取消与异常，包括进程先退出而读取仍超时的情况。
             if (stdout is not null && stderr is not null)
                 try { await Task.WhenAll(stdout, stderr); } catch (Exception e) when (e is OperationCanceledException or IOException) { }
         }
@@ -106,7 +109,7 @@ internal static class JavaProbe
             if (text.Length + count > 32768) overflow = true;
             else if (!overflow) text.Append(buffer, 0, count);
         }
-        // Invalid marker deliberately cannot parse as a JVM property set.
+        // 无效标记不能被解析成JVM属性集，避免错误输出成为可用Java证据。
         return overflow ? new string('?', 65537) : text.ToString();
     }
 }

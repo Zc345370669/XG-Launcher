@@ -84,7 +84,7 @@ internal sealed class LegalBrowser : ContentControl
         var content = new StackPanel { Spacing = 9, Margin = new Thickness(10, 8) };
         if (expandedSection == "own") {
             content.Children.Add(Text("MIT License · MIT", 15, true));
-            content.Children.Add(Text("XG Launcher 采用 GNU General Public License v3.0 only；第三方内容保留各自授权。"));
+            content.Children.Add(Text("XG Launcher 采用标准 MIT License；第三方内容保留各自授权。"));
             content.Children.Add(Button("查看内置说明", () => ShowDocument(LegalCatalog.File("XGLauncher-MIT.txt", "XG Launcher", "项目自身许可证状态"), ShowOverview)));
         } else if (expandedSection == "third") {
             content.Children.Add(Text("第三方许可证", 15, true));
@@ -101,39 +101,34 @@ internal sealed class LegalBrowser : ContentControl
         }
         return new Border { BorderBrush = ThemePalette.Line, BorderThickness = new Thickness(0, 1, 0, 0), Padding = new Thickness(4, 8), Child = content };
     }
-    private Control OverviewCredits() {
-        var container = new StackPanel { Spacing = 12 };
-        var heading = Text("鸣谢项目与社区", 17, true); heading.TextAlignment = TextAlignment.Center;
-        container.Children.Add(heading);
-        var items = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
-        foreach (var project in LegalCatalog.Credits) {
+    private Control CreditsStrip()
+    {
+        var items = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center };
+        foreach (var project in LegalCatalog.Credits)
+        {
             var tile = Button("", () => OpenProject(project)); tile.Width = 110; tile.MinHeight = 94;
-            var name = Text(project.Name, 12, true); name.TextAlignment = TextAlignment.Center;
-            tile.Content = Stack(new Border { Width = 32, Height = 32, CornerRadius = new(6), Background = ThemePalette.Hover, Child = new LucideIcon(LucideIcon.Project(project.Name), 18) { HorizontalAlignment=HorizontalAlignment.Center, VerticalAlignment=VerticalAlignment.Center } }, name);
-            ToolTip.SetTip(tile, project.Role);
-            items.Children.Add(tile);
+            tile.BorderThickness = new(0); tile.Background = Brushes.Transparent;
+            tile.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            Avalonia.Automation.AutomationProperties.SetName(tile, project.Name);
+            var name = Text(project.Name, 12, true); name.TextAlignment = TextAlignment.Center; name.VerticalAlignment = VerticalAlignment.Center; name.MaxLines = 2; name.TextTrimming = TextTrimming.CharacterEllipsis;
+            var icon = new Border { Width = 32, Height = 32, CornerRadius = new(6), Background = ThemePalette.Hover,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Child = new LucideIcon(LucideIcon.Project(project.Name), 18) { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center } };
+            tile.Content = Stack(icon, new Border { Height = 34, Child = name }); ToolTip.SetTip(tile, project.Name + "\n" + project.Role); items.Children.Add(tile);
         }
-        var scroll = new ScrollViewer { Content = items, HorizontalScrollBarVisibility = ScrollBarVisibility.Visible,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled, AllowAutoHide = false, MinHeight = 113 };
-        CreditsScroll = scroll;
-        var thinScroll = new Style(x => x.OfType<ScrollBar>());
-        thinScroll.Setters.Add(new Setter(ScrollBar.HeightProperty, 6d));
-        scroll.Styles.Add(thinScroll);
-        var overviewOffset = creditsOffset;
-        scroll.AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() => scroll.Offset = new Vector(overviewOffset, 0), DispatcherPriority.Loaded);
+        var scroll = new ScrollViewer { Name = "CreditsScroll", Content = items, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled, MinHeight = 113 };
+        CreditsScroll = scroll; IdleScrollbar.HorizontalWheel(scroll);
+        var previous = creditsOffset;
+        scroll.AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() => scroll.Offset = new Vector(previous, 0), DispatcherPriority.Loaded);
         scroll.ScrollChanged += (_, _) => creditsOffset = scroll.Offset.X;
-        scroll.AddHandler(PointerWheelChangedEvent, (_, e) => {
-            if (Math.Abs(e.Delta.X) > 0) return;
-            scroll.Offset = new Vector(Math.Max(0, scroll.Offset.X - e.Delta.Y * 60), 0); e.Handled = true;
-        }, Avalonia.Interactivity.RoutingStrategies.Bubble);
-        var strip = new Grid { ColumnDefinitions = new("Auto,*,Auto"), ColumnSpacing = 8 };
-        strip.Children.Add(Arrow("chevron-left", () => scroll.Offset = new Vector(Math.Max(0, scroll.Offset.X - 180), 0)));
-        Grid.SetColumn(scroll, 1); strip.Children.Add(scroll);
-        var right = Arrow("chevron-right", () => scroll.Offset = new Vector(scroll.Offset.X + 180, 0));
-        Grid.SetColumn(right, 2); strip.Children.Add(right);
-        container.Children.Add(strip);
-        return new Border { BorderBrush = ThemePalette.Line, BorderThickness = new(1), CornerRadius = new(12),
-            Padding = new(14), Background = ThemePalette.Panel, Child = container };
+        return scroll;
+    }
+    private Control OverviewCredits()
+    {
+        var heading = Text("鸣谢项目与社区", 17, true); heading.TextAlignment = TextAlignment.Center;
+        return new Border { BorderBrush = ThemePalette.Line, BorderThickness = new(1), CornerRadius = new(12), Padding = new(14),
+            Background = ThemePalette.Panel, Child = Stack(heading, CreditsStrip()) };
     }
     internal void ShowOverview() {
         Page = "overview"; CurrentDocument = null;
@@ -161,7 +156,7 @@ internal sealed class LegalBrowser : ContentControl
         layout.Children.Add(OverviewCredits());
         var bottom = new Grid { ColumnDefinitions = new("*,*"), ColumnSpacing = 14 };
         
-        // Official documents retain their existing verified link/read behavior.
+        // 官方许可文档继续使用既有链接验证和正文读取流程。
         var guide = Button("Minecraft 使用指南", () => ShowDocument(LegalCatalog.Guidelines, ShowOverview));
         guide.MinHeight = 74; guide.HorizontalAlignment = HorizontalAlignment.Stretch;
         guide.HorizontalContentAlignment = HorizontalAlignment.Center; guide.VerticalContentAlignment = VerticalAlignment.Center; guide.FontSize = 13; guide.FontWeight = FontWeight.SemiBold; guide.Content = new TextBlock { Text = "Minecraft 使用指南", TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center }; bottom.Children.Add(guide);
@@ -177,34 +172,10 @@ internal sealed class LegalBrowser : ContentControl
         foreach (var d in LegalCatalog.ThirdParty) list.Children.Add(Card(d.Project, d.Id, () => ShowDocument(d, ShowThirdParty)));
         Content = list;
     }
-    internal void ShowCredits() {
+    internal void ShowCredits()
+    {
         Page = "credits";
-        var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
-        CreditsScroll = new ScrollViewer { Content = row, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled, AllowAutoHide = true, MinHeight = 146 };
-        var thinScroll = new Style(s => s.OfType<ScrollBar>());
-        thinScroll.Setters.Add(new Setter(ScrollBar.HeightProperty, 6d));
-        thinScroll.Setters.Add(new Setter(ScrollBar.MinHeightProperty, 6d));
-        CreditsScroll.Styles.Add(thinScroll);
-        foreach (var project in LegalCatalog.Credits) {
-            var b = Button("", () => OpenProject(project)); b.Width = 108; b.MinHeight = 114;
-            Avalonia.Automation.AutomationProperties.SetName(b, project.Name);
-            var name = Text(project.Name, 12, true); name.TextAlignment = TextAlignment.Center;
-            b.Content = Stack(new Border { Width = 32, Height = 32, CornerRadius = new(6), Background = ThemePalette.Hover, Child = new LucideIcon(LucideIcon.Project(project.Name), 18) { HorizontalAlignment=HorizontalAlignment.Center, VerticalAlignment=VerticalAlignment.Center } }, name);
-            ToolTip.SetTip(b, project.Role); row.Children.Add(b);
-        }
-        var restoreOffset = creditsOffset;
-        CreditsScroll.AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() => CreditsScroll.Offset = new Vector(restoreOffset, 0), DispatcherPriority.Loaded);
-        CreditsScroll.ScrollChanged += (_, _) => creditsOffset = CreditsScroll.Offset.X;
-        CreditsScroll.AddHandler(PointerWheelChangedEvent, (_, e) => {
-            if (Math.Abs(e.Delta.X) > 0) return;
-            CreditsScroll.Offset = new Vector(Math.Max(0, CreditsScroll.Offset.X - e.Delta.Y * 60), 0); e.Handled = true;
-        }, Avalonia.Interactivity.RoutingStrategies.Bubble);
-        var strip = new Grid { ColumnDefinitions = new("Auto,*,Auto"), ColumnSpacing = 8 };
-        strip.Children.Add(Arrow("chevron-left", () => CreditsScroll.Offset = new Vector(Math.Max(0, CreditsScroll.Offset.X - 180), 0)));
-        Grid.SetColumn(CreditsScroll, 1); strip.Children.Add(CreditsScroll);
-        var right = Arrow("chevron-right", () => CreditsScroll.Offset = new Vector(CreditsScroll.Offset.X + 180, 0)); Grid.SetColumn(right, 2); strip.Children.Add(right);
-        Content = Stack(Heading("鸣谢项目与社区", ShowOverview), Text("点击项目即可阅读对应文件。"), strip,
+        Content = Stack(Heading("鸣谢项目与社区", ShowOverview), Text("点击项目即可阅读对应文件。"), CreditsStrip(),
             Text("Mojang、Microsoft、Modrinth 属于官方服务关系；加载器与 Java 按需下载。第三方依赖的原始许可单独列出。"));
     }
     internal void OpenProject(CreditProject project) {

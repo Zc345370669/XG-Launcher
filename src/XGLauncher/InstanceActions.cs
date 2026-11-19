@@ -25,15 +25,16 @@ public sealed partial class MainWindow
     }
     private async Task InspectInstanceAsync(Instance instance)
     {
-        var state = await Task.Run(() => model.Game.InspectInstallationAsync(instance));
-        installationStates[instance.Id] = state;
-        inspecting.Remove(instance.Id);
-        if (section is 0 or 1 or 2) Refresh();
+        try { installationStates[instance.Id] = await Task.Run(() => model.Game.InspectInstallationAsync(instance)); }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException)
+        { installationStates[instance.Id] = "检查失败"; }
+        finally { inspecting.Remove(instance.Id); }
+        if (!windowClosed && (IsCompact || section is 0 or 1 or 2)) Refresh();
     }
     private string InstanceButton(Instance instance)
     {
         if (model.InstallationJob(instance) is { State: "下载中", TotalBytes: > 0 } task)
-            return $"下载中 {Math.Clamp(100.0 * task.Bytes / task.TotalBytes, 0, 100):0}%";
+            return $"下载中 {Math.Floor(SharedProgress(task).Percent):0}%";
         if (model.InstallationJob(instance) is { State: "失败", CurrentStage: "模组加载器" }) return "修复安装";
         return InstanceState(instance) switch
     {
@@ -61,6 +62,11 @@ public sealed partial class MainWindow
     private async Task LaunchInstanceAsync(Instance instance)
     {
         if (model.Busy.Contains(instance.Id)) return;
+        if (model.Accounts.SelectedProfile == null)
+        {
+            await AccountsAsync();
+            if (model.Accounts.SelectedProfile == null) return;
+        }
         model.Selected = instance;
         SetStatus("正在检查和准备游戏");
         try
@@ -73,6 +79,7 @@ public sealed partial class MainWindow
             SetStatus("启动失败 · 可重新启动以修复资源，或在编辑实例中检查 Java");
             throw;
         }
+        finally { Refresh(); }
 
         void SetStatus(string message)
         {
@@ -83,7 +90,7 @@ public sealed partial class MainWindow
                 message == "正在检查和准备游戏";
             if (!important || instanceStatuses.GetValueOrDefault(instance.Id) == message) return;
             instanceStatuses[instance.Id] = message;
-            if (section is 0 or 1 or 2) Refresh();
+            if (IsCompact || section is 0 or 1 or 2) Refresh();
         }
     }
 

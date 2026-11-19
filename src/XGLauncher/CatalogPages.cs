@@ -127,7 +127,7 @@ public sealed partial class MainWindow
     private readonly Dictionary<Guid, (double Percent, string Text)> transferProgress = [];
     private readonly Dictionary<Guid, (ProgressBar Bar, TextBlock Text)> transferControls = [];
 
-    private readonly Dictionary<Guid, (ProgressBar Total, TextBlock Percent, TextBlock Summary, TextBlock Current, Canvas Stages)> resourceControls = [];
+    private readonly Dictionary<Guid, (ProgressBar Total, TextBlock Percent, TextBlock Summary, TextBlock Current, TextBlock Counts, Canvas Stages)> resourceControls = [];
 
     private static string TransferText(long bytes, long total, double speed)
     {
@@ -147,19 +147,24 @@ public sealed partial class MainWindow
     {
         if (!Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
         { Avalonia.Threading.Dispatcher.UIThread.Post(() => UpdateResourceProgress(item)); return; }
+        if (windowClosed) return;
+        UpdateCompactProgress();
         if (!resourceControls.TryGetValue(item.Id, out var view)) return;
-        var target = model.Store.Entries.FirstOrDefault(x => x.Id == item.Recovery?.InstanceId);
-        var children = model.Resources.Items.Where(x => x.ParentId == item.Id && (target?.Loader != "原版" || x.Kind != "模组加载器")).ToArray();
-        var progress = InstallationProgress.Calculate(item, children);
+        var progress = SharedProgress(item);
         view.Total.IsIndeterminate = false;
         view.Total.Value = progress.Percent;
         view.Percent.Text = $"{Math.Floor(progress.Percent):0}%";
         var active = item.State == "下载中";
         var description = TransferText(item.Bytes, item.TotalBytes, active ? item.BytesPerSecond : 0);
         view.Summary.Text = description.Contains("% · ", StringComparison.Ordinal) ? description[(description.IndexOf("% · ", StringComparison.Ordinal) + 4)..] : description;
-        var counts = item.TotalFiles > 0 ? $" · 文件 {item.CompletedFiles}/{item.TotalFiles}" : "";
-        view.Current.Text = item.CurrentFile is { } file ? $"当前文件　{file}{counts}" : counts;
-        ((StageRail)view.Stages).Update(progress.Stages,item.CurrentStage,item.State);
+        view.Counts.Text = item.TotalFiles > 0 ? $"{item.CompletedFiles}/{item.TotalFiles}" : "";
+        view.Current.Text = FriendlyResource(item.CurrentFile, item.CurrentStage ?? item.Kind);
+        // 旧任务可能缺少加载器显示元数据，只从该任务恢复目标对应的实例回补。
+        var loader = model.Store.Entries.FirstOrDefault(x => x.Id == item.Recovery?.InstanceId)?.Loader;
+        var nodes = progress.Stages.Select(stage => stage.Kind == "模组加载器" && stage.DisplayName == null && loader is not (null or "原版")
+            ? stage with { DisplayName = loader } : stage).ToArray();
+        var slots = model.Resources.Items.Count(child => child.ParentId == item.Id && !child.Skipped) + 1;
+        ((StageRail)view.Stages).Update(nodes,item.CurrentStage,item.State,progress.Percent,slots);
     }
 
     private Control DownloadSettings()
@@ -257,7 +262,8 @@ public sealed partial class MainWindow
             var stages = new StageRail();
             var summary = Label("");
             var current = Label("");
-            resourceControls[item.Id] = (total, percentage, summary, current, stages);
+            var counts = Label("");
+            resourceControls[item.Id] = (total, percentage, summary, current, counts, stages);
             total.DetachedFromVisualTree += (_, _) =>
             {
                 if (resourceControls.TryGetValue(item.Id, out var shown) && ReferenceEquals(shown.Total, total))
@@ -298,7 +304,7 @@ public sealed partial class MainWindow
             var title = target is null ? item.Name : $"Minecraft {target.Version} · {target.Loader}";
             var card = Frame(Column(Header(title, actions),
                 Label(item.Error ?? (item.CurrentStage is { } stage ? $"{item.State} · {stage}" : item.State)),
-                summary, ProgressRow(total, percentage), stages, current), new(10));
+                summary, Header("当前文件", counts), current, ProgressRow(total, percentage), stages), new(10));
             card.Name = "DownloadJob_" + item.Id.ToString("N");
             card.Margin = new(0, 0, 0, 8);
             if (focusedDownload == item.Id)
@@ -345,6 +351,7 @@ public sealed partial class MainWindow
                     if (transferPercentControls.TryGetValue(id, out var label)) label.Text = $"{Math.Floor(Math.Min(99, percent)):0}%";
                 }
                 status.Text = text;
+                UpdateCompactProgress();
             }, () => model.Store.Entries.Any(x => !model.Busy.Contains(x.Id) &&
                 (job.InstanceId == null || job.InstanceId == x.Id && job.InstanceConfiguration == LauncherModel.GameConfiguration(x)) &&
                 string.Equals(Path.GetDirectoryName(job.Target), model.ModsFolder(x), StringComparison.OrdinalIgnoreCase)));
@@ -368,9 +375,18 @@ public sealed partial class MainWindow
         return confirmed;
     }
 
-    private Button Link(string label, string destination) => Action(label, () =>
+    internal Func<string, Task> OpenExternalLink { get; set; } = destination =>
     {
         Process.Start(new ProcessStartInfo(destination) { UseShellExecute = true });
         return Task.CompletedTask;
-    });
+    };
+    private Button Link(string label, string destination)
+    {
+        var button = Action(label, () => OpenExternalLink(destination));
+        button.Content = Label(label, 12);
+        button.HorizontalAlignment = HorizontalAlignment.Stretch;
+        button.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+        Avalonia.Automation.AutomationProperties.SetName(button, destination);
+        return button;
+    }
 }

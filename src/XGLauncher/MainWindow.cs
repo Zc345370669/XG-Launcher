@@ -16,7 +16,7 @@ public sealed partial class MainWindow : Window
 {
     private static readonly IBrush Line = ThemePalette.Line;
     private static readonly IBrush Muted = ThemePalette.Muted;
-    private static readonly string[] Nav = ["首页", "个人游戏", "整合包", "模组管理", "下载管理", "设置"];
+    private static readonly string[] Nav = ["首页", "个人游玩", "整合包", "模组管理", "下载管理", "设置"];
 
     private readonly LauncherModel model;
     private readonly ContentControl page = new();
@@ -50,7 +50,7 @@ public sealed partial class MainWindow : Window
             Width = Math.Min(Width, usableWidth);
             Height = Math.Min(Height, usableHeight);
         }
-        Background = ThemePalette.WindowBackground; Foreground = ThemePalette.Text;
+        Background = ThemePalette.Background; Foreground = ThemePalette.Text;
         if (OperatingSystem.IsWindows()) FontFamily = new FontFamily("Microsoft YaHei UI");
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         var logoUri = new Uri("avares://XGLauncher/Assets/XG.png");
@@ -106,30 +106,50 @@ public sealed partial class MainWindow : Window
         foreach (var previous in model.Resources.MainJobs.Where(x => x.State == "已完成")) notifiedInstallations.Add(previous.Id);
         var notifyPath = Path.Combine(model.Store.Root, "download-notifications.json");
         if (File.Exists(notifyPath)) notificationsEnabled = System.Text.Json.JsonSerializer.Deserialize<bool>(File.ReadAllText(notifyPath));
-        Content = layout;
+        InitializeModes(body, layout);
+        Content = windowShell;
+        ApplyAppearance(false);
+        PropertyChanged += (_, e) => { if (e.Property.Name == "ActualTransparencyLevel") ApplyAppearance(false); };
         Closed += (_, _) =>
         {
+            windowClosed = true;
             catalogLifetime.Cancel();
+            catalogLifetime.Dispose();
+            model.Dispose();
+            model.Accounts.Changed -= AccountsChanged;
             model.Resources.ProgressChanged -= UpdateResourceProgress;
             model.Resources.Changed -= ResourceJobsChanged;
             model.Downloads.Changed -= ResourceJobsChanged;
             toastTimer.Stop();
         };
+        model.Accounts.Changed += AccountsChanged;
+        AccountsChanged();
         model.Resources.ProgressChanged += UpdateResourceProgress;
         model.Resources.Changed += ResourceJobsChanged;
         model.Downloads.Changed += ResourceJobsChanged;
         UpdateBadge();
         ConfigureTray();
+        Opened += async (_, _) =>
+        {
+            // 导入已存在的MSAL账号元数据不等于登录成功，也不声明已取得有效游戏会话。
+            try { await model.Accounts.ListAsync(catalogLifetime.Token); }
+            catch (OperationCanceledException) when (windowClosed) { }
+            catch (Exception ex)
+            {
+                if (!windowClosed) { status.Text = MicrosoftAccounts.Describe(ex); compactStatus.Text = status.Text; }
+            }
+        };
         Closing += (_, e) =>
         {
             if (minimizeToTray && !exitRequested && tray != null)
             {
                 e.Cancel = true; Hide(); return;
             }
-            if (maintenance != 0 || model.Busy.Count != 0 || model.Downloads.Items.Any(x => x.State is "等待中" or "连接中" or "下载中" or "校验中" or "安装中"))
+            if (model.Resources.MainJobs.Any(x => model.Resources.CanControl(x.Id)) || maintenance != 0 || model.Busy.Count != 0 || model.Downloads.Items.Any(x => x.State is "等待中" or "连接中" or "下载中" or "校验中" or "安装中"))
             {
                 e.Cancel = true;
                 status.Text = "退出前请等待文件操作完成、暂停下载并关闭游戏。";
+                compactStatus.Text = status.Text;
                 exitRequested = false;
             }
         };
@@ -159,6 +179,9 @@ public sealed partial class MainWindow : Window
 
     private void Refresh()
     {
+        if (windowClosed) return;
+        UpdateCompact();
+        if (IsCompact) return;
         if (drawnNavigation != section)
         {
             drawnNavigation = section;
@@ -221,7 +244,7 @@ public sealed partial class MainWindow : Window
     {
         if (status.Parent is Panel previous) previous.Children.Remove(status);
         status.Foreground = Muted;
-        var content = Column(Header("个人游戏", Row(PersonalIcon("plus","创建实例",()=>EditAsync(null)),PersonalIcon("folder-input","导入游戏",GameImportWizardAsync))), status);
+        var content = Column(Header("个人游玩", Row(PersonalIcon("plus","创建实例",()=>EditAsync(null)),PersonalIcon("folder-input","导入游戏",GameImportWizardAsync))), status);
         foreach (var instance in model.Store.Entries.Where(x => !x.Pack)) content.Children.Add(InstanceRow(instance));
         if (content.Children.Count == 2) content.Children.Add(Label("暂无个人实例"));
         return content;
@@ -260,7 +283,7 @@ public sealed partial class MainWindow : Window
             placement.Gravity = Avalonia.Controls.Primitives.PopupPositioning.PopupGravity.BottomRight;
         };
         instanceMenu.MaxHeight = Math.Max(160, ClientSize.Height - 16);
-        // Inspect the original routed source before the card's default context handler runs.
+        // 在卡片默认菜单处理前检查原始路由来源，避免内部按钮误触发卡片操作。
         card.AddHandler(Control.ContextRequestedEvent, (_, e) => {
             if (e.Source is Avalonia.Visual visual && Avalonia.VisualTree.VisualExtensions.GetVisualAncestors(visual)
                 .Prepend(visual).OfType<Button>().Any()) { e.Handled = true; return; }
@@ -274,153 +297,6 @@ public sealed partial class MainWindow : Window
             Refresh();
         };
         return card;
-    }
-
-    private async Task AccountsAsync()
-    {
-        var dialog = Dialog("账号管理");
-        using var lifetime = new CancellationTokenSource();
-        var cancellationToken = lifetime.Token;
-        dialog.Closed += (_, _) => lifetime.Cancel();
-        CancellationTokenSource? pending = null;
-        var cancel = Action("取消登录", () => { pending?.Cancel(); return Task.CompletedTask; });
-        cancel.IsVisible = false;
-        var player = Input("离线玩家名", model.Player);
-        var feedback = Label("", 12);
-        var cached = new UnifiedExpandableSelect
-        {
-            Title = "账号", PlaceholderText = "选择已保存的微软账号", Searchable = true,
-            DisplayMember = item => ((Microsoft.Identity.Client.IAccount)item).Username
-        };
-        var panel = Column(player, feedback);
-        var diagnosticText = model.Accounts.LastDiagnostic;
-        var copyFeedback = Label("", 12);
-        var copyDiagnostic = Action("复制诊断信息", async () =>
-        {
-            if (diagnosticText is null) return;
-            var clipboard = dialog.Clipboard ?? throw new InvalidOperationException("当前环境无法访问剪贴板。");
-            await clipboard.SetTextAsync(diagnosticText);
-            copyFeedback.Text = "已复制脱敏诊断。";
-        });
-        var detailsDiagnostic = Action("查看详细错误", async () =>
-        {
-            if (diagnosticText is null) return;
-            var details = Dialog("脱敏认证诊断");
-            details.SetBody(new TextBox { Text = diagnosticText, IsReadOnly = true, AcceptsReturn = true,
-                TextWrapping = Avalonia.Media.TextWrapping.Wrap, MinHeight = 180, MaxHeight = 420 },
-                CloseDialog(details, "返回账号管理"));
-            await details.ShowDialog(dialog);
-        });
-        var offline = Action("使用离线账号", async () =>
-        {
-            var name = Instance.ValidatePlayer(player.Text ?? "");
-            await model.Accounts.UseOfflineAsync();
-            model.Player = name;
-            account.Content = name;
-            dialog.Close();
-        });
-        Button browser = null!;
-        Button switchAccount = null!;
-        Button remove = null!;
-        browser = Action("微软正版登录", () => SignInAsync(null), true);
-        switchAccount = Action("切换到所选账号", () =>
-            cached.SelectedItem is Microsoft.Identity.Client.IAccount chosen ? SignInAsync(chosen) : Task.CompletedTask);
-        panel.Children.Add(Label(MicrosoftAccounts.ClientId is null ? "微软登录应用 ID：尚未配置" : "微软登录应用 ID：已配置"));
-        panel.Children.Add(Action("退出并清除账号缓存", async () => {
-            if (!await ConfirmAsync("清除启动器中的微软登录缓存？", dialog)) return;
-            await model.Accounts.ClearAsync(); account.Content = model.Player; await LoadAccountsAsync();
-        }));
-        panel.Children.Add(offline);
-        panel.Children.Add(browser);
-        panel.Children.Add(cached);
-        remove = Action("移除所选账号", async () =>
-        {
-            if (pending != null || cached.SelectedItem is not Microsoft.Identity.Client.IAccount selected) return;
-            if (!await ConfirmAsync("移除此账号在本启动器中的缓存？", dialog)) return;
-            await model.Accounts.RemoveAsync(selected, cancellationToken);
-            account.Content = model.Accounts.Identity is { } remaining ? ProfileView(remaining) : model.Player;
-            await LoadAccountsAsync();
-            feedback.Text = "已移除所选账号。";
-        });
-        panel.Children.Add(switchAccount);
-        panel.Children.Add(remove);
-        panel.Children.Add(cancel);
-        panel.Children.Add(copyDiagnostic);
-        panel.Children.Add(detailsDiagnostic);
-        panel.Children.Add(copyFeedback);
-        copyDiagnostic.IsVisible = detailsDiagnostic.IsVisible = diagnosticText != null;
-        browser.IsEnabled = MicrosoftAccounts.ClientId is not null;
-        switchAccount.IsEnabled = false;
-        cached.IsVisible = switchAccount.IsVisible = remove.IsVisible = false;
-        switchAccount.IsEnabled = remove.IsEnabled = false;
-        cached.SelectionChanged += (_, _) =>
-            switchAccount.IsEnabled = remove.IsEnabled = pending is null && cached.SelectedItem is not null;
-        feedback.Text = browser.IsEnabled
-            ? "登录将在微软官方浏览器页面完成。"
-            : "此版本尚未配置开发者的微软应用 ID。离线账号仍可使用。";
-        if (model.Accounts.Identity is { } identity) panel.Children.Insert(0, ProfileView(identity));
-        dialog.SetBody(panel, CloseDialog(dialog, "关闭"));
-        dialog.Opened += async (_, _) =>
-        {
-            try { await LoadAccountsAsync(); }
-            catch (Exception ex) { if (!lifetime.IsCancellationRequested) feedback.Text = MicrosoftAccounts.Describe(ex); }
-        };
-        await dialog.ShowDialog(this);
-
-        async Task LoadAccountsAsync()
-        {
-            var accounts = await model.Accounts.ListAsync(cancellationToken);
-            if (lifetime.IsCancellationRequested) return;
-            cached.ItemsSource = accounts;
-            cached.IsVisible = switchAccount.IsVisible = remove.IsVisible = accounts.Length > 0;
-        }
-
-        async Task SignInAsync(Microsoft.Identity.Client.IAccount? target)
-        {
-            if (pending != null) return;
-            using var attempt = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            pending = attempt;
-            var trace = new AuthDiagnosticTrace();
-            copyDiagnostic.IsVisible = detailsDiagnostic.IsVisible = false;
-            copyFeedback.Text = "";
-            cancel.IsVisible = cancel.IsEnabled = true;
-            browser.IsEnabled = offline.IsEnabled = switchAccount.IsEnabled = remove.IsEnabled = cached.IsEnabled = false;
-            feedback.Text = target is null ? "请在浏览器完成微软登录和授权。关闭此窗口可取消。" : "正在验证已保存的微软账号……";
-            try
-            {
-                var verifiedProfile = await model.Accounts.SignInAsync(target, attempt.Token, trace);
-                if (!lifetime.IsCancellationRequested)
-                {
-                    account.Content = ProfileView(verifiedProfile);
-                    dialog.Close();
-                }
-            }
-            catch (OperationCanceledException) when (attempt.IsCancellationRequested)
-            {
-                if (!lifetime.IsCancellationRequested) feedback.Text = "已取消登录。";
-            }
-            catch (Exception ex)
-            {
-                if (!lifetime.IsCancellationRequested)
-                {
-                    feedback.Text = MicrosoftAccounts.Describe(ex);
-                    browser.Content = "重试登录";
-                }
-            }
-            finally
-            {
-                pending = null;
-                cancel.IsVisible = false;
-                if (!lifetime.IsCancellationRequested)
-                {
-                    diagnosticText = trace.ToString();
-                    copyDiagnostic.IsVisible = detailsDiagnostic.IsVisible = true;
-                    browser.IsEnabled = MicrosoftAccounts.ClientId is not null;
-                    offline.IsEnabled = cached.IsEnabled = true;
-                    switchAccount.IsEnabled = remove.IsEnabled = cached.SelectedItem is not null;
-                }
-            }
-        }
     }
 
     private static Control ProfileView(MinecraftIdentity identity)

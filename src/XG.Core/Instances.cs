@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace XG.Core;
 
+/// <summary>
+/// 保存实例配置；安装就绪状态另由安装凭据验证，不由目录是否存在决定。
+/// </summary>
 public sealed record Instance(Guid Id, string Name, string Version, string Loader = "原版",
     string? Java = null, int Memory = 4096, int Width = 1280, int Height = 720,
     DateTimeOffset? LastPlayed = null, bool Pack = false, string? LoaderVersion = null, bool? AutomaticMemory = null, bool? AutomaticResolution = null)
@@ -25,6 +28,9 @@ public sealed record Instance(Guid Id, string Name, string Version, string Loade
         : throw new ArgumentException("玩家名须为 3–16 位英文字母、数字或下划线。");
 }
 
+/// <summary>
+/// 维护实例索引和隔离目录，并以临时文件替换方式保存配置。
+/// </summary>
 public sealed class InstanceStore
 {
     public string Root { get; }
@@ -71,7 +77,7 @@ public sealed class InstanceStore
         foreach (var instance in entries) instance.Validate();
         directoryIndex = Path.Combine(Root, "instance-directories.json");
         directories = File.Exists(directoryIndex) ? JsonSerializer.Deserialize<Dictionary<Guid, string>>(File.ReadAllText(directoryIndex)) ?? [] : [];
-        // Existing records retain their original directory even if it has not been created yet.
+        // 旧索引保留原目录约定，即使目录尚未创建也不能因重命名改变隔离路径。
         foreach (var instance in entries) directories.TryAdd(instance.Id, instance.Id.ToString("N"));
         foreach (var value in directories.Values) SafeFile(InstanceRoot, value);
     }
@@ -151,6 +157,11 @@ public sealed class InstanceStore
         }
     }
 
+    /// <summary>
+    /// 复制到新GUID隔离目录，拒绝目录链接；失败时清理副本，不覆盖源实例。
+    /// </summary>
+    /// <param name="source">要复制的实例。</param>
+    /// <returns>已保存到索引的新实例。</returns>
     public async Task<Instance> CopyAsync(Instance source)
     {
         var clone = source with { Id = Guid.NewGuid(), Name = source.Name[..Math.Min(76, source.Name.Length)] + " 副本",
@@ -170,6 +181,11 @@ public sealed class InstanceStore
         }
     }
 
+    /// <summary>
+    /// 移除实例索引；删除文件时先暂存目录，索引写入失败则尝试还原。
+    /// </summary>
+    /// <param name="instance">要移除的实例。</param>
+    /// <param name="deleteFiles">是否连同隔离目录删除；false仅移除索引。</param>
     public void Remove(Instance instance, bool deleteFiles)
     {
         var directory = DirectoryFor(instance);
@@ -227,6 +243,9 @@ public sealed class InstanceStore
         }
     }
 
+    /// <summary>
+    /// 先写入独立临时文件并刷新，再替换索引，避免直接截断现有配置。
+    /// </summary>
     public static void WriteJson<T>(string path, T data)
     {
         var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
@@ -242,6 +261,13 @@ public sealed class InstanceStore
         finally { File.Delete(temporary); }
     }
 
+    /// <summary>
+    /// 验证单个文件名组件，拒绝路径穿越、Windows保留名及分隔符。
+    /// </summary>
+    /// <param name="root">目标父目录。</param>
+    /// <param name="filename">单个文件或目录名称，不允许包含路径。</param>
+    /// <returns>父目录与通过验证的名称组合后的路径。</returns>
+    /// <exception cref="InvalidDataException">文件名不符合安全规则。</exception>
     public static string SafeFile(string root, string filename)
     {
         if (filename is "." or ".." || filename != Path.GetFileName(filename) ||

@@ -6,8 +6,9 @@ namespace XG.Core;
 
 public sealed record JavaInstallation(string Path, int Major, string Architecture, string Version = "", string Vendor = "");
 
-// Native implementation written for this revision. Public entry points remain
-// compatible with the launcher; no external discovery library or Python bridge.
+/// <summary>
+/// 以原生.NET候选收集和受限Java进程探测选择运行时，不依赖外部Python桥接。
+/// </summary>
 public static partial class JavaDiscovery
 {
     private sealed record Verified(JavaInstallation Runtime, string Stamp, DateTimeOffset Checked);
@@ -28,11 +29,14 @@ public static partial class JavaDiscovery
     internal static async Task<string?> FindAsync(string? manual, string managed, int major, IEnumerable<string>? extra = null) =>
         major <= 0 && string.IsNullOrWhiteSpace(manual) ? null : (await CompatibleAsync(manual, managed, major, extra))?.Path;
 
+    /// <summary>
+    /// 先验证显式选择与已知绑定，再扫描候选；探测结果不自动改写实例偏好。
+    /// </summary>
     public static Task<JavaInstallation?> CompatibleAsync(string? manual, string managed, int major,
         IEnumerable<string>? extra = null, CancellationToken cancellationToken = default) => Task.Run(async () =>
     {
-        // Validate an explicit choice before enumerating other sources. Selection
-        // never writes instance preferences; invalid choices can still fall back.
+        // 先验证显式Java选择，再枚举其他候选；
+        // 选择过程不写入实例偏好，无效选择仍按既有规则回退。
         if (!string.IsNullOrWhiteSpace(manual) && await InspectPathAsync(manual, cancellationToken) is { } preferred && Fits(preferred))
             return preferred;
         foreach (var path in extra ?? [])
@@ -64,7 +68,7 @@ public static partial class JavaDiscovery
                 if (Catalog.TryGetValue(path, out var entry) && entry.Stamp == stamp &&
                     DateTimeOffset.UtcNow - entry.Checked < TimeSpan.FromSeconds(30)) return entry.Runtime;
                 var runtime = await JavaProbe.ExecuteAsync(path, TimeSpan.FromSeconds(3), cancellationToken);
-                // Do not cache a probe if its executable/runtime changed during validation.
+                // 探测期间可执行文件或运行时发生变化时，不把结果写入缓存。
                 if (runtime is null || JavaProbe.Fingerprint(path) != stamp) { Catalog.TryRemove(path, out _); return null; }
                 Catalog[path] = new(runtime, stamp, DateTimeOffset.UtcNow);
                 if (Catalog.Count > 256)

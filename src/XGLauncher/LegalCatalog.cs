@@ -65,6 +65,7 @@ internal static class LegalCatalog
         new CreditProject("Fabric", "按需安装的加载器", Matching("Fabric-upstream-", "Fabric", "上游参考许可；加载器按需下载，不随 EXE 分发")),
         new CreditProject("Quilt", "按需安装的加载器", Matching("Quilt-upstream-", "Quilt", "上游参考许可；加载器按需下载，不随 EXE 分发")),
         new CreditProject(".NET", "随程序提供的运行时", Matching("dotnet-", ".NET", "Windows 自包含发布运行时")),
+        new CreditProject("Lucide", "界面图标", Matching("Lucide", "Lucide", "随程序分发的图标资源及版权声明")),
         new CreditProject("Avalonia UI", "界面框架", Matching("Avalonia", "Avalonia UI", "随程序分发的 UI 框架与相关本地组件")),
         new CreditProject("OpenJDK", "按需安装的 Java 运行时", Matching("OpenJDK-upstream-", "OpenJDK", "OpenJDK 上游参考许可；实际 Java 发行版以其随附文件为准，不随 EXE 分发")),
         new CreditProject("CmlLib", "游戏启动与安装库", Matching("CmlLib", "CmlLib", "随程序分发的游戏启动与安装库"))
