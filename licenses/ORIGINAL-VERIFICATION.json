@@ -1,0 +1,93 @@
+[
+  {
+    "file": "CmlLib.Core-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core/ffa2e908a9aa545c13175ec7b700472220e6d280/LICENSE",
+    "sha256": "d67622c23e5c980df485d1b1667a52c49f28fc73130c11d02f44a10be6ce9d7d",
+    "bytes": 1075,
+    "status": "upstream-original-pinned",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "CmlLib.Core.Commons-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core.Commons/aa96916cde628dcd74d4e82b5bfb20589398af1e/LICENSE",
+    "sha256": "a121c8933c2f037d351c25cdb6fe8af768c7a6fd824da88f237b86b547de2f84",
+    "bytes": 1063,
+    "status": "upstream-original-pinned",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "CmlLib.Core.Installer.Forge-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core.Installer.Forge/1a3954a11c2215ba0d08c96d3f7aa43d13835f06/LICENSE",
+    "sha256": "d1ede55f3f7f2b67a0f277b2682ff53537b855baa341f8a58638dde97f826dd2",
+    "bytes": 1063,
+    "status": "upstream-original-pinned",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "Avalonia-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/03bd7e694d8ae1247663b8a9a36f536f785c2bd3/licence.md",
+    "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+    "bytes": 1096,
+    "status": "upstream-original-pinned",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "Tmds.DBus.Protocol-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/tmds/Tmds.DBus/8cb04f66c330b64244e996ff68f685f27f7381a0/COPYING",
+    "sha256": "aca3b49277abcc7886ccb2f115603a9f5b15fc3f96019a10c00f2974098b210c",
+    "bytes": 1151,
+    "status": "upstream-original-pinned",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "MicroCom.Runtime-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/kekekeks/MicroCom/master/LICENSE",
+    "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9",
+    "bytes": 1072,
+    "status": "upstream-original-version-reference",
+    "baseline_bytes_unchanged": true
+  },
+  {
+    "file": "LZMA-SDK-19.0.0-MIT.txt",
+    "url": "https://raw.githubusercontent.com/monemihir/LZMA-SDK/master/LICENSE",
+    "sha256": "cbb9d941b9bf6bdb083bb64ba28e927b5fcbc6b14996b3143cfeff0c437e0ba8",
+    "bytes": 1066,
+    "status": "upstream-original-version-reference",
+    "baseline_bytes_unchanged": false
+  },
+  {
+    "file": "Microsoft.Identity.Client-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-dotnet/88df64013795d4e3716e1f677600f8164ffdb542/LICENSE",
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+    "bytes": 1073,
+    "status": "upstream-original-pinned"
+  },
+  {
+    "file": "Microsoft.Identity.Client.Extensions.Msal-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-dotnet/88df64013795d4e3716e1f677600f8164ffdb542/LICENSE",
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+    "bytes": 1073,
+    "status": "upstream-original-pinned"
+  },
+  {
+    "file": "Microsoft.IdentityModel.Abstractions-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/c94c7fc235501d478221e979062bd8837a55575b/LICENSE.txt",
+    "sha256": "cba03f5387b05405e56b688376421acae396136af4b5116738dc6e5160f87ddd",
+    "bytes": 1085,
+    "status": "upstream-original-pinned"
+  },
+  {
+    "file": "SharpZipLib-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/icsharpcode/SharpZipLib/33f64eb0f28cdd2b084cb822fcc224c7c5aba553/LICENSE.txt",
+    "sha256": "d7fbbc16f871bf24fa5624c7eaf945054b778985f32676dcacba41fddca61133",
+    "bytes": 1072,
+    "status": "upstream-original-pinned"
+  },
+  {
+    "file": "HtmlAgilityPack-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/zzzprojects/html-agility-pack/a22812ca8ee8ea15f4c9c383bafe9a932b0a3839/LICENSE",
+    "sha256": "601b80e87b30b47c7b5389d3077fda67a37e7cb6b200405e4524217989c1fe92",
+    "bytes": 1045,
+    "status": "upstream-original-pinned"
+  }
+]

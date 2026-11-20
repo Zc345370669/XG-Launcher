@@ -1,0 +1,52 @@
+{
+  "decision": "B",
+  "application_license": "GPL-3.0-only",
+  "entire_repository_relicensed": false,
+  "blocking_items": [
+    {
+      "id": "B1",
+      "files": [
+        "src/**/*.cs",
+        "tests/**/*.cs",
+        "build-windows.ps1",
+        "scripts/*.sh",
+        "installer/XGLauncher.nsi"
+      ],
+      "reason": "complete authorship/necessary contributor relicensing authority not confirmed; absence of attribution or git history does not establish ownership",
+      "minimum_resolution": "maintainer confirms actual own/authorized file scope, lists external contributions and permissions; replace only confirmed problematic portions if needed, with separate approval for functional changes"
+    },
+    {
+      "id": "B2",
+      "files": [
+        "src/XGLauncher/MainWindow.cs",
+        "src/XGLauncher/TitleBar.cs"
+      ],
+      "reason": "inline geometry source not established individually; complete Lucide/Feather notices do not prove every path originates there",
+      "minimum_resolution": "supply original geometry/SVG source or generation record and map hashes; if upstream is identified retain its exact required notices; no icon replacement performed"
+    },
+    {
+      "id": "B3",
+      "files": [
+        "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+        "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt"
+      ],
+      "reason": "native NOTICE contains gif MPL/GPL/LGPL alternatives, FreeType FTL/GPL choice and libmicrohttpd LGPL/eCos conditional licensing; exact compiled component/option and source/relink obligations not established for shipped DLLs",
+      "minimum_resolution": "obtain exact native build provenance/SBOM/options and applicable license selection/source obligations; keywords alone neither prove whole application GPL-only nor prove incompatibility"
+    }
+  ],
+  "qualified_asset_review": [
+    {
+      "id": "Q1",
+      "files": [
+        "src/XGLauncher/Assets/XG.png",
+        "src/XGLauncher/Assets/XG-light.png",
+        "src/XGLauncher/Assets/XG.ico"
+      ],
+      "reason": "maintainer confirms direct ChatGPT generation and selection of first sharp geometric XG design; exclusive copyright/trademark and third-party input rights not independently determined",
+      "minimum_resolution": "record generation provenance and any input materials; trademark/similarity review before claiming exclusive brand rights; missing generation log alone is not proof of infringement"
+    }
+  ],
+  "all_application_sources_unchanged": true,
+  "maintainer_no_deliberate_PCL2_HMCL_copy_statement_recorded": true,
+  "no_global_authorship_inference_from_AI": true
+}

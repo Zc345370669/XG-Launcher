@@ -1,0 +1,658 @@
+[
+  {
+    "file": "Avalonia-LICENSE.txt",
+    "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+    "bytes": 1096,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/03bd7e694d8ae1247663b8a9a36f536f785c2bd3/licence.md"
+  },
+  {
+    "file": "Avalonia.Angle.Windows.Natives-2.1.25547.20250602-LICENSE",
+    "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63",
+    "bytes": 1675,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/avalonia.angle.windows.natives/2.1.25547.20250602/LICENSE"
+  },
+  {
+    "file": "Avalonia.Angle.Windows.Natives-LICENSE",
+    "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63",
+    "bytes": 1675,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/avalonia.angle.windows.natives/2.1.25547.20250602/LICENSE"
+  },
+  {
+    "file": "CmlLib.Core-LICENSE.txt",
+    "sha256": "d67622c23e5c980df485d1b1667a52c49f28fc73130c11d02f44a10be6ce9d7d",
+    "bytes": 1075,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core/ffa2e908a9aa545c13175ec7b700472220e6d280/LICENSE"
+  },
+  {
+    "file": "CmlLib.Core.Commons-LICENSE.txt",
+    "sha256": "a121c8933c2f037d351c25cdb6fe8af768c7a6fd824da88f237b86b547de2f84",
+    "bytes": 1063,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core.Commons/aa96916cde628dcd74d4e82b5bfb20589398af1e/LICENSE"
+  },
+  {
+    "file": "CmlLib.Core.Installer.Forge-LICENSE.txt",
+    "sha256": "d1ede55f3f7f2b67a0f277b2682ff53537b855baa341f8a58638dde97f826dd2",
+    "bytes": 1063,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/CmlLib/CmlLib.Core.Installer.Forge/1a3954a11c2215ba0d08c96d3f7aa43d13835f06/LICENSE"
+  },
+  {
+    "file": "DEPENDENCY-INVENTORY.md",
+    "sha256": "2951e4d1ec8e7d59b6be8813316e76b78e3eed805e9b46f5631d58eefad946c6",
+    "bytes": 9186,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "project metadata"
+  },
+  {
+    "file": "Fabric-upstream-LICENSE",
+    "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "bytes": 11357,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/FabricMC/fabric-loader/cb9523bc29ef775c50b6aef5e43bc56927cd8e67/LICENSE"
+  },
+  {
+    "file": "Forge-upstream-LICENSE.txt",
+    "sha256": "415f4b8c16c0077728dd5c1d84aaba7c4b10df0fb358e7270e60e46ea520fd13",
+    "bytes": 27733,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/MinecraftForge/MinecraftForge/8ec868509887a1c77ef2cbbae1720b912336e83f/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp-8.3.1.1-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Linux-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Linux-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.WebAssembly-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Win32-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.macOS-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.macOS-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "HarfBuzzSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "HtmlAgilityPack-LICENSE.txt",
+    "sha256": "601b80e87b30b47c7b5389d3077fda67a37e7cb6b200405e4524217989c1fe92",
+    "bytes": 1045,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/zzzprojects/html-agility-pack/a22812ca8ee8ea15f4c9c383bafe9a932b0a3839/LICENSE"
+  },
+  {
+    "file": "LZMA-SDK-19.0.0-MIT.txt",
+    "sha256": "cbb9d941b9bf6bdb083bb64ba28e927b5fcbc6b14996b3143cfeff0c437e0ba8",
+    "bytes": 1066,
+    "status": "verified-version-tag-original",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/monemihir/LZMA-SDK/7c123efdaa886bd4a413d6157ff9793d8a20ce12/LICENSE"
+  },
+  {
+    "file": "MicroCom.Runtime-LICENSE.txt",
+    "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9",
+    "bytes": 1072,
+    "status": "verified-exact-package-mit-and-pinned-upstream-text",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/kekekeks/MicroCom/4b8a38f773c109bad558ee3713d9f16d80776e42/LICENSE"
+  },
+  {
+    "file": "Microsoft.Identity.Client-LICENSE.txt",
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+    "bytes": 1073,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-dotnet/88df64013795d4e3716e1f677600f8164ffdb542/LICENSE"
+  },
+  {
+    "file": "Microsoft.Identity.Client.Extensions.Msal-LICENSE.txt",
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+    "bytes": 1073,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-dotnet/88df64013795d4e3716e1f677600f8164ffdb542/LICENSE"
+  },
+  {
+    "file": "Microsoft.IdentityModel.Abstractions-LICENSE.txt",
+    "sha256": "cba03f5387b05405e56b688376421acae396136af4b5116738dc6e5160f87ddd",
+    "bytes": 1085,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/c94c7fc235501d478221e979062bd8837a55575b/LICENSE.txt"
+  },
+  {
+    "file": "Microsoft.NET.ILLink.Tasks-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+    "bytes": 78041,
+    "status": "verified-package-original",
+    "scope": "build-or-installer-reference",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "Microsoft.NETCore.App.Host.win-x64-10.0.15-LICENSE.TXT",
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+    "bytes": 1139,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/LICENSE.TXT"
+  },
+  {
+    "file": "Microsoft.NETCore.App.Host.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+    "bytes": 78041,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.15-LICENSE.TXT",
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+    "bytes": 1139,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/LICENSE.TXT"
+  },
+  {
+    "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+    "bytes": 78041,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "NSIS-COPYRIGHT.txt",
+    "sha256": "dc0f74a312c08ffc900548a67ae9a3670ed28ad25a3afda1fe0504da16f89361",
+    "bytes": 15488,
+    "status": "verified-version-tag-original",
+    "scope": "build-or-installer-reference",
+    "source": "https://raw.githubusercontent.com/NSIS-Dev/nsis/7359413009afd4f0fff472d841fc2f2cc0e0a5f8/COPYING"
+  },
+  {
+    "file": "NeoForge-upstream-LICENSE.txt",
+    "sha256": "a8746534d481c0d1046a1c6c02acc034231ad45b56f04ca35212e1f23e3f2712",
+    "bytes": 24444,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/neoforged/NeoForge/b404a2d93a533984ac5acbdefb82213cb3d51365/LICENSE.txt"
+  },
+  {
+    "file": "NeoForge-upstream-README-LICENSE.md",
+    "sha256": "f1af18da44ea27416ca0e7c3c633ab2832cad9c7f4f8f3991e26dd984ea28968",
+    "bytes": 2926,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/neoforged/NeoForge/b404a2d93a533984ac5acbdefb82213cb3d51365/README-LICENSE.md"
+  },
+  {
+    "file": "ORIGINAL-VERIFICATION.json",
+    "sha256": "c4dd703dfe19e52b7eab223ad09ca2a9da79ae9e47d80c42707f8e2838f18c9b",
+    "bytes": 4161,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "project metadata"
+  },
+  {
+    "file": "OpenJDK-upstream-ADDITIONAL_LICENSE_INFO",
+    "sha256": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "bytes": 2114,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/ADDITIONAL_LICENSE_INFO"
+  },
+  {
+    "file": "OpenJDK-upstream-ASSEMBLY_EXCEPTION",
+    "sha256": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "bytes": 1514,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/ASSEMBLY_EXCEPTION"
+  },
+  {
+    "file": "OpenJDK-upstream-LICENSE",
+    "sha256": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "bytes": 19274,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/LICENSE"
+  },
+  {
+    "file": "PROJECT-NOTICE.md",
+    "sha256": "0f40bc5cb330e389090060229f6def8ec91d6bf8ce00bde9b58f0b658aea5be4",
+    "bytes": 1558,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "project metadata"
+  },
+  {
+    "file": "Quilt-upstream-LICENSE",
+    "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "bytes": 11357,
+    "status": "verified-upstream-reference",
+    "scope": "on-demand-component-reference",
+    "source": "https://raw.githubusercontent.com/QuiltMC/quilt-loader/3492f6601e0c0bc86d53eb5cd988160db3b39703/LICENSE"
+  },
+  {
+    "file": "SharpZipLib-LICENSE.txt",
+    "sha256": "d7fbbc16f871bf24fa5624c7eaf945054b778985f32676dcacba41fddca61133",
+    "bytes": 1072,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/icsharpcode/SharpZipLib/33f64eb0f28cdd2b084cb822fcc224c7c5aba553/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp-2.88.9-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Linux-2.88.9-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Linux-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Linux-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Linux-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.WebAssembly-2.88.9-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.WebAssembly-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.WebAssembly-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.WebAssembly-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Win32-2.88.9-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Win32-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.macOS-2.88.9-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.macOS-2.88.9-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.macOS-LICENSE.txt",
+    "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+    "bytes": 1129,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/LICENSE.txt"
+  },
+  {
+    "file": "SkiaSharp.NativeAssets.macOS-THIRD-PARTY-NOTICES.txt",
+    "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+    "bytes": 139775,
+    "status": "verified-package-original",
+    "scope": "other-platform-reference",
+    "source": "nuget-cache:/skiasharp/2.88.9/THIRD-PARTY-NOTICES.txt"
+  },
+  {
+    "file": "System.Security.Cryptography.ProtectedData-4.5.0-LICENSE.TXT",
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+    "bytes": 1139,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/LICENSE.TXT"
+  },
+  {
+    "file": "System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "7864a01e2fdef7e8fdf81b906efb1466f083206affea7ba7e6dadea429754765",
+    "bytes": 15835,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/system.security.cryptography.protecteddata/4.5.0/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "System.Security.Cryptography.ProtectedData-LICENSE.TXT",
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+    "bytes": 1139,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/LICENSE.TXT"
+  },
+  {
+    "file": "System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "7864a01e2fdef7e8fdf81b906efb1466f083206affea7ba7e6dadea429754765",
+    "bytes": 15835,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/system.security.cryptography.protecteddata/4.5.0/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "Tmds.DBus.Protocol-LICENSE.txt",
+    "sha256": "aca3b49277abcc7886ccb2f115603a9f5b15fc3f96019a10c00f2974098b210c",
+    "bytes": 1151,
+    "status": "upstream-original-pinned",
+    "scope": "windows-runtime-dependency",
+    "source": "https://raw.githubusercontent.com/tmds/Tmds.DBus/8cb04f66c330b64244e996ff68f685f27f7381a0/COPYING"
+  },
+  {
+    "file": "UPSTREAM-PROVENANCE.json",
+    "sha256": "433a5f2cfeea33d6ff57df18ba2f5a6f952757303d8921bec98b425e6ea5aa95",
+    "bytes": 3858,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "project metadata"
+  },
+  {
+    "file": "dotnet-10.0.15-LICENSE.TXT",
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+    "bytes": 1139,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/LICENSE.TXT"
+  },
+  {
+    "file": "dotnet-10.0.15-THIRD-PARTY-NOTICES.TXT",
+    "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+    "bytes": 78041,
+    "status": "verified-package-original",
+    "scope": "windows-runtime-dependency",
+    "source": "nuget-cache:/microsoft.netcore.app.host.win-x64/10.0.15/THIRD-PARTY-NOTICES.TXT"
+  },
+  {
+    "file": "LOCKED-PACKAGE-LICENSES.json",
+    "sha256": "cf780d5bb7caf08c3f7743fd6324d440ed0af9d67ccb71bc3d6ed30da93421ff",
+    "bytes": 43882,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "current source audit; not a third-party license grant"
+  },
+  {
+    "file": "ASSET-PROVENANCE.json",
+    "sha256": "1434a1f8e678860c6b49891702940a9255ed69eb1a25abbe2d7534cf817856bb",
+    "bytes": 2240,
+    "status": "generated-metadata-not-license",
+    "scope": "metadata",
+    "source": "current source audit; not a third-party license grant"
+  },
+  {
+    "file": "Lucide-LICENSE.txt",
+    "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+    "bytes": 3208,
+    "status": "upstream-original-pinned",
+    "scope": "conditional-icon-provenance-reference-not-confirmed-package-use",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/LICENSE"
+  },
+  {
+    "file": "MPL-1.1.txt",
+    "sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+    "bytes": 25755,
+    "status": "upstream-original-pinned",
+    "scope": "native-component-separate-license-not-project-MIT",
+    "source": "https://www.mozilla.org/media/MPL/1.1/index.txt"
+  },
+  {
+    "file": "HarfBuzz-upstream-COPYING.txt",
+    "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64",
+    "bytes": 1971,
+    "status": "upstream-original-pinned",
+    "scope": "native-component-separate-license-not-project-MIT",
+    "source": "https://raw.githubusercontent.com/harfbuzz/harfbuzz/2b3631a866b3077d9d675caa4ec9010b342b5a7c/COPYING"
+  },
+  {
+    "file": "libgifcodec-LICENSE.md",
+    "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625",
+    "bytes": 4996,
+    "status": "upstream-original-pinned",
+    "scope": "native-component-separate-license-not-project-MIT",
+    "source": "source archive libgifcodec d06d2a6d LICENSE.md"
+  }
+]

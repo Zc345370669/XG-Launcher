@@ -1,0 +1,68 @@
+{
+  "decision": "B",
+  "application_license": "GPL-3.0-only",
+  "entire_repository_relicensed": false,
+  "blocking_items": [
+    {
+      "id": "B1",
+      "files": [
+        "licensing/APPLICATION-RELICENSING-CHECKLIST.json",
+        "src/XG.Core/GameService.cs",
+        "src/XG.Core/MinecraftAuthentication.cs",
+        "src/XG.Core/Instances.cs",
+        "src/XG.Core/SharedResourceCoordinator.cs",
+        "src/XGLauncher/MainWindow.cs",
+        "build-windows.ps1",
+        "installer/XGLauncher.nsi"
+      ],
+      "complete_scope": "112 exact entries and hashes in APPLICATION-RELICENSING-CHECKLIST.json, including five legacy independent document files",
+      "evidence_gap": "application scope is recorded GPL-3.0-only; neither an all-scope ownership/permission confirmation nor actual copyright-holder notice wording has been supplied. No specific outside contributor or external GPL copy has been identified.",
+      "block_reason": "cannot turn existing GPL grant into MIT solely by changing license identifiers; project ownership/authorization scope must be factual",
+      "next_action": "one truthful statement covering the checklist manifest (with explicit exclusions/contributor grants, if any), plus chosen accurate copyright-holder public wording and years; no mandatory full AI chat archive or wholesale rewrite",
+      "rewrite_required_now": false
+    },
+    {
+      "id": "B2",
+      "files": [
+        "src/XGLauncher/MainWindow.cs:19-25",
+        "src/XGLauncher/MainWindow.cs:233",
+        "src/XGLauncher/TitleBar.cs:38-47"
+      ],
+      "evidence_gap": "12 unique inline geometry hashes have no verified original SVG/path/generation mapping; complete Lucide ISC and Feather MIT texts are retained",
+      "block_reason": "third-party permission scope for unidentified copied expression cannot be assumed; not an identified infringement",
+      "next_action": "map each existing path hash to its real source or factual independent-generation record; if Lucide/Feather derived retain their original licenses; no icon replacement without evidence of need",
+      "rewrite_required_now": false
+    },
+    {
+      "id": "B3",
+      "files": [
+        "licenses/SkiaSharp.NativeAssets.Win32-2.88.9-THIRD-PARTY-NOTICES.txt",
+        "licenses/HarfBuzzSharp.NativeAssets.Win32-8.3.1.1-THIRD-PARTY-NOTICES.txt",
+        "libSkiaSharp.dll",
+        "libHarfBuzzSharp.dll"
+      ],
+      "evidence_gap": "exact NuGet commit metadata and Windows build scripts checked; no reproduced official binaries, binary SBOM or complete actual native-option/license mapping",
+      "block_reason": "binary distribution obligations remain unverified; this does not itself prove incompatibility with MIT licensing of independent application code",
+      "next_action": "obtain exact native build/SBOM/license selections and discharge applicable notice/source/relink conditions; preserve existing original notices; use minimum scoped remediation only if an actual incompatible part is identified",
+      "independent_application_mit_incompatibility_proven": false
+    }
+  ],
+  "qualified_asset_review": [
+    {
+      "id": "Q1",
+      "files": [
+        "src/XGLauncher/Assets/XG.png",
+        "src/XGLauncher/Assets/XG-light.png",
+        "src/XGLauncher/Assets/XG.ico"
+      ],
+      "reason": "maintainer confirms direct ChatGPT generation and selection of first sharp geometric XG design; exclusive copyright/trademark and third-party input rights not independently determined",
+      "minimum_resolution": "record generation provenance and any input materials; trademark/similarity review before claiming exclusive brand rights; missing generation log alone is not proof of infringement"
+    }
+  ],
+  "all_application_sources_unchanged": true,
+  "maintainer_no_deliberate_PCL2_HMCL_copy_statement_recorded": true,
+  "no_global_authorship_inference_from_AI": true,
+  "requested_license": "MIT",
+  "former_target_withdrawn": true,
+  "copyright_notice_confirmed": false
+}

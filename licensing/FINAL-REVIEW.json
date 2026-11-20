@@ -1,0 +1,16 @@
+{
+  "decision": "A",
+  "requested_license": "MIT",
+  "application_license": "MIT",
+  "entire_repository_relicensed": false,
+  "blocking_items": [],
+  "maintainer_declaration_record": "MAINTAINER-DECLARATION.md",
+  "third_party_auto_authorized_by_declaration": false,
+  "native_compliance": "NATIVE-COMPLIANCE.md",
+  "unresolved_runtime_validation": [
+    "Windows GUI",
+    "real Minecraft launch",
+    "real account login"
+  ],
+  "old_gpl_rights_revoked": false
+}

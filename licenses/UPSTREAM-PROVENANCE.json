@@ -1,0 +1,90 @@
+[
+  {
+    "project": "NeoForge",
+    "repository": "neoforged/NeoForge",
+    "reference": "26.3.x",
+    "commit": "b404a2d93a533984ac5acbdefb82213cb3d51365",
+    "file": "NeoForge-upstream-README-LICENSE.md",
+    "source": "https://raw.githubusercontent.com/neoforged/NeoForge/b404a2d93a533984ac5acbdefb82213cb3d51365/README-LICENSE.md",
+    "sha256": "f1af18da44ea27416ca0e7c3c633ab2832cad9c7f4f8f3991e26dd984ea28968",
+    "bytes": 2926,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "Forge",
+    "repository": "MinecraftForge/MinecraftForge",
+    "reference": "26.3",
+    "commit": "8ec868509887a1c77ef2cbbae1720b912336e83f",
+    "file": "Forge-upstream-LICENSE.txt",
+    "source": "https://raw.githubusercontent.com/MinecraftForge/MinecraftForge/8ec868509887a1c77ef2cbbae1720b912336e83f/LICENSE.txt",
+    "sha256": "415f4b8c16c0077728dd5c1d84aaba7c4b10df0fb358e7270e60e46ea520fd13",
+    "bytes": 27733,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "Fabric",
+    "repository": "FabricMC/fabric-loader",
+    "reference": "master",
+    "commit": "cb9523bc29ef775c50b6aef5e43bc56927cd8e67",
+    "file": "Fabric-upstream-LICENSE",
+    "source": "https://raw.githubusercontent.com/FabricMC/fabric-loader/cb9523bc29ef775c50b6aef5e43bc56927cd8e67/LICENSE",
+    "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "bytes": 11357,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "Quilt",
+    "repository": "QuiltMC/quilt-loader",
+    "reference": "develop",
+    "commit": "3492f6601e0c0bc86d53eb5cd988160db3b39703",
+    "file": "Quilt-upstream-LICENSE",
+    "source": "https://raw.githubusercontent.com/QuiltMC/quilt-loader/3492f6601e0c0bc86d53eb5cd988160db3b39703/LICENSE",
+    "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "bytes": 11357,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "OpenJDK",
+    "repository": "openjdk/jdk",
+    "reference": "master",
+    "commit": "b068723f47bf4e993ab1d6ae9b3d53fbdee98674",
+    "file": "OpenJDK-upstream-LICENSE",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/LICENSE",
+    "sha256": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "bytes": 19274,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "OpenJDK",
+    "repository": "openjdk/jdk",
+    "reference": "master",
+    "commit": "b068723f47bf4e993ab1d6ae9b3d53fbdee98674",
+    "file": "OpenJDK-upstream-ADDITIONAL_LICENSE_INFO",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/ADDITIONAL_LICENSE_INFO",
+    "sha256": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "bytes": 2114,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "OpenJDK",
+    "repository": "openjdk/jdk",
+    "reference": "master",
+    "commit": "b068723f47bf4e993ab1d6ae9b3d53fbdee98674",
+    "file": "OpenJDK-upstream-ASSEMBLY_EXCEPTION",
+    "source": "https://raw.githubusercontent.com/openjdk/jdk/b068723f47bf4e993ab1d6ae9b3d53fbdee98674/ASSEMBLY_EXCEPTION",
+    "sha256": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "bytes": 1514,
+    "role": "upstream-reference-not-bundled-binary"
+  },
+  {
+    "project": "NeoForge",
+    "repository": "neoforged/NeoForge",
+    "reference": "26.3.x",
+    "commit": "b404a2d93a533984ac5acbdefb82213cb3d51365",
+    "file": "NeoForge-upstream-LICENSE.txt",
+    "source": "https://raw.githubusercontent.com/neoforged/NeoForge/b404a2d93a533984ac5acbdefb82213cb3d51365/LICENSE.txt",
+    "sha256": "a8746534d481c0d1046a1c6c02acc034231ad45b56f04ca35212e1f23e3f2712",
+    "bytes": 24444,
+    "role": "upstream-reference-not-bundled-binary"
+  }
+]

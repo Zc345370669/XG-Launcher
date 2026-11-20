@@ -1,0 +1,2741 @@
+{
+  "\n可选依赖（需自行选择）：": [
+    "src/XGLauncher/OnlineCatalog.cs:444"
+  ],
+  "  允许字段=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:34"
+  ],
+  "  服务分类=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:67"
+  ],
+  "  服务分类=Unclassified  脱敏消息=服务端详情未能安全识别": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:69"
+  ],
+  "  服务端代码（标准化）=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:71"
+  ],
+  "  本地请求关联ID=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:63"
+  ],
+  "  耗时ms=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:64"
+  ],
+  "  脱敏消息=": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:67"
+  ],
+  " · 上次游玩 {0}": [
+    "src/XGLauncher/MainWindow.cs:256"
+  ],
+  " · 下载失败，点击查看重试": [
+    "src/XGLauncher/CompactMode.cs:159"
+  ],
+  " · 剩余约 {0}": [
+    "src/XGLauncher/CatalogPages.cs:137"
+  ],
+  " · 原始文件来源尚未独立核实，不能视为合规结论。": [
+    "src/XGLauncher/LegalCatalog.cs:48"
+  ],
+  " · 原文已核对上游；具体包版本对应关系待核对。": [
+    "src/XGLauncher/LegalCatalog.cs:47"
+  ],
+  " · 已完成": [
+    "src/XGLauncher/StageRail.cs:92"
+  ],
+  " · 微软账号": [
+    "src/XGLauncher/AccountRegistry.cs:9"
+  ],
+  " · 离线账号": [
+    "src/XGLauncher/AccountRegistry.cs:9"
+  ],
+  " 副本": [
+    "src/XG.Core/Instances.cs:172"
+  ],
+  " 已选中": [
+    "src/XGLauncher/AppearanceSettings.cs:41"
+  ],
+  "（版本不兼容或加载器未固定）": [
+    "src/XGLauncher/PackSynchronization.cs:45"
+  ],
+  "[已隐藏]": [
+    "src/XG.Core/GameLogSanitizer.cs:11"
+  ],
+  "{0}\n{1}\n请确认版本和加载器。缺失资源由正常安装流程校验后补齐。": [
+    "src/XGLauncher/GameImportWizard.cs:45"
+  ],
+  "{0}\n→ {1}\n{2} files · {3} MB\n目标必须不存在，原文件保留。": [
+    "src/XGLauncher/MigrationPage.cs:15"
+  ],
+  "{0} · Minecraft {1} 已安装完成，可以启动游戏。": [
+    "src/XGLauncher/DownloadNotifications.cs:33"
+  ],
+  "{0} · 无法识别": [
+    "src/XGLauncher/CatalogPages.cs:88"
+  ],
+  "{0} MB · 总大小未知": [
+    "src/XGLauncher/CatalogPages.cs:135"
+  ],
+  "{0} 含源实例之外的模组，可能存在同一模组的不同版本。请检查后重试。": [
+    "src/XG.Core/InstanceSynchronization.cs:59"
+  ],
+  "{0} 存在不同内容的同名文件：{1}": [
+    "src/XG.Core/InstanceSynchronization.cs:64"
+  ],
+  "{0}网络连接失败，请检查网络后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:200"
+  ],
+  "{0}连接超时，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:195"
+  ],
+  "<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>认证已完成 · XG Launcher</title>\n<h1>认证已完成</h1>\n<p>你可以返回 XG Launcher，并关闭此浏览器标签页。</p>\n<p>此页面仅表示浏览器授权回调已结束。账号、游戏所有权与玩家档案验证结果请查看启动器。</p>\n<p>Browser authorization has ended. Return to XG Launcher for the final account verification result.</p></html>": [
+    "src/XGLauncher/OAuthCompletionPage.cs:35"
+  ],
+  "<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>认证未完成 · XG Launcher</title><h1>认证未完成</h1>\n<p>请返回 XG Launcher 查看结果或重试登录。你可以关闭此标签页。</p>\n<p>Authorization did not complete. Return to XG Launcher for details or try again.</p></html>": [
+    "src/XGLauncher/OAuthCompletionPage.cs:23"
+  ],
+  "<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>请查看启动器 · XG Launcher</title><h1>授权回调已接收</h1>\n<p>认证尚未确认完成，请返回 XG Launcher 查看最终结果。</p>\n<p>Authorization is still being verified. Check XG Launcher for the final result.</p></html>": [
+    "src/XGLauncher/OAuthCompletionPage.cs:29"
+  ],
+  "Alex 的生物": [
+    "src/XGLauncher/OnlineCatalog.cs:27"
+  ],
+  "CurseForge 原站": [
+    "src/XGLauncher/OnlineCatalog.cs:47",
+    "src/XGLauncher/OnlineCatalog.cs:164"
+  ],
+  "CurseForge 文件需合法提供，当前无法自动取得这些项目文件。请手动提供完整游戏目录。\n": [
+    "src/XGLauncher/GameImportWizard.cs:38"
+  ],
+  "HTTP 403，服务未提供可识别的错误代码。": [
+    "src/XG.Core/MinecraftAuthentication.cs:227"
+  ],
+  "Invalid app registration。服务明确拒绝应用注册，请开发者核实 Minecraft Java 游戏服务 API 审批。": [
+    "src/XG.Core/MinecraftAuthentication.cs:269"
+  ],
+  "Java {0} · {1} · 已验证\n{2}": [
+    "src/XGLauncher/InstanceJavaSettings.cs:33"
+  ],
+  "Java {0} 未就绪，请在创建或编辑实例中选择兼容运行时。": [
+    "src/XG.Core/GameService.cs:197"
+  ],
+  "Java 安装临时文件清理未完成：": [
+    "src/XG.Core/JavaInstallerCleanup.cs:51"
+  ],
+  "Java 安装临时目录暂时无法清理：": [
+    "src/XG.Core/JavaInstallerCleanup.cs:54"
+  ],
+  "Java 安装或兼容性检查失败：": [
+    "src/XG.Core/GameService.cs:204"
+  ],
+  "Java 安装检查": [
+    "src/XGLauncher/DownloadRecovery.cs:103"
+  ],
+  "Java 清理前检查未完成：": [
+    "src/XG.Core/JavaInstallerCleanup.cs:27"
+  ],
+  "Java 环境": [
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/StageRail.cs:192",
+    "src/XG.Core/GameService.cs:181",
+    "src/XG.Core/GameService.cs:190",
+    "src/XG.Core/GameService.cs:194"
+  ],
+  "Java 运行环境": [
+    "src/XGLauncher/InstanceJavaSettings.cs:10",
+    "src/XGLauncher/InstanceJavaSettings.cs:42"
+  ],
+  "Java 进程未能启动（系统错误 {0}）。请检查 Java 路径和运行权限。": [
+    "src/XGLauncher/LauncherModel.cs:94"
+  ],
+  "JEI 物品管理器": [
+    "src/XGLauncher/OnlineCatalog.cs:25"
+  ],
+  "MC百科原站": [
+    "src/XGLauncher/OnlineCatalog.cs:47",
+    "src/XGLauncher/OnlineCatalog.cs:165"
+  ],
+  "Microsoft 服务协议": [
+    "src/XGLauncher/LegalCatalog.cs:61"
+  ],
+  "Microsoft 正版登录": [
+    "src/XGLauncher/CompactAccountForm.cs:37"
+  ],
+  "Microsoft 正版账号": [
+    "src/XGLauncher/AccountManagement.cs:102"
+  ],
+  "Minecraft  {0}\n加载器  {1}\n依赖  {2}\n冲突  {3}\n状态  {4}": [
+    "src/XGLauncher/OnlineCatalog.cs:275"
+  ],
+  "Minecraft 会话": [
+    "src/XG.Core/MinecraftAuthentication.cs:354"
+  ],
+  "Minecraft 会话响应无效，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:395"
+  ],
+  "Minecraft 使用指南": [
+    "src/XGLauncher/LegalBrowser.cs:160",
+    "src/XGLauncher/LegalBrowser.cs:162",
+    "src/XGLauncher/LegalCatalog.cs:75"
+  ],
+  "Minecraft 最终用户许可协议": [
+    "src/XGLauncher/LegalBrowser.cs:163",
+    "src/XGLauncher/LegalBrowser.cs:165",
+    "src/XGLauncher/LegalCatalog.cs:74"
+  ],
+  "Minecraft 官方": [
+    "src/XGLauncher/DownloadRecovery.cs:87",
+    "src/XGLauncher/DownloadRecovery.cs:103",
+    "src/XG.Core/GameService.cs:183",
+    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:188",
+    "src/XG.Core/GameService.cs:190"
+  ],
+  "Minecraft 所有权": [
+    "src/XG.Core/MinecraftAuthentication.cs:352"
+  ],
+  "Minecraft 所有权响应无效，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:393"
+  ],
+  "Minecraft 版本": [
+    "src/XGLauncher/GameImportWizard.cs:18",
+    "src/XGLauncher/InstanceEditor.cs:19"
+  ],
+  "Minecraft 版本标识无效。": [
+    "src/XGLauncher/InstanceEditor.cs:57",
+    "src/XG.Core/Instances.cs:21"
+  ],
+  "Minecraft 玩家档案": [
+    "src/XG.Core/MinecraftAuthentication.cs:353"
+  ],
+  "Minecraft 玩家档案响应无效，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:394"
+  ],
+  "Minecraft 账号认证失败。\n微软账号和 Xbox 身份验证已经成功，但 Minecraft Services 拒绝了登录请求。\nHTTP 状态：403\n{0}\n请复制脱敏诊断，或重试登录。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:417"
+  ],
+  "Modrinth 清单：使用现有校验及下载任务系统导入。": [
+    "src/XGLauncher/GameImportWizard.cs:32"
+  ],
+  "Mojang、Microsoft、Modrinth 属于官方服务关系；加载器与 Java 按需下载。第三方依赖的原始许可单独列出。": [
+    "src/XGLauncher/LegalBrowser.cs:179"
+  ],
+  "NOTICE / 版权声明": [
+    "src/XGLauncher/LegalCatalog.cs:52"
+  ],
+  "OpenJDK 上游参考许可；实际 Java 发行版以其随附文件为准，不随 EXE 分发": [
+    "src/XGLauncher/LegalCatalog.cs:71"
+  ],
+  "versions 中存在同名目录；未覆盖任何文件，请先处理实例目录冲突。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:50"
+  ],
+  "Windows 自包含发布运行时": [
+    "src/XGLauncher/LegalCatalog.cs:68"
+  ],
+  "Xbox Live 与 XSTS 返回的用户哈希不一致，已停止认证。": [
+    "src/XG.Core/MinecraftAuthentication.cs:111"
+  ],
+  "Xbox XSTS 返回的身份响应无效，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:391"
+  ],
+  "Xbox 地区限制": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:120"
+  ],
+  "Xbox 家庭权限限制": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:122"
+  ],
+  "Xbox 年龄验证要求": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:121"
+  ],
+  "Xbox 档案缺失": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:119"
+  ],
+  "Xbox 账号需要完成成人验证。": [
+    "src/XG.Core/MinecraftAuthentication.cs:258"
+  ],
+  "Xbox 账号需要家庭组织者完成年龄或权限设置。": [
+    "src/XG.Core/MinecraftAuthentication.cs:259"
+  ],
+  "Xbox 身份令牌已过期或有效期无效，请重新登录。": [
+    "src/XG.Core/MinecraftAuthentication.cs:294"
+  ],
+  "Xbox 身份或权限验证失败，请检查 Xbox 账号状态。": [
+    "src/XG.Core/MinecraftAuthentication.cs:260"
+  ],
+  "Xbox 返回的身份响应无效，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:392"
+  ],
+  "XG Launcher · OAuth 脱敏诊断": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:40"
+  ],
+  "XG Launcher 采用标准 MIT License；第三方内容保留各自授权。": [
+    "src/XGLauncher/LegalBrowser.cs:87"
+  ],
+  "XG Launcher（瞎搞启动器）是独立开发的 Minecraft Java 版启动器，不是 Minecraft 官方产品，未获得 Mojang 或 Microsoft 的批准或认可。": [
+    "src/XGLauncher/LegalBrowser.cs:99"
+  ],
+  "XG Launcher（瞎搞启动器）是独立开发的 Minecraft Java 版启动器。它不是官方 Minecraft 产品，未获得 Mojang 或 Microsoft 批准，也不与两者关联。": [
+    "src/XGLauncher/LegalBrowser.cs:195"
+  ],
+  "上次操作中断。相关子任务可通过父任务重新执行。": [
+    "src/XG.Core/ResourceOperations.cs:77"
+  ],
+  "上游参考许可；加载器按需下载，不随 EXE 分发": [
+    "src/XGLauncher/LegalCatalog.cs:64",
+    "src/XGLauncher/LegalCatalog.cs:65",
+    "src/XGLauncher/LegalCatalog.cs:66",
+    "src/XGLauncher/LegalCatalog.cs:67"
+  ],
+  "下载": [
+    "src/XGLauncher/InstanceActions.cs:41"
+  ],
+  "下载中": [
+    "src/XGLauncher/WindowShutdown.cs:31",
+    "src/XGLauncher/InstanceActions.cs:36",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:199",
+    "src/XGLauncher/CatalogPages.cs:143",
+    "src/XGLauncher/CatalogPages.cs:216",
+    "src/XGLauncher/CatalogPages.cs:226",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/GameService.cs:223",
+    "src/XG.Core/VerifiedTransfer.cs:211"
+  ],
+  "下载中 {0}%": [
+    "src/XGLauncher/InstanceActions.cs:37"
+  ],
+  "下载任务": [
+    "src/XGLauncher/MainWindow.cs:233"
+  ],
+  "下载地址发生重定向。": [
+    "src/XG.Core/VerifiedTransfer.cs:190"
+  ],
+  "下载完成": [
+    "src/XGLauncher/CatalogPages.cs:374"
+  ],
+  "下载完成提示": [
+    "src/XGLauncher/SettingsPage.cs:29"
+  ],
+  "下载已取消，可重新选择版本安装。": [
+    "src/XGLauncher/CompactDownloadForm.cs:96"
+  ],
+  "下载已取消。": [
+    "src/XGLauncher/InstanceActions.cs:58"
+  ],
+  "下载并安装": [
+    "src/XGLauncher/CompactDownloadForm.cs:30",
+    "src/XGLauncher/CompactDownloadForm.cs:64"
+  ],
+  "下载文件超过声明大小。": [
+    "src/XG.Core/VerifiedTransfer.cs:228"
+  ],
+  "下载服务器返回 HTTP {0}。": [
+    "src/XG.Core/VerifiedTransfer.cs:295"
+  ],
+  "下载游戏实例": [
+    "src/XGLauncher/CompactMode.cs:38",
+    "src/XGLauncher/CompactMode.cs:125"
+  ],
+  "下载目录没有写入权限。": [
+    "src/XG.Core/VerifiedTransfer.cs:298"
+  ],
+  "下载管理": [
+    "src/XGLauncher/MainWindow.cs:19",
+    "src/XGLauncher/CatalogPages.cs:209"
+  ],
+  "下载索引为空。": [
+    "src/XG.Core/Downloads.cs:43"
+  ],
+  "下载连接失败，请检查网络后重试。": [
+    "src/XG.Core/VerifiedTransfer.cs:296"
+  ],
+  "下载连接超时，请重试。": [
+    "src/XG.Core/VerifiedTransfer.cs:297"
+  ],
+  "下载量": [
+    "src/XGLauncher/OnlineCatalog.cs:51"
+  ],
+  "下载限速": [
+    "src/XGLauncher/CatalogPages.cs:190"
+  ],
+  "不限速": [
+    "src/XGLauncher/CatalogPages.cs:189"
+  ],
+  "世界生成": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "个人游玩": [
+    "src/XGLauncher/MainWindow.cs:19",
+    "src/XGLauncher/MainWindow.cs:245"
+  ],
+  "主许可证：MIT License": [
+    "src/XGLauncher/AboutPage.cs:76"
+  ],
+  "主题": [
+    "src/XGLauncher/AppearanceSettings.cs:86"
+  ],
+  "仅 Windows": [
+    "src/XGLauncher/SettingsPage.cs:56"
+  ],
+  "仅移除记录": [
+    "src/XGLauncher/InstanceActions.cs:193"
+  ],
+  "仍有未完成的安装阶段，请重试。": [
+    "src/XG.Core/ResourceOperations.cs:163"
+  ],
+  "从 ZIP 恢复为新实例": [
+    "src/XGLauncher/InstanceActions.cs:153"
+  ],
+  "从 ZIP 恢复到新实例": [
+    "src/XGLauncher/SettingsPage.cs:58"
+  ],
+  "作者  {0}": [
+    "src/XGLauncher/OnlineCatalog.cs:231"
+  ],
+  "作者 / 维护者：Zc345370669": [
+    "src/XGLauncher/AboutPage.cs:75"
+  ],
+  "依赖": [
+    "src/XGLauncher/StageRail.cs:196"
+  ],
+  "依赖版本冲突：": [
+    "src/XG.Core/ModInstallPlanner.cs:79"
+  ],
+  "依赖项过多，请分批核对。": [
+    "src/XG.Core/ModInstallPlanner.cs:82"
+  ],
+  "保存": [
+    "src/XGLauncher/InstanceEditor.cs:45"
+  ],
+  "保存下载进度并退出？下次打开可从下载管理恢复任务。": [
+    "src/XGLauncher/WindowShutdown.cs:37"
+  ],
+  "修复": [
+    "src/XGLauncher/InstanceActions.cs:41"
+  ],
+  "修复安装": [
+    "src/XGLauncher/InstanceActions.cs:38"
+  ],
+  "光影包": [
+    "src/XGLauncher/PackSynchronization.cs:36"
+  ],
+  "免责声明": [
+    "src/XGLauncher/LegalBrowser.cs:98",
+    "src/XGLauncher/LegalBrowser.cs:141",
+    "src/XGLauncher/LegalBrowser.cs:194"
+  ],
+  "全局备份管理": [
+    "src/XGLauncher/SettingsPage.cs:58"
+  ],
+  "全部": [
+    "src/XGLauncher/OnlineCatalog.cs:46",
+    "src/XGLauncher/OnlineCatalog.cs:47",
+    "src/XGLauncher/OnlineCatalog.cs:53",
+    "src/XGLauncher/OnlineCatalog.cs:322",
+    "src/XGLauncher/MinecraftVersionPicker.cs:17",
+    "src/XGLauncher/MinecraftVersionPicker.cs:19",
+    "src/XGLauncher/MinecraftVersionPicker.cs:28",
+    "src/XGLauncher/MinecraftVersionPicker.cs:33"
+  ],
+  "关于": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "关闭": [
+    "src/XGLauncher/OnlineCatalog.cs:79",
+    "src/XGLauncher/OnlineCatalog.cs:80",
+    "src/XGLauncher/TitleBar.cs:57",
+    "src/XGLauncher/MainWindow.cs:401"
+  ],
+  "关闭弹窗": [
+    "src/XGLauncher/LauncherDialog.cs:43"
+  ],
+  "关闭时缩到托盘": [
+    "src/XGLauncher/SettingsPage.cs:54"
+  ],
+  "关闭窗口时缩到系统托盘": [
+    "src/XGLauncher/SettingsPage.cs:38"
+  ],
+  "关闭详情": [
+    "src/XGLauncher/OnlineCatalog.cs:84"
+  ],
+  "其他启动器实例": [
+    "src/XGLauncher/GameImportWizard.cs:17"
+  ],
+  "其他平台依赖参考，不表示其二进制随 Windows EXE 分发。": [
+    "src/XGLauncher/LegalCatalog.cs:42"
+  ],
+  "兼容 Java 尚未就绪，无法安装加载器。": [
+    "src/XG.Core/InstallerJava.cs:10",
+    "src/XG.Core/GameService.cs:444"
+  ],
+  "内存": [
+    "src/XGLauncher/InstanceEditor.cs:236"
+  ],
+  "内存 MB": [
+    "src/XGLauncher/InstanceEditor.cs:27"
+  ],
+  "内存分配": [
+    "src/XGLauncher/InstanceEditor.cs:26"
+  ],
+  "内存须为 512–65536 MB。": [
+    "src/XG.Core/Instances.cs:22"
+  ],
+  "再次确认从启动器移除此实例记录？": [
+    "src/XGLauncher/InstanceActions.cs:196"
+  ],
+  "再次确认永久删除此实例的存档、配置和其他文件？": [
+    "src/XGLauncher/InstanceActions.cs:196"
+  ],
+  "冒险": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "最大化": [
+    "src/XGLauncher/TitleBar.cs:53",
+    "src/XGLauncher/TitleBar.cs:63"
+  ],
+  "最小化": [
+    "src/XGLauncher/TitleBar.cs:52"
+  ],
+  "最近游玩": [
+    "src/XGLauncher/MainWindow.cs:234"
+  ],
+  "写入目标实例": [
+    "src/XG.Core/InstanceSynchronization.cs:109"
+  ],
+  "准备": [
+    "src/XGLauncher/InstanceActions.cs:88"
+  ],
+  "准备中": [
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XG.Core/ResourceOperations.cs:217",
+    "src/XG.Core/GameService.cs:155",
+    "src/XG.Core/InstallationProgress.cs:42"
+  ],
+  "准备已取消，可重新启动以继续": [
+    "src/XGLauncher/InstanceActions.cs:76"
+  ],
+  "准备文件 {0}/{1}": [
+    "src/XG.Core/InstanceSynchronization.cs:106"
+  ],
+  "准备游戏期间账号已更换，请重新点击启动。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:229"
+  ],
+  "凭据无效或已过期，请重新登录。": [
+    "src/XG.Core/MinecraftAuthentication.cs:273"
+  ],
+  "凭据无效或过期": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:115"
+  ],
+  "分类": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "分辨率": [
+    "src/XGLauncher/InstanceEditor.cs:28",
+    "src/XGLauncher/InstanceEditor.cs:236"
+  ],
+  "分辨率超出支持范围。": [
+    "src/XG.Core/Instances.cs:23"
+  ],
+  "切换到新目录": [
+    "src/XGLauncher/MigrationPage.cs:21"
+  ],
+  "切换完整模式": [
+    "src/XGLauncher/TitleBar.cs:24"
+  ],
+  "切换完整模式的下载管理查看失败原因并重试": [
+    "src/XGLauncher/CompactMode.cs:160"
+  ],
+  "切换精简模式": [
+    "src/XGLauncher/TitleBar.cs:24",
+    "src/XGLauncher/TitleBar.cs:55"
+  ],
+  "创建备份": [
+    "src/XGLauncher/LucideIcon.cs:91"
+  ],
+  "创建实例": [
+    "src/XGLauncher/InstanceEditor.cs:17",
+    "src/XGLauncher/MainWindow.cs:245"
+  ],
+  "删除「{0}」？可保留现有文件，也可同时删除实例目录。": [
+    "src/XGLauncher/InstanceActions.cs:192"
+  ],
+  "删除实例": [
+    "src/XGLauncher/LucideIcon.cs:90",
+    "src/XGLauncher/CompactMode.cs:15",
+    "src/XGLauncher/InstanceActions.cs:154",
+    "src/XGLauncher/InstanceActions.cs:188"
+  ],
+  "删除账号": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:52",
+    "src/XGLauncher/AccountManagement.cs:96"
+  ],
+  "删除账号 ": [
+    "src/XGLauncher/AccountManagement.cs:95"
+  ],
+  "删除账号「": [
+    "src/XGLauncher/AccountSelectors.cs:35",
+    "src/XGLauncher/AccountManagement.cs:88"
+  ],
+  "刷新后的 Minecraft 档案与所选账号不一致，请重新登录。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:239"
+  ],
+  "刷新失败，正在显示缓存版本。": [
+    "src/XGLauncher/InstanceEditor.cs:148"
+  ],
+  "刷新微软凭据超时，请检查网络后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:157"
+  ],
+  "前置 API": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "剪贴板不可用。": [
+    "src/XGLauncher/LegalBrowser.cs:236",
+    "src/XGLauncher/InstanceActions.cs:130"
+  ],
+  "加载器": [
+    "src/XGLauncher/OnlineCatalog.cs:46",
+    "src/XGLauncher/CompactDownloadForm.cs:26"
+  ],
+  "加载器安装后的版本配置未通过验证。": [
+    "src/XG.Core/GameService.cs:336"
+  ],
+  "加载器版本": [
+    "src/XGLauncher/InstanceEditor.cs:23",
+    "src/XGLauncher/InstanceEditor.cs:235"
+  ],
+  "加载器版本（如适用）": [
+    "src/XGLauncher/GameImportWizard.cs:18"
+  ],
+  "加载器版本与游戏版本不兼容。": [
+    "src/XG.Core/GameService.cs:275",
+    "src/XG.Core/GameService.cs:296"
+  ],
+  "加载器类型": [
+    "src/XGLauncher/GameImportWizard.cs:18",
+    "src/XGLauncher/InstanceEditor.cs:21",
+    "src/XGLauncher/InstanceEditor.cs:235"
+  ],
+  "加载器配置的游戏版本不匹配。": [
+    "src/XG.Core/GameService.cs:280"
+  ],
+  "加载失败，点击重试": [
+    "src/XGLauncher/OnlineCatalog.cs:211"
+  ],
+  "卸载": [
+    "src/XGLauncher/CatalogPages.cs:63"
+  ],
+  "卸载 ": [
+    "src/XGLauncher/CatalogPages.cs:65"
+  ],
+  "历史参考文件，不对应当前 Windows 发布依赖。": [
+    "src/XGLauncher/LegalCatalog.cs:43"
+  ],
+  "原有黑白灰风格": [
+    "src/XGLauncher/ThemePalette.cs:19"
+  ],
+  "原版": [
+    "src/XGLauncher/OnlineCatalog.cs:417",
+    "src/XGLauncher/GameImportWizard.cs:18",
+    "src/XGLauncher/GameImportWizard.cs:32",
+    "src/XGLauncher/GameImportWizard.cs:60",
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/InstanceEditor.cs:21",
+    "src/XGLauncher/InstanceEditor.cs:22",
+    "src/XGLauncher/InstanceEditor.cs:51",
+    "src/XGLauncher/InstanceEditor.cs:58",
+    "src/XGLauncher/InstanceEditor.cs:108",
+    "src/XGLauncher/InstanceEditor.cs:173",
+    "src/XGLauncher/CompactDownloadForm.cs:12",
+    "src/XGLauncher/CompactDownloadForm.cs:26",
+    "src/XGLauncher/CompactDownloadForm.cs:33",
+    "src/XGLauncher/CompactDownloadForm.cs:41",
+    "src/XGLauncher/CompactDownloadForm.cs:76",
+    "src/XGLauncher/CompactDownloadForm.cs:85",
+    "src/XGLauncher/CompactMode.cs:181",
+    "src/XGLauncher/CatalogPages.cs:175",
+    "src/XG.Core/PackImporter.cs:42",
+    "src/XG.Core/GameImport.cs:16",
+    "src/XG.Core/GameImport.cs:21",
+    "src/XG.Core/GameImport.cs:29",
+    "src/XG.Core/Instances.cs:10",
+    "src/XG.Core/Instances.cs:112",
+    "src/XG.Core/InstanceSynchronization.cs:34",
+    "src/XG.Core/Modrinth.cs:51",
+    "src/XG.Core/Modrinth.cs:78",
+    "src/XG.Core/GameService.cs:182",
+    "src/XG.Core/GameService.cs:182",
+    "src/XG.Core/GameService.cs:260",
+    "src/XG.Core/ExistingInstallation.cs:47"
+  ],
+  "原选版本不兼容，已调整。": [
+    "src/XGLauncher/InstanceEditor.cs:187"
+  ],
+  "发现新版本": [
+    "src/XGLauncher/LauncherUpdates.cs:90"
+  ],
+  "发现版本 {0}": [
+    "src/XGLauncher/CatalogPages.cs:95"
+  ],
+  "取消": [
+    "src/XGLauncher/InstanceJavaSettings.cs:40",
+    "src/XGLauncher/MainWindow.cs:410",
+    "src/XGLauncher/CatalogPages.cs:245",
+    "src/XGLauncher/CatalogPages.cs:298"
+  ],
+  "取消任务": [
+    "src/XGLauncher/CatalogPages.cs:314"
+  ],
+  "取消任务并删除未完成的临时文件？": [
+    "src/XGLauncher/CatalogPages.cs:247"
+  ],
+  "取消导入": [
+    "src/XGLauncher/GameImportWizard.cs:64"
+  ],
+  "取消此资源任务？": [
+    "src/XGLauncher/CatalogPages.cs:300"
+  ],
+  "取消登录": [
+    "src/XGLauncher/AccountManagement.cs:45"
+  ],
+  "取消迁移": [
+    "src/XGLauncher/MigrationPage.cs:27"
+  ],
+  "取消这个恢复任务？": [
+    "src/XGLauncher/CatalogPages.cs:316"
+  ],
+  "另一个账号操作仍在进行，请稍后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:68"
+  ],
+  "同时删除实例文件": [
+    "src/XGLauncher/InstanceActions.cs:193"
+  ],
+  "同步内容": [
+    "src/XGLauncher/PackSynchronization.cs:52"
+  ],
+  "同步到其他实例": [
+    "src/XGLauncher/PackSynchronization.cs:31",
+    "src/XGLauncher/MainWindow.cs:262"
+  ],
+  "同步前备份目标文件。同名文件内容不同时停止；只复制源实例已有的文件。": [
+    "src/XGLauncher/PackSynchronization.cs:56"
+  ],
+  "同步失败 · ": [
+    "src/XGLauncher/PackSynchronization.cs:96"
+  ],
+  "同步完成": [
+    "src/XG.Core/InstanceSynchronization.cs:117"
+  ],
+  "同步完成 · 已添加 {0} 个文件": [
+    "src/XGLauncher/PackSynchronization.cs:90"
+  ],
+  "同步未完成，部分文件无法回滚。请检查备份：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:128"
+  ],
+  "同步路径包含链接：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:187"
+  ],
+  "向右滚动": [
+    "src/XGLauncher/LegalBrowser.cs:46",
+    "src/XGLauncher/LegalBrowser.cs:46"
+  ],
+  "向左滚动": [
+    "src/XGLauncher/LegalBrowser.cs:46",
+    "src/XGLauncher/LegalBrowser.cs:46"
+  ],
+  "启动": [
+    "src/XGLauncher/InstanceActions.cs:41"
+  ],
+  "启动中…": [
+    "src/XGLauncher/CompactMode.cs:130"
+  ],
+  "启动器更新": [
+    "src/XGLauncher/LauncherUpdates.cs:119"
+  ],
+  "启动失败": [
+    "src/XGLauncher/CompactMode.cs:128",
+    "src/XGLauncher/InstanceActions.cs:89"
+  ],
+  "启动失败 · 可重新启动以修复资源，或在编辑实例中检查 Java": [
+    "src/XGLauncher/InstanceActions.cs:79"
+  ],
+  "启动失败，请检查实例设置后重试": [
+    "src/XGLauncher/CompactMode.cs:133"
+  ],
+  "启动游戏": [
+    "src/XGLauncher/LucideIcon.cs:90",
+    "src/XGLauncher/CompactMode.cs:48",
+    "src/XGLauncher/CompactMode.cs:130",
+    "src/XGLauncher/InstanceActions.cs:100",
+    "src/XGLauncher/InstanceActions.cs:170"
+  ],
+  "启用": [
+    "src/XGLauncher/CatalogPages.cs:58"
+  ],
+  "回滚存在同名文件，保留双方数据。": [
+    "src/XG.Core/FlatVersionLayout.cs:134"
+  ],
+  "在线下载": [
+    "src/XGLauncher/OnlineCatalog.cs:97",
+    "src/XGLauncher/CatalogPages.cs:31"
+  ],
+  "在线替换程序仅支持 Windows。": [
+    "src/XGLauncher/LauncherUpdates.cs:104"
+  ],
+  "备份与恢复": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "备份包含范围以外的文件。": [
+    "src/XG.Core/Backups.cs:83"
+  ],
+  "备份实例": [
+    "src/XGLauncher/LucideIcon.cs:91",
+    "src/XGLauncher/InstanceActions.cs:142"
+  ],
+  "备份并复制": [
+    "src/XGLauncher/SettingsPage.cs:60"
+  ],
+  "备份并复制旧版实例？请先关闭旧版启动器和游戏。旧数据将保留在原目录。": [
+    "src/XGLauncher/SettingsPage.cs:86"
+  ],
+  "备份恢复完成": [
+    "src/XGLauncher/SettingsPage.cs:81"
+  ],
+  "备份目标实例": [
+    "src/XG.Core/InstanceSynchronization.cs:82"
+  ],
+  "备份解压超过 16 GB。": [
+    "src/XG.Core/Backups.cs:86"
+  ],
+  "复制全文": [
+    "src/XGLauncher/LegalBrowser.cs:235"
+  ],
+  "复制实例": [
+    "src/XGLauncher/LucideIcon.cs:90",
+    "src/XGLauncher/InstanceActions.cs:134"
+  ],
+  "复制并校验": [
+    "src/XGLauncher/MigrationPage.cs:16"
+  ],
+  "复制诊断信息": [
+    "src/XGLauncher/AccountManagement.cs:46"
+  ],
+  "复制错误摘要": [
+    "src/XGLauncher/InstanceActions.cs:128"
+  ],
+  "外观设置读取失败，使用默认主题。": [
+    "src/XGLauncher/AppearanceSettings.cs:22"
+  ],
+  "失败": [
+    "src/XGLauncher/MigrationPage.cs:9",
+    "src/XGLauncher/StageRail.cs:96",
+    "src/XGLauncher/StageRail.cs:100",
+    "src/XGLauncher/CompactMode.cs:159",
+    "src/XGLauncher/CompactMode.cs:160",
+    "src/XGLauncher/InstanceActions.cs:38",
+    "src/XGLauncher/InstanceActions.cs:42",
+    "src/XGLauncher/CatalogPages.cs:216",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XG.Core/ResourceOperations.cs:25",
+    "src/XG.Core/ResourceOperations.cs:27",
+    "src/XG.Core/ResourceOperations.cs:76",
+    "src/XG.Core/ResourceOperations.cs:179",
+    "src/XG.Core/Downloads.cs:229"
+  ],
+  "存档": [
+    "src/XGLauncher/PackSynchronization.cs:36"
+  ],
+  "安全操作": [
+    "src/XGLauncher/AccountManagement.cs:108"
+  ],
+  "安装": [
+    "src/XGLauncher/OnlineCatalog.cs:311"
+  ],
+  "安装 {0}": [
+    "src/XGLauncher/OnlineCatalog.cs:313"
+  ],
+  "安装中": [
+    "src/XGLauncher/WindowShutdown.cs:31",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:199",
+    "src/XGLauncher/CatalogPages.cs:226",
+    "src/XG.Core/PackImporter.cs:86",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/Downloads.cs:216",
+    "src/XG.Core/GameService.cs:259",
+    "src/XG.Core/InstallationProgress.cs:42"
+  ],
+  "安装到「{0}」？\nMinecraft {1} · {2}\n{3}{4}": [
+    "src/XGLauncher/OnlineCatalog.cs:445"
+  ],
+  "安装后的必要资源或 Java 未通过最终校验。": [
+    "src/XG.Core/GameService.cs:375"
+  ],
+  "安装尚未完成，请查看下载任务。": [
+    "src/XGLauncher/CompactDownloadForm.cs:94"
+  ],
+  "安装整合包「{0} · {1}」并创建独立实例？\nMinecraft {2} · {3}\n{4} · {5} MB": [
+    "src/XGLauncher/OnlineCatalog.cs:425"
+  ],
+  "安装文件清单为空。": [
+    "src/XG.Core/InstallationReceipt.cs:26"
+  ],
+  "安装更新并重启": [
+    "src/XGLauncher/LauncherUpdates.cs:102"
+  ],
+  "安装校验缺少必要文件。": [
+    "src/XG.Core/InstallationReceipt.cs:22"
+  ],
+  "安装证据无效。": [
+    "src/XG.Core/InstallationReceipt.cs:36"
+  ],
+  "安装选中版本": [
+    "src/XGLauncher/OnlineCatalog.cs:254"
+  ],
+  "完成检查": [
+    "src/XGLauncher/StageRail.cs:197",
+    "src/XG.Core/RelayProgressTracker.cs:30",
+    "src/XG.Core/InstallationProgress.cs:43"
+  ],
+  "完整在线条款未内置。这里没有虚构的离线正文；请主动打开经过核实的官方入口阅读。": [
+    "src/XGLauncher/LegalBrowser.cs:210"
+  ],
+  "官方 Java 检查完成。": [
+    "src/XGLauncher/InstanceActions.cs:118"
+  ],
+  "官方在线条款，不是随 EXE 分发的开源依赖许可证": [
+    "src/XGLauncher/LegalCatalog.cs:55"
+  ],
+  "官方数据未标记稳定版，已选择一个兼容版本，可手动更换。": [
+    "src/XGLauncher/InstanceEditor.cs:188"
+  ],
+  "官方资源": [
+    "src/XG.Core/ResourceOperations.cs:90",
+    "src/XG.Core/InstallationProgress.cs:38"
+  ],
+  "实例名称": [
+    "src/XGLauncher/InstanceEditor.cs:18"
+  ],
+  "实例名称不能超过 80 个字符。": [
+    "src/XGLauncher/InstanceEditor.cs:56"
+  ],
+  "实例名称须为 1–80 个字符。": [
+    "src/XG.Core/Instances.cs:20"
+  ],
+  "实例含符号链接或目录联接，无法安全复制。": [
+    "src/XG.Core/Instances.cs:244"
+  ],
+  "实例含符号链接或目录联接，请先手动移除这些链接。": [
+    "src/XG.Core/Instances.cs:233"
+  ],
+  "实例安装": [
+    "src/XGLauncher/DownloadRecovery.cs:87"
+  ],
+  "实例标识无效。": [
+    "src/XG.Core/Instances.cs:19"
+  ],
+  "实例根目录是链接，不能自动迁移。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:26"
+  ],
+  "实例根目录过长，请选择更短的便携目录。": [
+    "src/XG.Core/Instances.cs:115"
+  ],
+  "实例正在运行，请在退出游戏后重试。": [
+    "src/XG.Core/Downloads.cs:215"
+  ],
+  "实例没有已安装模组。": [
+    "src/XGLauncher/CatalogPages.cs:97"
+  ],
+  "实例目录": [
+    "src/XGLauncher/InstanceEditor.cs:233"
+  ],
+  "实例目录不可写。请检查目录权限和可用空间。": [
+    "src/XGLauncher/InstanceEditor.cs:97"
+  ],
+  "实例目录是符号链接或目录联接。": [
+    "src/XG.Core/Instances.cs:223"
+  ],
+  "实例目录迁移备份路径无效。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:126"
+  ],
+  "实例目录迁移记录无效。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:31"
+  ],
+  "实例目录迁移路径无效。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:123"
+  ],
+  "实例索引为空。": [
+    "src/XG.Core/Instances.cs:79",
+    "src/XG.Core/Instances.cs:87"
+  ],
+  "实例资源缺失或损坏，请先修复安装。": [
+    "src/XG.Core/GameService.cs:391"
+  ],
+  "实例配置或已安装文件有变化，请重新生成安装计划。": [
+    "src/XGLauncher/OnlineCatalog.cs:450"
+  ],
+  "实例配置文件过大。": [
+    "src/XG.Core/Backups.cs:68"
+  ],
+  "实例配置无效。": [
+    "src/XG.Core/Backups.cs:70"
+  ],
+  "宽度": [
+    "src/XGLauncher/InstanceEditor.cs:29"
+  ],
+  "导入 .mrpack": [
+    "src/XGLauncher/CatalogPages.cs:106"
+  ],
+  "导入完成；启动前将重新验证资源。": [
+    "src/XGLauncher/GameImportWizard.cs:60"
+  ],
+  "导入本地 JAR": [
+    "src/XGLauncher/CatalogPages.cs:42"
+  ],
+  "导入游戏": [
+    "src/XGLauncher/GameImportWizard.cs:16",
+    "src/XGLauncher/MainWindow.cs:245"
+  ],
+  "导入类型": [
+    "src/XGLauncher/GameImportWizard.cs:17"
+  ],
+  "已保留兼容的加载器版本。": [
+    "src/XGLauncher/InstanceEditor.cs:186"
+  ],
+  "已加入下载队列": [
+    "src/XGLauncher/OnlineCatalog.cs:465"
+  ],
+  "已加载上次任务。恢复时重新校验缓存与目标。": [
+    "src/XG.Core/ResourceOperations.cs:77"
+  ],
+  "已取消": [
+    "src/XGLauncher/MigrationPage.cs:9",
+    "src/XGLauncher/OnlineCatalog.cs:458",
+    "src/XGLauncher/DownloadRecovery.cs:73",
+    "src/XGLauncher/StageRail.cs:95",
+    "src/XGLauncher/StageRail.cs:104",
+    "src/XGLauncher/StageRail.cs:104",
+    "src/XGLauncher/CompactMode.cs:140",
+    "src/XGLauncher/CompactMode.cs:141",
+    "src/XGLauncher/CompactMode.cs:149",
+    "src/XGLauncher/DownloadNotifications.cs:13",
+    "src/XGLauncher/InstanceJavaSettings.cs:34",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:232",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XG.Core/ResourceOperations.cs:25",
+    "src/XG.Core/ResourceOperations.cs:62",
+    "src/XG.Core/ResourceOperations.cs:143",
+    "src/XG.Core/ResourceOperations.cs:170",
+    "src/XG.Core/ResourceOperations.cs:284",
+    "src/XG.Core/Downloads.cs:67",
+    "src/XG.Core/Downloads.cs:83",
+    "src/XG.Core/Downloads.cs:92",
+    "src/XG.Core/Downloads.cs:115",
+    "src/XG.Core/Downloads.cs:181",
+    "src/XG.Core/Downloads.cs:226"
+  ],
+  "已取消，原目录不变。": [
+    "src/XGLauncher/MigrationPage.cs:19"
+  ],
+  "已取消恢复": [
+    "src/XGLauncher/CatalogPages.cs:310"
+  ],
+  "已取消登录。": [
+    "src/XGLauncher/AccountManagement.cs:153",
+    "src/XGLauncher/CompactAccountForm.cs:48"
+  ],
+  "已处理": [
+    "src/XGLauncher/CatalogPages.cs:149"
+  ],
+  "已备份到 ": [
+    "src/XGLauncher/InstanceActions.cs:150"
+  ],
+  "已复制全文。": [
+    "src/XGLauncher/LegalBrowser.cs:236"
+  ],
+  "已复制脱敏诊断。": [
+    "src/XGLauncher/AccountManagement.cs:49"
+  ],
+  "已安装": [
+    "src/XGLauncher/OnlineCatalog.cs:275",
+    "src/XGLauncher/CompactDownloadForm.cs:92",
+    "src/XGLauncher/CompactMode.cs:120",
+    "src/XGLauncher/InstanceActions.cs:41",
+    "src/XGLauncher/InstanceActions.cs:54",
+    "src/XGLauncher/InstanceActions.cs:170",
+    "src/XG.Core/WorkspaceMigration.cs:80",
+    "src/XG.Core/WorkspaceMigration.cs:80",
+    "src/XG.Core/InstallationReceipt.cs:63",
+    "src/XG.Core/GameService.cs:374",
+    "src/XG.Core/GameService.cs:390"
+  ],
+  "已安装模组": [
+    "src/XGLauncher/OnlineCatalog.cs:97",
+    "src/XGLauncher/MainWindow.cs:232",
+    "src/XGLauncher/CatalogPages.cs:31"
+  ],
+  "已安装模组声明与此安装计划不兼容：": [
+    "src/XG.Core/ModInstallPlanner.cs:61"
+  ],
+  "已安装游戏": [
+    "src/XGLauncher/CompactMode.cs:14",
+    "src/XGLauncher/CompactMode.cs:125"
+  ],
+  "已完成": [
+    "src/XGLauncher/MigrationPage.cs:9",
+    "src/XGLauncher/OnlineCatalog.cs:458",
+    "src/XGLauncher/DownloadRecovery.cs:73",
+    "src/XGLauncher/StageRail.cs:74",
+    "src/XGLauncher/StageRail.cs:88",
+    "src/XGLauncher/StageRail.cs:94",
+    "src/XGLauncher/StageRail.cs:95",
+    "src/XGLauncher/StageRail.cs:98",
+    "src/XGLauncher/StageRail.cs:104",
+    "src/XGLauncher/StageRail.cs:104",
+    "src/XGLauncher/StageRail.cs:150",
+    "src/XGLauncher/CompactMode.cs:140",
+    "src/XGLauncher/CompactMode.cs:141",
+    "src/XGLauncher/CompactMode.cs:149",
+    "src/XGLauncher/DownloadNotifications.cs:13",
+    "src/XGLauncher/DownloadNotifications.cs:27",
+    "src/XGLauncher/MainWindow.cs:106",
+    "src/XGLauncher/CatalogPages.cs:146",
+    "src/XGLauncher/CatalogPages.cs:216",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:221",
+    "src/XGLauncher/CatalogPages.cs:232",
+    "src/XGLauncher/CatalogPages.cs:234",
+    "src/XGLauncher/CatalogPages.cs:236",
+    "src/XGLauncher/CatalogPages.cs:262",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XGLauncher/CatalogPages.cs:267",
+    "src/XG.Core/ResourceOperations.cs:25",
+    "src/XG.Core/ResourceOperations.cs:62",
+    "src/XG.Core/ResourceOperations.cs:91",
+    "src/XG.Core/ResourceOperations.cs:93",
+    "src/XG.Core/ResourceOperations.cs:162",
+    "src/XG.Core/ResourceOperations.cs:164",
+    "src/XG.Core/ResourceOperations.cs:213",
+    "src/XG.Core/ResourceOperations.cs:217",
+    "src/XG.Core/ResourceOperations.cs:284",
+    "src/XG.Core/Downloads.cs:67",
+    "src/XG.Core/Downloads.cs:83",
+    "src/XG.Core/Downloads.cs:115",
+    "src/XG.Core/Downloads.cs:181",
+    "src/XG.Core/Downloads.cs:221",
+    "src/XG.Core/RelayProgressTracker.cs:34",
+    "src/XG.Core/RelayProgressTracker.cs:41",
+    "src/XG.Core/InstallationProgress.cs:25",
+    "src/XG.Core/InstallationProgress.cs:27",
+    "src/XG.Core/InstallationProgress.cs:34",
+    "src/XG.Core/InstallationProgress.cs:41",
+    "src/XG.Core/InstallationProgress.cs:42",
+    "src/XG.Core/InstallationProgress.cs:43",
+    "src/XG.Core/InstallationProgress.cs:45"
+  ],
+  "已推荐兼容的稳定版，可手动更换。": [
+    "src/XGLauncher/InstanceEditor.cs:188"
+  ],
+  "已是最新兼容版本": [
+    "src/XGLauncher/CatalogPages.cs:95"
+  ],
+  "已暂停": [
+    "src/XGLauncher/StageRail.cs:100",
+    "src/XGLauncher/InstanceActions.cs:42",
+    "src/XG.Core/ResourceControl.cs:28",
+    "src/XG.Core/ResourceOperations.cs:160",
+    "src/XG.Core/ResourceOperations.cs:170",
+    "src/XG.Core/ResourceOperations.cs:216",
+    "src/XG.Core/ResourceOperations.cs:216",
+    "src/XG.Core/Downloads.cs:8",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/Downloads.cs:227"
+  ],
+  "已有 Minecraft 游戏": [
+    "src/XGLauncher/GameImportWizard.cs:17"
+  ],
+  "已有实例": [
+    "src/XGLauncher/CatalogPages.cs:261"
+  ],
+  "已有账号": [
+    "src/XGLauncher/AccountManagement.cs:105"
+  ],
+  "已添加并选择离线账号。": [
+    "src/XGLauncher/AccountManagement.cs:37"
+  ],
+  "已清除微软账号缓存。": [
+    "src/XGLauncher/AccountManagement.cs:63"
+  ],
+  "已知总量": [
+    "src/XGLauncher/CatalogPages.cs:149"
+  ],
+  "已经到底了，没有更多内容了": [
+    "src/XGLauncher/OnlineCatalog.cs:205"
+  ],
+  "已经到底了～": [
+    "src/XGLauncher/SettingsSurface.cs:107",
+    "src/XGLauncher/SettingsSurface.cs:109"
+  ],
+  "已选中": [
+    "src/XGLauncher/AppearanceSettings.cs:43"
+  ],
+  "已选择已有离线账号。": [
+    "src/XGLauncher/AccountManagement.cs:37"
+  ],
+  "常规": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "建筑装饰": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "开发方式：AI 辅助开发": [
+    "src/XGLauncher/AboutPage.cs:76"
+  ],
+  "开始同步": [
+    "src/XGLauncher/PackSynchronization.cs:58"
+  ],
+  "当前 Java 缺少 javaw.exe，无法静默安装加载器；请在 Java 管理中选择完整的 Windows Java 运行时。": [
+    "src/XG.Core/InstallerJava.cs:15"
+  ],
+  "当前 Minecraft 版本暂无兼容的加载器版本。": [
+    "src/XGLauncher/InstanceEditor.cs:185"
+  ],
+  "当前会话暂无退出状态。": [
+    "src/XGLauncher/InstanceActions.cs:131"
+  ],
+  "当前安装目标": [
+    "src/XGLauncher/MainWindow.cs:268"
+  ],
+  "当前平台的窗口合成不支持此毛玻璃选项。": [
+    "src/XGLauncher/AppearanceSettings.cs:83"
+  ],
+  "当前建议 {0} MB，启动时重新评估。": [
+    "src/XGLauncher/InstanceEditor.cs:208"
+  ],
+  "当前文件": [
+    "src/XGLauncher/CatalogPages.cs:323"
+  ],
+  "当前文件\u3000{0} · 文件 {1}/1": [
+    "src/XGLauncher/CatalogPages.cs:262"
+  ],
+  "当前版本：v{0}": [
+    "src/XGLauncher/LauncherUpdates.cs:119"
+  ],
+  "当前版本：v{0}\n新版本：{1}\n是否更新？": [
+    "src/XGLauncher/LauncherUpdates.cs:91"
+  ],
+  "当前目录：": [
+    "src/XGLauncher/MigrationPage.cs:13"
+  ],
+  "当前系统不支持透明效果，已使用不透明显示；设置会保留。": [
+    "src/XGLauncher/AppearanceSettings.cs:31"
+  ],
+  "当前系统未提供毛玻璃，已使用普通透明显示。": [
+    "src/XGLauncher/AppearanceSettings.cs:33"
+  ],
+  "当前自定义模式无法自动迁移，请保留原目录。": [
+    "src/XGLauncher/MigrationPage.cs:10"
+  ],
+  "当前账号或应用无权访问该服务。": [
+    "src/XG.Core/MinecraftAuthentication.cs:274"
+  ],
+  "微软凭据已失效或需要再次授权，请重新使用浏览器登录。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:419"
+  ],
+  "微软应用注册或权限配置有误，请联系启动器开发者。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:423"
+  ],
+  "微软正版登录": [
+    "src/XGLauncher/AccountManagement.cs:43"
+  ],
+  "微软登录已取消或授权被拒绝。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:421"
+  ],
+  "微软登录未完成，请重新尝试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:429"
+  ],
+  "微软账号已验证并选择。": [
+    "src/XGLauncher/AccountManagement.cs:149"
+  ],
+  "快照版": [
+    "src/XGLauncher/MinecraftVersionPicker.cs:17"
+  ],
+  "性能": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "恢复 / 重试": [
+    "src/XGLauncher/CatalogPages.cs:306"
+  ],
+  "恢复备份": [
+    "src/XGLauncher/LucideIcon.cs:91",
+    "src/XGLauncher/SettingsPage.cs:58"
+  ],
+  "恢复普通": [
+    "src/XGLauncher/CatalogPages.cs:252"
+  ],
+  "所有选中的文件已一致": [
+    "src/XGLauncher/PackSynchronization.cs:90"
+  ],
+  "手动": [
+    "src/XGLauncher/InstanceEditor.cs:26",
+    "src/XGLauncher/InstanceEditor.cs:28"
+  ],
+  "手动添加": [
+    "src/XGLauncher/InstanceJavaSettings.cs:38"
+  ],
+  "手动覆盖 Java 路径（可选）": [
+    "src/XGLauncher/InstanceEditor.cs:25"
+  ],
+  "手动选择": [
+    "src/XGLauncher/InstanceEditor.cs:24"
+  ],
+  "打开 mods 文件夹": [
+    "src/XGLauncher/InstanceActions.cs:104"
+  ],
+  "打开 saves 文件夹": [
+    "src/XGLauncher/InstanceActions.cs:105"
+  ],
+  "打开光影包文件夹": [
+    "src/XGLauncher/InstanceActions.cs:107"
+  ],
+  "打开在线下载": [
+    "src/XGLauncher/CatalogPages.cs:98"
+  ],
+  "打开备份目录": [
+    "src/XGLauncher/SettingsPage.cs:58"
+  ],
+  "打开官方在线文档": [
+    "src/XGLauncher/LegalBrowser.cs:212"
+  ],
+  "打开崩溃报告目录": [
+    "src/XGLauncher/InstanceActions.cs:127"
+  ],
+  "打开日志文件夹": [
+    "src/XGLauncher/InstanceActions.cs:126"
+  ],
+  "打开游戏文件夹": [
+    "src/XGLauncher/InstanceActions.cs:103"
+  ],
+  "打开目录": [
+    "src/XGLauncher/SettingsPage.cs:25"
+  ],
+  "打开瞎搞启动器": [
+    "src/XGLauncher/MainWindow.cs:158"
+  ],
+  "打开资源包文件夹": [
+    "src/XGLauncher/InstanceActions.cs:106"
+  ],
+  "找不到暂存的整合包，请重新导入。": [
+    "src/XGLauncher/DownloadRecovery.cs:55"
+  ],
+  "找到匹配内容 · {0}/{1}": [
+    "src/XGLauncher/LegalBrowser.cs:231"
+  ],
+  "按原始文件阅读，不将未知授权状态标为已合规。": [
+    "src/XGLauncher/LegalBrowser.cs:171"
+  ],
+  "按需安装的 Java 运行时": [
+    "src/XGLauncher/LegalCatalog.cs:71"
+  ],
+  "按需安装的加载器": [
+    "src/XGLauncher/LegalCatalog.cs:64",
+    "src/XGLauncher/LegalCatalog.cs:65",
+    "src/XGLauncher/LegalCatalog.cs:66",
+    "src/XGLauncher/LegalCatalog.cs:67"
+  ],
+  "授权文件": [
+    "src/XGLauncher/LegalBrowser.cs:203"
+  ],
+  "排序": [
+    "src/XGLauncher/OnlineCatalog.cs:51"
+  ],
+  "排队中": [
+    "src/XGLauncher/InstanceActions.cs:42"
+  ],
+  "搜索": [
+    "src/XGLauncher/OnlineCatalog.cs:86"
+  ],
+  "搜索 Modrinth 整合包": [
+    "src/XGLauncher/OnlineCatalog.cs:117"
+  ],
+  "搜索 Modrinth 模组": [
+    "src/XGLauncher/OnlineCatalog.cs:117"
+  ],
+  "搜索整合包或项目 ID": [
+    "src/XGLauncher/OnlineCatalog.cs:42"
+  ],
+  "搜索模组或项目 ID": [
+    "src/XGLauncher/OnlineCatalog.cs:42"
+  ],
+  "搜索正文": [
+    "src/XGLauncher/LegalBrowser.cs:217"
+  ],
+  "搜索选项": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:258"
+  ],
+  "操作失败": [
+    "src/XGLauncher/MainWindow.cs:400"
+  ],
+  "数据目录": [
+    "src/XGLauncher/SettingsPage.cs:25"
+  ],
+  "整合包": [
+    "src/XGLauncher/OnlineCatalog.cs:95",
+    "src/XGLauncher/GameImportWizard.cs:17",
+    "src/XGLauncher/DownloadRecovery.cs:37",
+    "src/XGLauncher/DownloadRecovery.cs:52",
+    "src/XGLauncher/MainWindow.cs:19",
+    "src/XGLauncher/CatalogPages.cs:104",
+    "src/XG.Core/PackImporter.cs:76",
+    "src/XG.Core/PackImporter.cs:83"
+  ],
+  "整合包任务的目标实例已变化，请检查原实例。": [
+    "src/XG.Core/PackImporter.cs:23"
+  ],
+  "整合包包含重复文件。": [
+    "src/XG.Core/PackImporter.cs:60"
+  ],
+  "整合包同步 · {0}": [
+    "src/XGLauncher/PackSynchronization.cs:76"
+  ],
+  "整合包同步失败，详见下载管理。": [
+    "src/XGLauncher/PackSynchronization.cs:97"
+  ],
+  "整合包安装完成": [
+    "src/XGLauncher/OnlineCatalog.cs:430"
+  ],
+  "整合包导入完成": [
+    "src/XGLauncher/GameImportWizard.cs:59",
+    "src/XGLauncher/CatalogPages.cs:119"
+  ],
+  "整合包市场": [
+    "src/XGLauncher/OnlineCatalog.cs:96",
+    "src/XGLauncher/CatalogPages.cs:105"
+  ],
+  "整合包文件超过 1 GiB。": [
+    "src/XGLauncher/DownloadRecovery.cs:21"
+  ],
+  "整合包暂存记录无效。": [
+    "src/XGLauncher/DownloadRecovery.cs:44"
+  ],
+  "整合包清单过大。": [
+    "src/XG.Core/PackImporter.cs:27"
+  ],
+  "整合包目标已存在，未覆盖旧数据。": [
+    "src/XG.Core/PackImporter.cs:46"
+  ],
+  "整合包覆盖文件过大。": [
+    "src/XG.Core/PackImporter.cs:94"
+  ],
+  "整合包试图覆盖游戏核心目录。": [
+    "src/XG.Core/PackImporter.cs:141"
+  ],
+  "文件下载并发数": [
+    "src/XGLauncher/CatalogPages.cs:183"
+  ],
+  "文件与来源清单": [
+    "src/XGLauncher/LegalCatalog.cs:53"
+  ],
+  "文件名无效。": [
+    "src/XG.Core/Instances.cs:283"
+  ],
+  "文件哈希校验失败。": [
+    "src/XG.Core/VerifiedTransfer.cs:241"
+  ],
+  "文件在校验时发生变化，请重试。": [
+    "src/XG.Core/FileVerificationCache.cs:57"
+  ],
+  "文件已有任务或存在于目标实例：": [
+    "src/XGLauncher/OnlineCatalog.cs:459"
+  ],
+  "文件或目录": [
+    "src/XGLauncher/GameImportWizard.cs:18"
+  ],
+  "文件挡住同步目录：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:152"
+  ],
+  "文件挡住目标目录：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:176"
+  ],
+  "文件损坏": [
+    "src/XGLauncher/InstanceActions.cs:41",
+    "src/XG.Core/InstallationReceipt.cs:46",
+    "src/XG.Core/InstallationReceipt.cs:53",
+    "src/XG.Core/InstallationReceipt.cs:55",
+    "src/XG.Core/InstallationReceipt.cs:59",
+    "src/XG.Core/InstallationReceipt.cs:62",
+    "src/XG.Core/InstallationReceipt.cs:65"
+  ],
+  "文件未完整接收。": [
+    "src/XG.Core/VerifiedTransfer.cs:232"
+  ],
+  "文件清单或项目说明，不是第三方授权正文。": [
+    "src/XGLauncher/LegalCatalog.cs:45"
+  ],
+  "文件需通过原站取得。{0}": [
+    "src/XG.Core/PackImporter.cs:63"
+  ],
+  "新实例名称": [
+    "src/XGLauncher/GameImportWizard.cs:18"
+  ],
+  "新版本：{0}": [
+    "src/XGLauncher/LauncherUpdates.cs:120"
+  ],
+  "新的空目标目录": [
+    "src/XGLauncher/MigrationPage.cs:13"
+  ],
+  "旅行地图": [
+    "src/XGLauncher/OnlineCatalog.cs:27"
+  ],
+  "无": [
+    "src/XGLauncher/OnlineCatalog.cs:275",
+    "src/XGLauncher/OnlineCatalog.cs:275"
+  ],
+  "无兼容依赖版本：": [
+    "src/XG.Core/ModInstallPlanner.cs:108"
+  ],
+  "无兼容版本": [
+    "src/XGLauncher/CatalogPages.cs:95"
+  ],
+  "无可选项": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:421"
+  ],
+  "无法保存托盘设置：": [
+    "src/XGLauncher/SettingsPage.cs:50"
+  ],
+  "无法创建本地授权完成页面，请重试登录。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:379"
+  ],
+  "无法同步仅大小写不同的路径：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:164"
+  ],
+  "无法打开启动器目录，请选择一个可写位置。\n": [
+    "src/XGLauncher/MainWindow.cs:67"
+  ],
+  "无法打开系统默认浏览器，请检查 Windows 默认浏览器设置后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:410"
+  ],
+  "无法接收浏览器授权回调，请检查本机回环连接并重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:425"
+  ],
+  "无法移除所选账号，请检查本地加密缓存权限。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:295"
+  ],
+  "无法获取兼容版本，请检查网络或稍后重试。": [
+    "src/XGLauncher/InstanceEditor.cs:195"
+  ],
+  "无法获取版本列表，请检查网络。": [
+    "src/XGLauncher/InstanceEditor.cs:148"
+  ],
+  "无法访问 Windows 加密账号缓存。请检查数据目录权限，或在设置中清除本地缓存后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:352"
+  ],
+  "无法识别下载任务。": [
+    "src/XGLauncher/DownloadRecovery.cs:121"
+  ],
+  "无法识别整合包格式。": [
+    "src/XG.Core/PackImporter.cs:32"
+  ],
+  "旧版实例": [
+    "src/XGLauncher/SettingsPage.cs:60"
+  ],
+  "旧版实例复制已完成。": [
+    "src/XGLauncher/SettingsPage.cs:104"
+  ],
+  "旧版本目录包含冲突文件，未自动合并：": [
+    "src/XG.Core/FlatVersionLayout.cs:51"
+  ],
+  "暂不更新": [
+    "src/XGLauncher/LauncherUpdates.cs:92",
+    "src/XGLauncher/LauncherUpdates.cs:118"
+  ],
+  "暂停": [
+    "src/XGLauncher/CatalogPages.cs:227",
+    "src/XGLauncher/CatalogPages.cs:293"
+  ],
+  "暂无个人实例": [
+    "src/XGLauncher/MainWindow.cs:247"
+  ],
+  "暂无任务": [
+    "src/XGLauncher/CatalogPages.cs:334"
+  ],
+  "暂无其他实例。": [
+    "src/XGLauncher/PackSynchronization.cs:51"
+  ],
+  "暂无已安装模组": [
+    "src/XGLauncher/CatalogPages.cs:69"
+  ],
+  "暂无已安装游戏": [
+    "src/XGLauncher/CompactMode.cs:15"
+  ],
+  "暂无本地整合包": [
+    "src/XGLauncher/CatalogPages.cs:123"
+  ],
+  "暂无游玩记录": [
+    "src/XGLauncher/MainWindow.cs:237"
+  ],
+  "暂无账号": [
+    "src/XGLauncher/AccountSelectors.cs:26"
+  ],
+  "暂无账号，请在上方添加": [
+    "src/XGLauncher/AccountManagement.cs:23"
+  ],
+  "暂时无法校验所选 Java，请检查网络后重试。": [
+    "src/XGLauncher/InstanceEditor.cs:80"
+  ],
+  "暖米白": [
+    "src/XGLauncher/ThemePalette.cs:17"
+  ],
+  "更新": [
+    "src/XGLauncher/LauncherUpdates.cs:92"
+  ],
+  "更新下载或校验失败，原程序与用户数据未修改。请重新检查更新后重试。": [
+    "src/XGLauncher/LauncherUpdates.cs:135"
+  ],
+  "更新下载重定向到非官方地址。": [
+    "src/XG.Core/GitHubUpdates.cs:70"
+  ],
+  "更新下载重定向无效。": [
+    "src/XG.Core/GitHubUpdates.cs:67"
+  ],
+  "更新下载重定向次数过多。": [
+    "src/XG.Core/GitHubUpdates.cs:95"
+  ],
+  "更新仅替换程序与许可文件，保留游戏、存档、账号和设置。": [
+    "src/XGLauncher/LauncherUpdates.cs:120"
+  ],
+  "更新包信息无效。": [
+    "src/XG.Core/GitHubUpdates.cs:55"
+  ],
+  "更新包含不允许的文件路径。": [
+    "src/XG.Core/UpdateFiles.cs:17"
+  ],
+  "更新包大小不符。": [
+    "src/XG.Core/GitHubUpdates.cs:75",
+    "src/XG.Core/GitHubUpdates.cs:84"
+  ],
+  "更新包已校验。点击安装更新并重启，下载任务将保存后退出。": [
+    "src/XGLauncher/LauncherUpdates.cs:129"
+  ],
+  "更新包校验失败。": [
+    "src/XG.Core/GitHubUpdates.cs:89",
+    "src/XG.Core/UpdateFiles.cs:34"
+  ],
+  "更新包结构无效。": [
+    "src/XG.Core/UpdateFiles.cs:49"
+  ],
+  "更新包缺少程序或许可证。": [
+    "src/XG.Core/UpdateFiles.cs:56"
+  ],
+  "更新文件过多。": [
+    "src/XG.Core/UpdateFiles.cs:43"
+  ],
+  "更新时间": [
+    "src/XGLauncher/OnlineCatalog.cs:51"
+  ],
+  "更新服务数据过大。": [
+    "src/XG.Core/GitHubUpdates.cs:116"
+  ],
+  "更新服务返回的数据无效。": [
+    "src/XG.Core/GitHubUpdates.cs:25"
+  ],
+  "更新校验值无效。": [
+    "src/XG.Core/UpdateFiles.cs:32"
+  ],
+  "更新程序不是 Windows EXE。": [
+    "src/XG.Core/UpdateFiles.cs:60"
+  ],
+  "更新程序不是 Windows x64。": [
+    "src/XG.Core/UpdateFiles.cs:64"
+  ],
+  "更新程序结构无效。": [
+    "src/XG.Core/UpdateFiles.cs:62"
+  ],
+  "更新路径不能包含目录链接。": [
+    "src/XG.Core/UpdateFiles.cs:24"
+  ],
+  "更新路径越界。": [
+    "src/XG.Core/UpdateFiles.cs:20"
+  ],
+  "服务与 API 使用条款": [
+    "src/XGLauncher/LegalCatalog.cs:63"
+  ],
+  "服务响应格式无效": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:123"
+  ],
+  "服务器提供的文件大小与元数据不符。": [
+    "src/XG.Core/VerifiedTransfer.cs:197"
+  ],
+  "服务器返回了无效的续传范围或文件标识。": [
+    "src/XG.Core/VerifiedTransfer.cs:207"
+  ],
+  "服务拒绝访问；具体原因未确认": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:116"
+  ],
+  "服务拒绝访问。响应未确认应用注册被拒，请复制诊断信息以便核查。": [
+    "src/XG.Core/MinecraftAuthentication.cs:270"
+  ],
+  "服务暂时不可用": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:118"
+  ],
+  "服务暂时不可用，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:236"
+  ],
+  "服务未完成验证，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:275"
+  ],
+  "服务未提供可安全记录的错误字段。": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:34"
+  ],
+  "服务端详情未能安全识别": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:125"
+  ],
+  "未发现兼容 Java。启动时将通过下载管理获取 Mojang 官方运行时。": [
+    "src/XGLauncher/InstanceJavaSettings.cs:33"
+  ],
+  "未发现可用的新版本。": [
+    "src/XGLauncher/LauncherUpdates.cs:70"
+  ],
+  "未安装": [
+    "src/XGLauncher/OnlineCatalog.cs:275",
+    "src/XGLauncher/InstanceActions.cs:41",
+    "src/XGLauncher/InstanceActions.cs:53",
+    "src/XG.Core/InstallationReceipt.cs:44",
+    "src/XG.Core/InstallationReceipt.cs:48",
+    "src/XG.Core/ExistingInstallation.cs:23",
+    "src/XG.Core/ExistingInstallation.cs:27"
+  ],
+  "未找到符合条件的文件。": [
+    "src/XGLauncher/OnlineCatalog.cs:246"
+  ],
+  "未查到受支持的 Java 权益": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:124"
+  ],
+  "未标注": [
+    "src/XGLauncher/OnlineCatalog.cs:324"
+  ],
+  "未游玩": [
+    "src/XGLauncher/MainWindow.cs:254"
+  ],
+  "未记录": [
+    "src/XGLauncher/AboutPage.cs:49"
+  ],
+  "本体": [
+    "src/XGLauncher/StageRail.cs:195"
+  ],
+  "本地 Modrinth 清单": [
+    "src/XGLauncher/DownloadRecovery.cs:37"
+  ],
+  "本地安装检查不会下载资源。": [
+    "src/XG.Core/ExistingInstallation.cs:83"
+  ],
+  "本地微软缓存删除失败，请检查启动器数据目录权限后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:319"
+  ],
+  "本地整合包": [
+    "src/XGLauncher/OnlineCatalog.cs:96",
+    "src/XGLauncher/CatalogPages.cs:105"
+  ],
+  "本地整合包暂存文件校验失败，请重新导入。": [
+    "src/XGLauncher/DownloadRecovery.cs:57"
+  ],
+  "本地诊断编号：{0}": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:41"
+  ],
+  "机械动力": [
+    "src/XGLauncher/OnlineCatalog.cs:26"
+  ],
+  "来源": [
+    "src/XGLauncher/OnlineCatalog.cs:47"
+  ],
+  "来源与目标是同一个实例目录。": [
+    "src/XG.Core/Instances.cs:144"
+  ],
+  "来源已改变，请重新分析。": [
+    "src/XGLauncher/MigrationPage.cs:23",
+    "src/XGLauncher/GameImportWizard.cs:56"
+  ],
+  "构建或安装工具参考，不随 EXE 分发工具二进制。": [
+    "src/XGLauncher/LegalCatalog.cs:44"
+  ],
+  "构建时间（UTC）：": [
+    "src/XGLauncher/AboutPage.cs:73"
+  ],
+  "柔和、精致": [
+    "src/XGLauncher/ThemePalette.cs:15"
+  ],
+  "查找下一个": [
+    "src/XGLauncher/LegalBrowser.cs:233"
+  ],
+  "查看 {0} 详情": [
+    "src/XGLauncher/OnlineCatalog.cs:309"
+  ],
+  "查看 MIT License": [
+    "src/XGLauncher/AboutPage.cs:78"
+  ],
+  "查看 Modrinth": [
+    "src/XGLauncher/OnlineCatalog.cs:233"
+  ],
+  "查看内置说明": [
+    "src/XGLauncher/LegalBrowser.cs:88"
+  ],
+  "查看加载器日志": [
+    "src/XGLauncher/LucideIcon.cs:91",
+    "src/XGLauncher/InstanceActions.cs:120",
+    "src/XGLauncher/InstanceActions.cs:172"
+  ],
+  "查看日志": [
+    "src/XGLauncher/LucideIcon.cs:91"
+  ],
+  "查看游戏日志": [
+    "src/XGLauncher/LucideIcon.cs:91",
+    "src/XGLauncher/InstanceActions.cs:108",
+    "src/XGLauncher/InstanceActions.cs:171"
+  ],
+  "查看详情": [
+    "src/XGLauncher/LauncherDialog.cs:119",
+    "src/XGLauncher/LauncherDialog.cs:121"
+  ],
+  "查看详细错误": [
+    "src/XGLauncher/AccountManagement.cs:51"
+  ],
+  "校验": [
+    "src/XGLauncher/StageRail.cs:197"
+  ],
+  "校验中": [
+    "src/XGLauncher/WindowShutdown.cs:31",
+    "src/XGLauncher/StageRail.cs:94",
+    "src/XGLauncher/InstanceActions.cs:22",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:43",
+    "src/XGLauncher/InstanceActions.cs:199",
+    "src/XGLauncher/CatalogPages.cs:226",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/GameService.cs:195",
+    "src/XG.Core/GameService.cs:360",
+    "src/XG.Core/InstallationProgress.cs:42",
+    "src/XG.Core/InstallationProgress.cs:43",
+    "src/XG.Core/VerifiedTransfer.cs:235"
+  ],
+  "校验完成，可以切换目录。": [
+    "src/XGLauncher/MigrationPage.cs:18"
+  ],
+  "校验期间设置已变更，请重新保存。": [
+    "src/XGLauncher/InstanceEditor.cs:83"
+  ],
+  "检查 Modrinth 更新": [
+    "src/XGLauncher/CatalogPages.cs:77"
+  ],
+  "检查及更新官方 Java": [
+    "src/XGLauncher/InstanceActions.cs:114"
+  ],
+  "检查失败": [
+    "src/XGLauncher/InstanceActions.cs:30"
+  ],
+  "检查更新失败，请检查网络后重试。": [
+    "src/XGLauncher/LauncherUpdates.cs:83"
+  ],
+  "检查目标兼容性和冲突": [
+    "src/XG.Core/InstanceSynchronization.cs:51"
+  ],
+  "检查迁移内容": [
+    "src/XGLauncher/MigrationPage.cs:15"
+  ],
+  "检测到不兼容模组：": [
+    "src/XG.Core/ModInstallPlanner.cs:57"
+  ],
+  "模组": [
+    "src/XGLauncher/OnlineCatalog.cs:464",
+    "src/XG.Core/Downloads.cs:8",
+    "src/XG.Core/Downloads.cs:63"
+  ],
+  "模组 JAR": [
+    "src/XGLauncher/GameImportWizard.cs:17"
+  ],
+  "模组、整合包与 API 服务": [
+    "src/XGLauncher/LegalCatalog.cs:63"
+  ],
+  "模组依赖": [
+    "src/XGLauncher/OnlineCatalog.cs:464"
+  ],
+  "模组加载器": [
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/StageRail.cs:198",
+    "src/XGLauncher/StageRail.cs:198",
+    "src/XGLauncher/CompactMode.cs:181",
+    "src/XGLauncher/InstanceActions.cs:38",
+    "src/XGLauncher/CatalogPages.cs:146",
+    "src/XGLauncher/CatalogPages.cs:175",
+    "src/XG.Core/ResourceOperations.cs:33",
+    "src/XG.Core/ResourceOperations.cs:124",
+    "src/XG.Core/ResourceOperations.cs:186",
+    "src/XG.Core/GameService.cs:182",
+    "src/XG.Core/GameService.cs:182",
+    "src/XG.Core/GameService.cs:262",
+    "src/XG.Core/GameService.cs:310",
+    "src/XG.Core/InstallationProgress.cs:38"
+  ],
+  "模组和已安装依赖": [
+    "src/XGLauncher/PackSynchronization.cs:34"
+  ],
+  "模组安装计划未完成。请在下载管理检查失败或暂停的任务。": [
+    "src/XGLauncher/OnlineCatalog.cs:467"
+  ],
+  "模组导入完成。": [
+    "src/XGLauncher/GameImportWizard.cs:58"
+  ],
+  "模组文件不适用或文件名冲突：{0}": [
+    "src/XG.Core/ModInstallPlanner.cs:68"
+  ],
+  "模组更新": [
+    "src/XGLauncher/OnlineCatalog.cs:97",
+    "src/XGLauncher/CatalogPages.cs:31"
+  ],
+  "模组版本与目标实例或指定项目不兼容：": [
+    "src/XG.Core/ModInstallPlanner.cs:76"
+  ],
+  "模组目标实例": [
+    "src/XGLauncher/GameImportWizard.cs:19"
+  ],
+  "模组管理": [
+    "src/XGLauncher/OnlineCatalog.cs:95",
+    "src/XGLauncher/MainWindow.cs:19",
+    "src/XGLauncher/CatalogPages.cs:30"
+  ],
+  "正在下载更新…": [
+    "src/XGLauncher/LauncherUpdates.cs:100"
+  ],
+  "正在保存下载任务，等待当前安装步骤安全结束…": [
+    "src/XGLauncher/WindowShutdown.cs:40"
+  ],
+  "正在保存下载任务，请稍后重试。": [
+    "src/XG.Core/ResourceOperations.cs:115",
+    "src/XG.Core/ResourceOperations.cs:134",
+    "src/XG.Core/ResourceOperations.cs:266",
+    "src/XG.Core/Downloads.cs:99",
+    "src/XG.Core/VerifiedTransfer.cs:87"
+  ],
+  "正在准备…": [
+    "src/XGLauncher/CompactDownloadForm.cs:34"
+  ],
+  "正在准备安装任务…": [
+    "src/XGLauncher/CompactDownloadForm.cs:35"
+  ],
+  "正在加载…": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:421"
+  ],
+  "正在加载更多内容…": [
+    "src/XGLauncher/OnlineCatalog.cs:185"
+  ],
+  "正在安装…": [
+    "src/XGLauncher/CompactDownloadForm.cs:64"
+  ],
+  "正在执行加载器安装程序…": [
+    "src/XG.Core/GameService.cs:267"
+  ],
+  "正在扫描已安装游戏…": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:202"
+  ],
+  "正在按文件校验值识别模组…": [
+    "src/XGLauncher/CatalogPages.cs:80"
+  ],
+  "正在搜索…": [
+    "src/XGLauncher/OnlineCatalog.cs:185"
+  ],
+  "正在校验加载器安装结果…": [
+    "src/XG.Core/GameService.cs:333"
+  ],
+  "正在检查和准备游戏": [
+    "src/XGLauncher/CompactMode.cs:127",
+    "src/XGLauncher/InstanceActions.cs:71",
+    "src/XGLauncher/InstanceActions.cs:90"
+  ],
+  "正在检测 Java…": [
+    "src/XGLauncher/InstanceJavaSettings.cs:21"
+  ],
+  "正在获取兼容加载器版本…": [
+    "src/XGLauncher/InstanceEditor.cs:174"
+  ],
+  "正在读取官方版本列表…": [
+    "src/XGLauncher/InstanceEditor.cs:134"
+  ],
+  "正在读取版本与依赖…": [
+    "src/XGLauncher/OnlineCatalog.cs:234"
+  ],
+  "正在验证已保存的微软账号……": [
+    "src/XGLauncher/AccountManagement.cs:141"
+  ],
+  "正式版": [
+    "src/XGLauncher/MinecraftVersionPicker.cs:17"
+  ],
+  "此任务没有恢复信息。": [
+    "src/XGLauncher/DownloadRecovery.cs:115"
+  ],
+  "此任务目前不可恢复。": [
+    "src/XG.Core/ResourceOperations.cs:135"
+  ],
+  "此实例还没有加载器日志。": [
+    "src/XGLauncher/InstanceActions.cs:123"
+  ],
+  "此微软账号未通过 Minecraft Java 版所有权验证。请检查是否选中了购买游戏或拥有有效订阅的账号。": [
+    "src/XG.Core/MinecraftAuthentication.cs:132"
+  ],
+  "此微软账号的本地凭据不可用，请通过添加账号重新登录。": [
+    "src/XGLauncher/AccountProfiles.cs:27"
+  ],
+  "此文件不是 .mrpack。": [
+    "src/XGLauncher/OnlineCatalog.cs:424"
+  ],
+  "此文件已有下载任务。": [
+    "src/XG.Core/Downloads.cs:68"
+  ],
+  "此游戏版本没有兼容的加载器版本。": [
+    "src/XGLauncher/CompactDownloadForm.cs:80"
+  ],
+  "此版本尚未配置开发者的微软应用 ID。离线账号仍可使用。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:335"
+  ],
+  "此设置超过当前建议值 {0} MB。": [
+    "src/XGLauncher/InstanceEditor.cs:210"
+  ],
+  "武器战斗": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "没有与游戏版本兼容的 Forge 安装版本。": [
+    "src/XG.Core/GameService.cs:327"
+  ],
+  "没有找到兼容的安装文件。": [
+    "src/XGLauncher/OnlineCatalog.cs:420"
+  ],
+  "没有找到匹配内容。": [
+    "src/XGLauncher/LegalBrowser.cs:229"
+  ],
+  "没有找到已知加载器的模组清单。": [
+    "src/XG.Core/LocalMods.cs:15"
+  ],
+  "没有找到符合条件的内容": [
+    "src/XGLauncher/OnlineCatalog.cs:204"
+  ],
+  "浅紫": [
+    "src/XGLauncher/ThemePalette.cs:15"
+  ],
+  "深度扫描": [
+    "src/XGLauncher/InstanceJavaSettings.cs:39"
+  ],
+  "深海蓝": [
+    "src/XGLauncher/ThemePalette.cs:18"
+  ],
+  "深色、沉稳": [
+    "src/XGLauncher/ThemePalette.cs:18"
+  ],
+  "添加离线账号": [
+    "src/XGLauncher/AccountManagement.cs:30",
+    "src/XGLauncher/CompactAccountForm.cs:36"
+  ],
+  "添加账号": [
+    "src/XGLauncher/AccountSelectors.cs:13",
+    "src/XGLauncher/UnifiedExpandableSelect.cs:209",
+    "src/XGLauncher/UnifiedExpandableSelect.cs:209"
+  ],
+  "清单包含不支持的加载器配置。": [
+    "src/XG.Core/PackImporter.cs:39"
+  ],
+  "清爽、科技感": [
+    "src/XGLauncher/ThemePalette.cs:14"
+  ],
+  "清理已完成": [
+    "src/XGLauncher/CatalogPages.cs:209"
+  ],
+  "温暖、耐看": [
+    "src/XGLauncher/ThemePalette.cs:17"
+  ],
+  "游戏": [
+    "src/XGLauncher/InstanceActions.cs:87"
+  ],
+  "游戏下载提前结束，正在重试（{0}/2）": [
+    "src/XG.Core/GameService.cs:484"
+  ],
+  "游戏下载连接中断，正在重试（{0}/2）": [
+    "src/XG.Core/GameService.cs:479"
+  ],
+  "游戏元数据与资源服务": [
+    "src/XGLauncher/LegalCatalog.cs:60"
+  ],
+  "游戏及模组资源使用官方渠道；下载文件会校验后再安装。用户数据保留于本地工作目录。": [
+    "src/XGLauncher/SettingsPage.cs:62"
+  ],
+  "游戏启动与安装库": [
+    "src/XGLauncher/LegalCatalog.cs:72"
+  ],
+  "游戏实例": [
+    "src/XGLauncher/MainWindow.cs:231"
+  ],
+  "游戏已退出（{0}）": [
+    "src/XGLauncher/LauncherModel.cs:106"
+  ],
+  "游戏已退出（{0}），日志写入失败，请检查磁盘空间和权限。": [
+    "src/XGLauncher/LauncherModel.cs:106"
+  ],
+  "游戏本体": [
+    "src/XGLauncher/DownloadRecovery.cs:89",
+    "src/XGLauncher/StageRail.cs:195",
+    "src/XG.Core/GameService.cs:178",
+    "src/XG.Core/GameService.cs:183",
+    "src/XG.Core/GameService.cs:183"
+  ],
+  "游戏版本": [
+    "src/XGLauncher/CompactDownloadForm.cs:23"
+  ],
+  "游戏目录无法写入。请在可写位置运行启动器，并检查可用磁盘空间。": [
+    "src/XG.Core/GameService.cs:428"
+  ],
+  "游戏资源和商标归各自权利人所有；第三方鸣谢不代表赞助、认可或合作。": [
+    "src/XGLauncher/LegalBrowser.cs:100"
+  ],
+  "游戏资源和商标归各自权利人所有。第三方鸣谢不代表获得官方认可、赞助或合作，在线服务须遵守相应条款。": [
+    "src/XGLauncher/LegalBrowser.cs:196"
+  ],
+  "游戏运行中": [
+    "src/XGLauncher/CompactMode.cs:130",
+    "src/XGLauncher/InstanceActions.cs:17",
+    "src/XGLauncher/InstanceActions.cs:17",
+    "src/XGLauncher/InstanceActions.cs:41",
+    "src/XGLauncher/LauncherModel.cs:103"
+  ],
+  "源实例没有选中类型的文件。": [
+    "src/XG.Core/InstanceSynchronization.cs:48"
+  ],
+  "点击应用": [
+    "src/XGLauncher/AppearanceSettings.cs:43"
+  ],
+  "点击版本号检查更新": [
+    "src/XGLauncher/LauncherUpdates.cs:31"
+  ],
+  "点击项目即可阅读对应文件。": [
+    "src/XGLauncher/LegalBrowser.cs:178"
+  ],
+  "版本": [
+    "src/XGLauncher/OnlineCatalog.cs:43",
+    "src/XGLauncher/OnlineCatalog.cs:263"
+  ],
+  "版本不包含可用文件。": [
+    "src/XG.Core/Modrinth.cs:108"
+  ],
+  "版本号无效。": [
+    "src/XG.Core/GitHubUpdates.cs:125"
+  ],
+  "版本更新": [
+    "src/XGLauncher/LauncherUpdates.cs:69"
+  ],
+  "版本目录含链接，不能自动合并。": [
+    "src/XG.Core/FlatVersionLayout.cs:32"
+  ],
+  "版本目录存在同名但内容不同的文件，未自动覆盖：": [
+    "src/XG.Core/FlatVersionLayout.cs:48"
+  ],
+  "版本目录迁移记录无效。": [
+    "src/XG.Core/FlatVersionLayout.cs:25"
+  ],
+  "版本资源目标是同名目录，未覆盖任何文件。": [
+    "src/XG.Core/FlatVersionLayout.cs:46"
+  ],
+  "版本迁移备份路径无效。": [
+    "src/XG.Core/FlatVersionLayout.cs:150"
+  ],
+  "版本迁移恢复路径含链接。": [
+    "src/XG.Core/FlatVersionLayout.cs:153"
+  ],
+  "版本迁移资源路径无效。": [
+    "src/XG.Core/FlatVersionLayout.cs:148"
+  ],
+  "玉": [
+    "src/XGLauncher/OnlineCatalog.cs:26"
+  ],
+  "玩家名须为 3–16 位英文字母、数字或下划线。": [
+    "src/XG.Core/Instances.cs:28"
+  ],
+  "生物": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "由系统决定毛玻璃是否可用，不支持时自动回退。": [
+    "src/XGLauncher/AppearanceSettings.cs:83"
+  ],
+  "界面": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "界面图标": [
+    "src/XGLauncher/LegalCatalog.cs:69"
+  ],
+  "界面框架": [
+    "src/XGLauncher/LegalCatalog.cs:70"
+  ],
+  "登录将在微软官方浏览器页面完成。": [
+    "src/XGLauncher/AccountManagement.cs:103"
+  ],
+  "登录服务连接中断或超时，请检查网络后重试。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:428"
+  ],
+  "目录架构参考": [
+    "src/XGLauncher/LegalCatalog.cs:59"
+  ],
+  "目录架构参考鸣谢": [
+    "src/XGLauncher/LegalCatalog.cs:52"
+  ],
+  "目录架构思路参考鸣谢；未引入 PCL 源码或资源，不是其许可证正文": [
+    "src/XGLauncher/LegalCatalog.cs:59"
+  ],
+  "目标为新实例": [
+    "src/XGLauncher/OnlineCatalog.cs:275"
+  ],
+  "目标包含未通过校验的文件，未覆盖。": [
+    "src/XG.Core/PackImporter.cs:118"
+  ],
+  "目标实例  {0}": [
+    "src/XGLauncher/OnlineCatalog.cs:241"
+  ],
+  "目标实例已删除或配置已变更，请在实例页面重新开始。": [
+    "src/XGLauncher/DownloadRecovery.cs:124"
+  ],
+  "目标实例已变化，请重新打开详情并选择版本。": [
+    "src/XGLauncher/OnlineCatalog.cs:411"
+  ],
+  "目标实例已有同项目的其他版本或禁用文件：": [
+    "src/XG.Core/ModInstallPlanner.cs:86"
+  ],
+  "目标实例正在使用。": [
+    "src/XGLauncher/DownloadRecovery.cs:99",
+    "src/XGLauncher/DownloadRecovery.cs:125"
+  ],
+  "目标目录与文件冲突：{0}": [
+    "src/XG.Core/InstanceSynchronization.cs:179"
+  ],
+  "目标路径含链接，未合并版本资源。": [
+    "src/XG.Core/FlatVersionLayout.cs:45"
+  ],
+  "相关度": [
+    "src/XGLauncher/OnlineCatalog.cs:51"
+  ],
+  "瞎搞启动器": [
+    "src/XGLauncher/TitleBar.cs:39",
+    "src/XGLauncher/AboutPage.cs:72",
+    "src/XGLauncher/MainWindow.cs:40",
+    "src/XGLauncher/MainWindow.cs:156"
+  ],
+  "知道了": [
+    "src/XGLauncher/LauncherUpdates.cs:70"
+  ],
+  "确认": [
+    "src/XGLauncher/CatalogPages.cs:389"
+  ],
+  "确认并导入": [
+    "src/XGLauncher/GameImportWizard.cs:55"
+  ],
+  "确认操作": [
+    "src/XGLauncher/CatalogPages.cs:386"
+  ],
+  "磁盘可用空间不足。": [
+    "src/XG.Core/VerifiedTransfer.cs:290",
+    "src/XG.Core/VerifiedTransfer.cs:299"
+  ],
+  "禁用": [
+    "src/XGLauncher/CatalogPages.cs:58"
+  ],
+  "离线玩家名": [
+    "src/XGLauncher/AccountManagement.cs:20"
+  ],
+  "离线玩家名字": [
+    "src/XGLauncher/CompactAccountForm.cs:19",
+    "src/XGLauncher/CompactAccountForm.cs:55"
+  ],
+  "离线玩家名称": [
+    "src/XGLauncher/AccountManagement.cs:101"
+  ],
+  "科技": [
+    "src/XGLauncher/OnlineCatalog.cs:53"
+  ],
+  "窗口不透明度": [
+    "src/XGLauncher/AppearanceSettings.cs:76",
+    "src/XGLauncher/AppearanceSettings.cs:87"
+  ],
+  "窗口设置保存失败，请检查目录权限。": [
+    "src/XGLauncher/WindowSession.cs:171"
+  ],
+  "第三方许可证": [
+    "src/XGLauncher/LegalBrowser.cs:90",
+    "src/XGLauncher/LegalBrowser.cs:140",
+    "src/XGLauncher/LegalBrowser.cs:171",
+    "src/XGLauncher/AboutPage.cs:79"
+  ],
+  "等待中": [
+    "src/XGLauncher/WindowShutdown.cs:31",
+    "src/XGLauncher/StageRail.cs:95",
+    "src/XGLauncher/InstanceActions.cs:42",
+    "src/XGLauncher/InstanceActions.cs:199",
+    "src/XGLauncher/CatalogPages.cs:226",
+    "src/XG.Core/ResourceControl.cs:35",
+    "src/XG.Core/ResourceOperations.cs:91",
+    "src/XG.Core/ResourceOperations.cs:119",
+    "src/XG.Core/ResourceOperations.cs:158",
+    "src/XG.Core/ResourceOperations.cs:198",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/Downloads.cs:200",
+    "src/XG.Core/RelayProgressTracker.cs:24",
+    "src/XG.Core/InstallationProgress.cs:43",
+    "src/XG.Core/VerifiedTransfer.cs:184",
+    "src/XG.Core/VerifiedTransfer.cs:247"
+  ],
+  "等待同步": [
+    "src/XGLauncher/PackSynchronization.cs:14"
+  ],
+  "等待当前安装步骤结束后取消": [
+    "src/XG.Core/ResourceOperations.cs:56",
+    "src/XG.Core/ResourceOperations.cs:215"
+  ],
+  "等待当前安装步骤结束后暂停": [
+    "src/XG.Core/ResourceOperations.cs:44"
+  ],
+  "等待微软授权回调超时。请重新登录并保持默认浏览器打开。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:156"
+  ],
+  "等待恢复": [
+    "src/XGLauncher/StageRail.cs:95",
+    "src/XGLauncher/StageRail.cs:100",
+    "src/XGLauncher/InstanceActions.cs:42",
+    "src/XG.Core/ResourceOperations.cs:27",
+    "src/XG.Core/ResourceOperations.cs:76",
+    "src/XG.Core/ResourceOperations.cs:170",
+    "src/XG.Core/RelayProgressTracker.cs:24"
+  ],
+  "简体中文": [
+    "src/XGLauncher/AppearanceSettings.cs:49"
+  ],
+  "系统托盘": [
+    "src/XGLauncher/SettingsPage.cs:56"
+  ],
+  "经典黑白": [
+    "src/XGLauncher/ThemePalette.cs:19"
+  ],
+  "继续": [
+    "src/XGLauncher/CatalogPages.cs:293"
+  ],
+  "继续 / 重试": [
+    "src/XGLauncher/CatalogPages.cs:227"
+  ],
+  "继续下载": [
+    "src/XGLauncher/InstanceActions.cs:42"
+  ],
+  "编辑": [
+    "src/XGLauncher/MainWindow.cs:260"
+  ],
+  "编辑实例": [
+    "src/XGLauncher/LucideIcon.cs:90",
+    "src/XGLauncher/InstanceEditor.cs:17",
+    "src/XGLauncher/InstanceActions.cs:101"
+  ],
+  "缺少 Modrinth 清单。": [
+    "src/XG.Core/PackImporter.cs:26"
+  ],
+  "缺少内置许可证文件。": [
+    "src/XGLauncher/LegalCatalog.cs:23"
+  ],
+  "缺少受支持的文件哈希。": [
+    "src/XG.Core/VerifiedTransfer.cs:267"
+  ],
+  "缺少受支持的文件地址或 SHA-512 校验值。": [
+    "src/XG.Core/Downloads.cs:60"
+  ],
+  "缺少启动元数据，请重新检查安装。": [
+    "src/XG.Core/GameService.cs:394"
+  ],
+  "缺少实例配置。": [
+    "src/XG.Core/Backups.cs:67"
+  ],
+  "缺少无法在 Modrinth 解析的本地依赖：": [
+    "src/XG.Core/ModInstallPlanner.cs:111"
+  ],
+  "缺少更新程序，请完整解压发布包。": [
+    "src/XGLauncher/LauncherUpdates.cs:106"
+  ],
+  "缺少正式 XG Logo。": [
+    "src/XGLauncher/OfficialLogo.cs:16"
+  ],
+  "脱敏认证诊断": [
+    "src/XGLauncher/AccountManagement.cs:54"
+  ],
+  "自动": [
+    "src/XGLauncher/InstanceEditor.cs:26",
+    "src/XGLauncher/InstanceEditor.cs:28"
+  ],
+  "自动（推荐）": [
+    "src/XGLauncher/InstanceEditor.cs:24"
+  ],
+  "自动选择（推荐）": [
+    "src/XGLauncher/InstanceJavaSettings.cs:8"
+  ],
+  "自定义外部数据目录不支持自动切换，原目录保持不变。": [
+    "src/XGLauncher/MigrationPage.cs:12"
+  ],
+  "自然、舒适": [
+    "src/XGLauncher/ThemePalette.cs:16"
+  ],
+  "自身许可证": [
+    "src/XGLauncher/LegalBrowser.cs:139"
+  ],
+  "苹果皮": [
+    "src/XGLauncher/OnlineCatalog.cs:26"
+  ],
+  "薄荷绿": [
+    "src/XGLauncher/ThemePalette.cs:16"
+  ],
+  "许可证  {0}": [
+    "src/XGLauncher/OnlineCatalog.cs:265"
+  ],
+  "许可证与版权声明": [
+    "src/XGLauncher/LegalCatalog.cs:53"
+  ],
+  "许可证与鸣谢": [
+    "src/XGLauncher/LegalBrowser.cs:136",
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "设为优先": [
+    "src/XGLauncher/CatalogPages.cs:252"
+  ],
+  "设为安装目标": [
+    "src/XGLauncher/LucideIcon.cs:92",
+    "src/XGLauncher/InstanceActions.cs:102"
+  ],
+  "设置": [
+    "src/XGLauncher/MainWindow.cs:19"
+  ],
+  "该 Xbox 账号所在地区的服务不可用。": [
+    "src/XG.Core/MinecraftAuthentication.cs:257"
+  ],
+  "该实例尚未产生启动日志。": [
+    "src/XGLauncher/InstanceActions.cs:111"
+  ],
+  "该微软账号尚未创建 Xbox 档案，请先在 Xbox 官方页面完成设置。": [
+    "src/XG.Core/MinecraftAuthentication.cs:256"
+  ],
+  "该文件夹是符号链接或目录联接。": [
+    "src/XGLauncher/InstanceActions.cs:163"
+  ],
+  "该模组及其必需依赖已安装。": [
+    "src/XGLauncher/OnlineCatalog.cs:442"
+  ],
+  "该项目的授权文件尚未取得，请查看未验证事项。": [
+    "src/XGLauncher/LegalBrowser.cs:182"
+  ],
+  "语言": [
+    "src/XGLauncher/AppearanceSettings.cs:49",
+    "src/XGLauncher/AppearanceSettings.cs:86"
+  ],
+  "请先停止此实例的下载。": [
+    "src/XGLauncher/InstanceActions.cs:201"
+  ],
+  "请先关闭正在运行的游戏，或等待文件操作结束。": [
+    "src/XGLauncher/WindowShutdown.cs:25"
+  ],
+  "请先关闭游戏。": [
+    "src/XGLauncher/CatalogPages.cs:381"
+  ],
+  "请先关闭游戏并处理未完成任务。": [
+    "src/XGLauncher/MigrationPage.cs:9"
+  ],
+  "请先分析来源。": [
+    "src/XGLauncher/GameImportWizard.cs:60"
+  ],
+  "请先选中游戏实例": [
+    "src/XGLauncher/CatalogPages.cs:41",
+    "src/XGLauncher/CatalogPages.cs:75"
+  ],
+  "请先选择 Minecraft 版本。": [
+    "src/XGLauncher/InstanceJavaSettings.cs:29"
+  ],
+  "请先选择已确认兼容的加载器版本。": [
+    "src/XGLauncher/InstanceEditor.cs:59"
+  ],
+  "请先选择游戏实例。": [
+    "src/XGLauncher/OnlineCatalog.cs:415",
+    "src/XGLauncher/GameImportWizard.cs:58",
+    "src/XGLauncher/SettingsPage.cs:108"
+  ],
+  "请勾选至少一种要同步的内容。": [
+    "src/XG.Core/InstanceSynchronization.cs:44"
+  ],
+  "请勾选要同步的内容。": [
+    "src/XGLauncher/PackSynchronization.cs:61"
+  ],
+  "请在浏览器完成微软登录和授权。": [
+    "src/XGLauncher/CompactAccountForm.cs:41"
+  ],
+  "请在浏览器完成微软登录和授权。关闭此窗口可取消。": [
+    "src/XGLauncher/AccountManagement.cs:141"
+  ],
+  "请求受到限流": [
+    "src/XG.Core/AuthDiagnosticTrace.cs:117"
+  ],
+  "请求过于频繁，请在约 {0} 秒后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:233"
+  ],
+  "请求过于频繁，请稍后重试。": [
+    "src/XG.Core/MinecraftAuthentication.cs:234"
+  ],
+  "请等待文件操作结束后重试关闭。": [
+    "src/XGLauncher/WindowShutdown.cs:49"
+  ],
+  "请输入 512–65536 之间的整数内存值（MB）。": [
+    "src/XGLauncher/InstanceEditor.cs:64"
+  ],
+  "请输入实例名称。": [
+    "src/XGLauncher/InstanceEditor.cs:56"
+  ],
+  "请输入搜索内容。": [
+    "src/XGLauncher/LegalBrowser.cs:226"
+  ],
+  "请输入有效的整数分辨率。宽度 320–7680，高度 240–4320。": [
+    "src/XGLauncher/InstanceEditor.cs:67"
+  ],
+  "请选择": [
+    "src/XGLauncher/UnifiedExpandableSelect.cs:33"
+  ],
+  "请选择 JAR 文件。": [
+    "src/XGLauncher/GameImportWizard.cs:58",
+    "src/XG.Core/LocalMods.cs:11"
+  ],
+  "请选择 Minecraft 版本。": [
+    "src/XGLauncher/InstanceEditor.cs:57"
+  ],
+  "请选择使用模组加载器的实例。": [
+    "src/XGLauncher/OnlineCatalog.cs:417"
+  ],
+  "请选择存在的 Java 可执行文件。": [
+    "src/XGLauncher/InstanceEditor.cs:71",
+    "src/XGLauncher/InstanceEditor.cs:74"
+  ],
+  "请选择实例以查看兼容版本。": [
+    "src/XGLauncher/OnlineCatalog.cs:246"
+  ],
+  "请选择游戏与加载器版本完全一致的目标实例。": [
+    "src/XG.Core/InstanceSynchronization.cs:42"
+  ],
+  "请选择目标实例。": [
+    "src/XGLauncher/PackSynchronization.cs:63"
+  ],
+  "读取详情失败，请检查网络后重试。": [
+    "src/XGLauncher/OnlineCatalog.cs:283"
+  ],
+  "账号": [
+    "src/XGLauncher/MainWindow.cs:87"
+  ],
+  "账号凭据由系统支持的安全缓存管理。账号退出和缓存清除请进入顶部账号管理。": [
+    "src/XGLauncher/SettingsPage.cs:61"
+  ],
+  "账号列表为空或损坏。": [
+    "src/XGLauncher/AccountRegistry.cs:30"
+  ],
+  "账号列表格式无效。": [
+    "src/XGLauncher/AccountRegistry.cs:32"
+  ],
+  "账号已被移除。": [
+    "src/XGLauncher/AccountProfiles.cs:22",
+    "src/XGLauncher/AccountRegistry.cs:67"
+  ],
+  "账号操作仍在进行，请完成后重新启动游戏。": [
+    "src/XGLauncher/MicrosoftAccounts.cs:213"
+  ],
+  "账号服务与身份库": [
+    "src/XGLauncher/LegalCatalog.cs:61"
+  ],
+  "账号没有 Minecraft Java 玩家档案，请先通过官方启动器创建玩家名称。": [
+    "src/XG.Core/MinecraftAuthentication.cs:238"
+  ],
+  "账号管理": [
+    "src/XGLauncher/AccountManagement.cs:16"
+  ],
+  "资源与依赖": [
+    "src/XGLauncher/DownloadRecovery.cs:90",
+    "src/XGLauncher/StageRail.cs:196",
+    "src/XG.Core/GameService.cs:180",
+    "src/XG.Core/GameService.cs:188",
+    "src/XG.Core/GameService.cs:188"
+  ],
+  "资源包": [
+    "src/XGLauncher/PackSynchronization.cs:36"
+  ],
+  "轻微毛玻璃效果": [
+    "src/XGLauncher/AppearanceSettings.cs:79"
+  ],
+  "迁移后安装验证失败，未切换目录。": [
+    "src/XG.Core/WorkspaceMigration.cs:80"
+  ],
+  "迁移恢复发现同名目录，已保留两份数据。": [
+    "src/XG.Core/InstanceDirectoryLayout.cs:134"
+  ],
+  "迁移游戏数据": [
+    "src/XGLauncher/MigrationPage.cs:13",
+    "src/XGLauncher/SettingsPage.cs:26"
+  ],
+  "迁移目标文件缺失，停止清理旧目录。": [
+    "src/XG.Core/FlatVersionLayout.cs:118"
+  ],
+  "运行中": [
+    "src/XGLauncher/InstanceActions.cs:41"
+  ],
+  "运行平台：": [
+    "src/XGLauncher/AboutPage.cs:73"
+  ],
+  "返回": [
+    "src/XGLauncher/LegalBrowser.cs:42"
+  ],
+  "返回关于": [
+    "src/XGLauncher/AboutPage.cs:22"
+  ],
+  "返回已安装游戏": [
+    "src/XGLauncher/CompactDownloadForm.cs:45"
+  ],
+  "还原": [
+    "src/XGLauncher/TitleBar.cs:63"
+  ],
+  "连接中": [
+    "src/XGLauncher/WindowShutdown.cs:31",
+    "src/XGLauncher/InstanceActions.cs:199",
+    "src/XGLauncher/CatalogPages.cs:226",
+    "src/XG.Core/Downloads.cs:51",
+    "src/XG.Core/VerifiedTransfer.cs:164"
+  ],
+  "连接连续 30 秒未收到数据。": [
+    "src/XG.Core/VerifiedTransfer.cs:224"
+  ],
+  "退出": [
+    "src/XGLauncher/MainWindow.cs:160"
+  ],
+  "退出并清除所有微软账号的本地凭据？离线账号会保留。": [
+    "src/XGLauncher/AccountManagement.cs:62"
+  ],
+  "退出并清除账号缓存": [
+    "src/XGLauncher/AccountManagement.cs:60"
+  ],
+  "选择 XG Launcher 工作目录": [
+    "src/XGLauncher/MainWindow.cs:72"
+  ],
+  "选择可写目录": [
+    "src/XGLauncher/MainWindow.cs:68"
+  ],
+  "选择已安装游戏": [
+    "src/XGLauncher/CompactMode.cs:126"
+  ],
+  "选择整合包": [
+    "src/XGLauncher/CatalogPages.cs:110"
+  ],
+  "选择来源": [
+    "src/XGLauncher/GameImportWizard.cs:47"
+  ],
+  "选择模组": [
+    "src/XGLauncher/CatalogPages.cs:47"
+  ],
+  "选择游戏版本并安装": [
+    "src/XGLauncher/CompactMode.cs:126"
+  ],
+  "选择目标实例": [
+    "src/XGLauncher/PackSynchronization.cs:39"
+  ],
+  "选择目标父目录": [
+    "src/XGLauncher/MigrationPage.cs:14"
+  ],
+  "选择账号 ": [
+    "src/XGLauncher/AccountManagement.cs:85"
+  ],
+  "选择项目，离线阅读实际收录的许可证及 NOTICE。": [
+    "src/XGLauncher/LegalBrowser.cs:91"
+  ],
+  "透明度实时应用；窗口圆角由系统管理。": [
+    "src/XGLauncher/AppearanceSettings.cs:33"
+  ],
+  "通知与托盘": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "部分资源大小未提供": [
+    "src/XGLauncher/CatalogPages.cs:149"
+  ],
+  "配置文件": [
+    "src/XGLauncher/PackSynchronization.cs:35"
+  ],
+  "重复文件内容已变化，保留源文件并停止清理。": [
+    "src/XG.Core/FlatVersionLayout.cs:120"
+  ],
+  "重新分析": [
+    "src/XGLauncher/GameImportWizard.cs:64"
+  ],
+  "重新检测": [
+    "src/XGLauncher/InstanceJavaSettings.cs:37"
+  ],
+  "重试下载": [
+    "src/XGLauncher/InstanceActions.cs:42"
+  ],
+  "重试加载器列表": [
+    "src/XGLauncher/InstanceEditor.cs:119"
+  ],
+  "重试版本列表": [
+    "src/XGLauncher/InstanceEditor.cs:118"
+  ],
+  "钠": [
+    "src/XGLauncher/OnlineCatalog.cs:24"
+  ],
+  "锂": [
+    "src/XGLauncher/OnlineCatalog.cs:24"
+  ],
+  "隐私与安全": [
+    "src/XGLauncher/SettingsPage.cs:24"
+  ],
+  "随程序分发的 UI 框架与相关本地组件": [
+    "src/XGLauncher/LegalCatalog.cs:70"
+  ],
+  "随程序分发的图标资源及版权声明": [
+    "src/XGLauncher/LegalCatalog.cs:69"
+  ],
+  "随程序分发的游戏启动与安装库": [
+    "src/XGLauncher/LegalCatalog.cs:72"
+  ],
+  "随程序分发的身份库；此许可不替代微软服务条款": [
+    "src/XGLauncher/LegalCatalog.cs:62"
+  ],
+  "随程序提供的依赖许可或通知": [
+    "src/XGLauncher/LegalCatalog.cs:51"
+  ],
+  "随程序提供的运行时": [
+    "src/XGLauncher/LegalCatalog.cs:68"
+  ],
+  "雾蓝": [
+    "src/XGLauncher/ThemePalette.cs:14",
+    "src/XGLauncher/AppearanceSettings.cs:14"
+  ],
+  "面向 Minecraft Java 版的独立 Windows 启动器。": [
+    "src/XGLauncher/AboutPage.cs:71"
+  ],
+  "项目版本": [
+    "src/XGLauncher/OnlineCatalog.cs:249"
+  ],
+  "项目自身许可证状态": [
+    "src/XGLauncher/LegalBrowser.cs:88"
+  ],
+  "首页": [
+    "src/XGLauncher/MainWindow.cs:19"
+  ],
+  "高度": [
+    "src/XGLauncher/InstanceEditor.cs:30"
+  ],
+  "鸢尾花光影": [
+    "src/XGLauncher/OnlineCatalog.cs:24"
+  ],
+  "鸣谢项目与社区": [
+    "src/XGLauncher/LegalBrowser.cs:129",
+    "src/XGLauncher/LegalBrowser.cs:178"
+  ]
+}

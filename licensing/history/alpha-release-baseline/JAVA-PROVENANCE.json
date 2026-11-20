@@ -1,0 +1,39 @@
+{
+  "status": "native-reimplementation-with-qualified-provenance",
+  "source_statement": "Earlier Java search referenced a Baidu Wenxin Assistant plan/Python example. This revision rewrites discovery in C# using .NET APIs; original Python was not available or copied. Existing C# was read for API and integration compatibility, so this is not a legally certified clean-room process.",
+  "original_example_available": false,
+  "historical_rights_resolved": false,
+  "third_party_source_imported_in_revision": false,
+  "new_nuget_dependencies": false,
+  "business_logic_modified_in_review": true,
+  "files": [
+    {
+      "path": "src/XG.Core/JavaDiscovery.cs",
+      "sha256": "5e90aafe663e09ba1555d87d26655beccfe56a163e8071aa71865336a500024f"
+    },
+    {
+      "path": "src/XG.Core/JavaCatalog.cs",
+      "sha256": "0f2f37428f9e73295904706a02cdbcfad4e2a12ca7a562501c845180c39e3626"
+    },
+    {
+      "path": "src/XG.Core/JavaLocations.cs",
+      "sha256": "44d738e673d3533fedb26cd26c09e0f15918386e1f57479c7a0b5eb689b9ba17"
+    },
+    {
+      "path": "src/XG.Core/JavaProbe.cs",
+      "sha256": "970063b1782c4cdd4003eb6e0f03cc36e5ed9c52adf87b5c16b5b0f64bc02c99"
+    },
+    {
+      "path": "src/XG.Core/JavaDiscoveryTestAccess.cs",
+      "sha256": "b01eb084efaaf3af2fdfe0b297ee614a651f3a8f8d4acd4414aeb92cce4ae9b6"
+    },
+    {
+      "path": "src/XGLauncher/InstanceJavaSettings.cs",
+      "sha256": "3cfa0aaffccae69bc8841b1d8cc5f0584da1b33a645256db50f67ed15eb08648"
+    }
+  ],
+  "historical_reference_date_maintainer_reported": "2026-11-17",
+  "native_rewrite_preserved_in_v15": true,
+  "current_module_old_python_reference_required": false,
+  "maintainer_confirms_current_module_not_old_python": true
+}

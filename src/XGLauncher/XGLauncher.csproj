@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <XGBuildUtc Condition="'$(XGBuildUtc)' == ''">$([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))</XGBuildUtc>
+    <ApplicationIcon>Assets/XG.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- XG Launcher注册的公开Entra应用ID，不是机密凭据；Minecraft API资格仍需独立验证。 -->
+    <XGMicrosoftClientId Condition="'$(XGMicrosoftClientId)' == ''">dbccdda9-9c7d-4435-9309-1e84eb908462</XGMicrosoftClientId>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>XGMicrosoftClientId</_Parameter1>
+      <_Parameter2>$(XGMicrosoftClientId)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>XGBuildUtc</_Parameter1><_Parameter2>$(XGBuildUtc)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/XG.png" />
+    <EmbeddedResource Include="Assets/Lucide/*.svg" LogicalName="XG.Lucide.%(Filename)%(Extension)" />
+    <AvaloniaResource Include="Assets/XG-light.png" />
+    <EmbeddedResource Include="Localization/*.json" LogicalName="XG.Strings.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../licenses/*" LogicalName="XG.Licenses.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../LICENSE" LogicalName="XG.Licenses.XGLauncher-MIT.txt" />
+    <EmbeddedResource Include="../../DISCLAIMER.md" LogicalName="XG.Licenses.DISCLAIMER.md" />
+    <EmbeddedResource Include="../../AI-DEVELOPMENT.md" LogicalName="XG.Licenses.AI-DEVELOPMENT.md" />
+    <EmbeddedResource Include="../../LICENSE.md" LogicalName="XG.Licenses.XGLauncher-LICENSE.md" />
+    <InternalsVisibleTo Include="XG.UI.Tests" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.61.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.23" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.23" />
+    <ProjectReference Include="../XG.Core/XG.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,39 @@
+{
+  "requested_license": "LicenseRef-XGCL-1.0",
+  "requested_short_name": "XGCL-1.0",
+  "active_application_license": "GPL-3.0-only",
+  "application_relicense_status": "blocked_pending_rights_confirmation",
+  "entire_repository_relicensed": false,
+  "is_osi_approved": false,
+  "independent_new_document_scope": [
+    "README.md",
+    "TRADEMARKS.md",
+    "licensing/XGCL-1.0.txt",
+    "licensing/SCOPE.md",
+    "licensing/RIGHTS_CONFIRMATION.md"
+  ],
+  "blocked_scopes": [
+    {
+      "path_scope": "baseline application and project files",
+      "reason": "existing GPL-3.0-only; complete relicensing rights not confirmed by supplied records"
+    },
+    {
+      "path_scope": "src/XGLauncher/Assets/*",
+      "reason": "maintainer now declares direct ChatGPT generation; original generation inputs and any third-party elements not independently verified"
+    },
+    {
+      "path_scope": "historical Java reference and broader application rights",
+      "reason": "current discovery reimplemented with native APIs; historical source terms and whole-application relicensing authority are not thereby certified"
+    },
+    {
+      "path_scope": "inline navigation/titlebar/toolbar icon geometry",
+      "reason": "actual upstream provenance unconfirmed; full Lucide ISC and Feather MIT reference added without declaring actual use"
+    }
+  ],
+  "third_party_relicensed": false,
+  "past_gpl_grants_revoked": false,
+  "publication_clearance": "blocked_pending_provenance_and_rights_confirmation",
+  "java_discovery_revision": "native-reimplementation-with-qualified-provenance",
+  "final_review_decision": "B",
+  "final_review_details": "licensing/FINAL-REVIEW.json"
+}

@@ -1,0 +1,10 @@
+<Project>
+  <!-- These projects deliberately use executable regression suites rather than a test adapter.
+       Make dotnet test build the current source and execute them too, so a successful empty VSTest invocation is not mistaken for a tested build. -->
+  <Target Name="RunExecutableRegressionSuite" AfterTargets="VSTest" DependsOnTargets="Build"
+          Condition="'$(MSBuildProjectName)' == 'XG.Tests' Or '$(MSBuildProjectName)' == 'XG.UI.Tests'">
+    <PropertyGroup><XGTestHost Condition="'$(XGTestHost)' == ''">$(DotNetHostPath)</XGTestHost>
+      <XGTestHost Condition="'$(XGTestHost)' == ''">dotnet</XGTestHost></PropertyGroup>
+    <Exec Command="&quot;$(XGTestHost)&quot; &quot;$(TargetPath)&quot;" />
+  </Target>
+</Project>

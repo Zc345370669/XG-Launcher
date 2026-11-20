@@ -1,0 +1,1 @@
+XG Launcher is an unofficial third-party Minecraft launcher, with no official affiliation or sponsorship from Mojang Studios or Microsoft. Minecraft content, trademarks and resources belong to their respective rights holders. Mods, modpacks and resource packs belong to their authors. Downloads and use must follow the respective platform terms and licenses.

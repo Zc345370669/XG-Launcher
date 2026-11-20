@@ -1,0 +1,36 @@
+{
+  "status": "old-inline-geometry-replaced-with-pinned-official-svg",
+  "lucide_package_declared": false,
+  "official_license": {
+    "commit": "de8d11aac831d519d2377ff516868244475fac06",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/LICENSE",
+    "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+    "bytes": 3208
+  },
+  "license_text_complete": true,
+  "actual_icon_version_confirmed": true,
+  "upstream_source_of_each_geometry_confirmed": true,
+  "notice_does_not_prove_provenance": true,
+  "reviewed_files": [
+    {
+      "path": "src/XGLauncher/MainWindow.cs",
+      "sha256": "08a2e740fcd17bde05fb20511bcb1a48a9f72c6f5053a8550de738407e8a3c6c"
+    },
+    {
+      "path": "src/XGLauncher/TitleBar.cs",
+      "sha256": "bb882a6e0b0a27ac358b85d75be166e739b562296bcb24cbccfc28edb5252f5b"
+    },
+    {
+      "path": "src/XGLauncher/GameImportWizard.cs",
+      "sha256": "9b0053df0d85b0f264bc7c477e06037895272360545456890ece13b302146418"
+    }
+  ],
+  "current_asset_manifest": "LUCIDE-ASSETS.json",
+  "phase17_snapshot_note": "Current file hash refresh after authorized phase17 edits; original snapshot preserved in licensing/history/phase17-baseline. No new independent provenance or rights verification is asserted.",
+  "compact_final_snapshot_note": "Active hashes updated for compact final implementation; phase17 originals retained in licensing/history/compact-final-baseline. No new provenance clearance is asserted.",
+  "window_rounding_snapshot_note": "Current source hash refresh only; no geometry or icon asset replaced; previous evidence retained in history/window-rounding-baseline.",
+  "adaptive_combo_snapshot_note": "Active source hashes only; pinned SVG assets unchanged; trash-2 resolves to the canonical trash asset per pinned upstream aliases metadata in LUCIDE-ASSETS.json.",
+  "global_ui_snapshot_note": "Source hashes updated; pinned wrench/shapes SVG sources and hashes in LUCIDE-ASSETS.json, existing SVGs and original licenses unchanged.",
+  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance.",
+  "responsive_window_note": "Current hashes refreshed for authorized window and responsive UI repair. Original manifest archived; no new independent rights clearance or changes to license grants."
+}
