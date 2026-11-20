@@ -78,7 +78,7 @@ GitHub Actions仅由手动操作或PR触发，执行扫描、测试、Windows发
 
 ## 已知限制
 
-Windows GUI、真实游戏启动、真人账号登录、安全缓存、原生DPI/多显示器仍需实机验证；Linux无头截图和交叉发布不能替代这些检查。Windows11圆角依赖DWM实际合成能力；Windows10保留兼容直角路径，毛玻璃不受支持时回退。详见 [已知问题](docs/KNOWN_ISSUES.md) 和 [403记录](OAUTH-403-KNOWN-ISSUES.md)。
+Windows GUI、真实游戏启动、真人账号登录、安全缓存、原生DPI/多显示器仍需实机验证；Linux无头截图和交叉发布不能替代这些检查。Windows11圆角依赖DWM实际合成能力；Windows10保留兼容直角路径，毛玻璃不受支持时回退。详见 [已知问题](docs/KNOWN_ISSUES.md) 和 [403记录](docs/history/OAUTH-403-KNOWN-ISSUES.md)。
 
 ## 许可证与第三方
 
