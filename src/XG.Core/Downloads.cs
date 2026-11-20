@@ -27,6 +27,8 @@ public sealed class Downloads
     private readonly List<Download> items;
     public event Action? Changed;
     public IReadOnlyList<Download> Items => items.AsReadOnly();
+    /// <summary>暂停只取消等待者时，底层共享传输仍可能写入；退出必须等待其释放。</summary>
+    public bool HasPendingWrites => VerifiedTransfer.HasPendingWrites(http);
 
     public Downloads(HttpClient http, string root, string? portableRoot = null)
     {

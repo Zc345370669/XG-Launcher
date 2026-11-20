@@ -29,12 +29,12 @@ public sealed partial class MainWindow
             return;
         }
         var transferring = activeResources.Length > 0 || model.Downloads.Items.Any(x => x.State is "等待中" or "连接中" or "下载中" or "校验中" or "安装中");
-        if (!transferring) { exitReady = true; e.Cancel = !TryLaunchUpdater(); return; }
+        if (!transferring && !model.Downloads.HasPendingWrites) { exitReady = true; e.Cancel = !TryLaunchUpdater(); return; }
         e.Cancel = true;
         preparingExit = true;
         try
         {
-            if (!updateExitAuthorized && !await ConfirmAsync("保存下载进度并退出？下次打开可从下载管理恢复任务。"))
+            if (transferring && !updateExitAuthorized && !await ConfirmAsync("保存下载进度并退出？下次打开可从下载管理恢复任务。"))
             { pendingUpdatePlan = null; updateExitAuthorized = false; exitRequested = false; return; }
             IsEnabled = false;
             status.Text = "正在保存下载任务，等待当前安装步骤安全结束…";

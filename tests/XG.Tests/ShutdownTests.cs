@@ -67,7 +67,11 @@ internal static class ShutdownTests
         var queued = downloads.RunAsync(b.Id, () => { }, (_, _) => { }, () => true);
         await handler.Started.Task.WaitAsync(TimeSpan.FromSeconds(3));
         File.WriteAllText(partialPath, "partial");
+        downloads.Pause(a.Id);
+        await first;
+        Check(downloads.HasPendingWrites, "paused waiter incorrectly hid underlying HTTP worker");
         await downloads.PauseForExitAsync().WaitAsync(TimeSpan.FromSeconds(3));
+        Check(!downloads.HasPendingWrites, "shutdown left pending writes");
         Check(!await first && !await queued && File.Exists(partialPath), "mod exit deleted partial or left queue running");
         Check(new Downloads(http, modRoot).Items.All(x => x.State == "已暂停"), "mod queue was not persisted paused");
         Console.WriteLine("PASS exit pauses running and queued Modrinth transfers without cancelling/deleting their resumable data");

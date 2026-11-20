@@ -15,6 +15,8 @@ internal static class VerifiedTransfer
     internal static void SetSpeedLimit(HttpClient client, long bytesPerSecond) =>
         gates.GetOrCreateValue(client).SetSpeedLimit(bytesPerSecond);
 
+    internal static bool HasPendingWrites(HttpClient client) => gates.TryGetValue(client, out var gate) && gate.HasPendingWrites;
+
     /// <summary>停止此 HTTP 会话拥有的共享传输，并等待文件句柄释放；不影响其他会话。</summary>
     internal static Task StopForExitAsync(HttpClient client) => gates.GetOrCreateValue(client).StopForExitAsync();
 
@@ -68,6 +70,8 @@ internal static class VerifiedTransfer
         private readonly HashSet<Task> workers = [];
         private CancellationTokenSource lifetime = new();
         private bool stopping;
+
+        internal bool HasPendingWrites { get { lock (sync) return workers.Count != 0; } }
 
         internal async Task RunOwnedAsync(Func<CancellationToken, Task> operation)
         {

@@ -1,5 +1,5 @@
 {
-  "manifest_sha256": "85c665c6ea9cdb9481f5a32f6508f5d607895652f7697207bc6d013553b3d93e",
+  "manifest_sha256": "2efde047399d543ff1c16028cbe64021b2712d11fbe15683875705594bd93a58",
   "can_confirm_scope_as_one_manifest": true,
   "decision": "A",
   "copyright_holder_display_name": "XG Launcher (existing public project designation; no natural person or legal entity invented)",
@@ -7,7 +7,7 @@
   "rows": [
     {
       "path": ".github/workflows/build-windows.yml",
-      "sha256": "1e9acbc92ea15b0820b6d88808ea1ef1565de1dc247631560c6706ad4dc2e714",
+      "sha256": "5967b9fd3fefeb7989e64e07e576cb997f2a6c9480541787002e87ef46e940eb",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",
@@ -133,7 +133,7 @@
     },
     {
       "path": "src/XG.Core/Downloads.cs",
-      "sha256": "e113c2da102a0497549378d159ea58b7c5f62c4f7c5cd75903a5610b8eb4edee",
+      "sha256": "dd1d333a2331cb1f994fd3365c1325e40c68d25176b10a9b2c18e9983be806eb",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",
@@ -385,7 +385,7 @@
     },
     {
       "path": "src/XG.Core/VerifiedTransfer.cs",
-      "sha256": "ae0942eeb3e991f8070bd366516a2de93a885c94a554844511b38a69fa032a11",
+      "sha256": "a34c4c54afd19f3d6d9152794260a31e9cef63e9bbc9910729e2b3dedd9ba2aa",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",
