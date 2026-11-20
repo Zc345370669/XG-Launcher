@@ -47,6 +47,8 @@ jobs:
         run: dotnet publish tests/XG.Update.Probe -c Release -r win-x64 --self-contained true -p:XgWindowsPublish=true -p:RestoreLockedMode=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none -p:DebugSymbols=false -o dist/update-probe
       - name: 验证内嵌许可及更新成功、回滚、占用和父进程等待
         run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --audit-embedded src/XGLauncher/bin/Release/net10.0/win-x64/XGLauncher.dll dist/update-probe/XGUpdateProbe.exe
+      - name: 公网官方 Release 隔离更新实测（模拟旧版本，不发布 Release）
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --live-release-update src/XGLauncher/obj/single-exe-assets/updater/XGUpdater.exe dist/update-probe/XGUpdateProbe.exe
       - uses: actions/upload-artifact@v4
         with:
           name: XGLauncher-v0.1.0-alpha-win-x64

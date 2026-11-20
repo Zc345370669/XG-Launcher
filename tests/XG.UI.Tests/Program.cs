@@ -8,6 +8,8 @@ using Avalonia.VisualTree;
 using XG.Core;
 using XGLauncher;
 
+if (args.Length == 3 && args[0] == "--live-release-update") { await LiveReleaseUpdateSmoke.RunAsync(args[1], args[2]); return; }
+
 if (args.Length is 2 or 3 && args[0] == "--audit-embedded") { await EmbeddedPublishAudit.RunAsync(args[1], args.Length == 3 ? args[2] : null); return; }
 
 if (args.Contains("--oauth-probe", StringComparer.Ordinal))
