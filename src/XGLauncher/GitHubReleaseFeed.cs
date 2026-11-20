@@ -76,7 +76,7 @@ internal static class GitHubReleaseFeed
 
     private static bool TryParseVersion(string tag, out Version version)
     {
-        version = default;
+        version = new Version(0, 0, 0);
         var match = TagPattern.Match(tag);
         if (!match.Success ||
             !int.TryParse(match.Groups["major"].Value, out var major) ||

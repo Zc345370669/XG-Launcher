@@ -1,2 +1,4 @@
+# Keep exact repository bytes on Windows and Unix: licenses, pinned icons and provenance hashes are byte-sensitive.
+* -text
 # Preserve exact upstream license bytes and evidence hashes; do not normalize or whitespace-rewrite them.
 licenses/* -text -diff

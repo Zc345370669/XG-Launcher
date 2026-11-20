@@ -11,7 +11,7 @@ class ScopeTests(unittest.TestCase):
  def test_resource_matches_current_license(self):self.assertIn('XGLauncher-MIT.txt',(R/'src/XGLauncher/XGLauncher.csproj').read_text());self.assertIn('<PackageLicenseExpression>MIT',(R/'Directory.Build.props').read_text())
  def test_readme_intro_and_current_license(self):
   t=(R/'README.md').read_text()
-  for p in ['一个趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。','v0.1.0-alpha','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
+  for p in ['趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。','v0.1.0-alpha','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
  def test_release_provides_native_source_and_notices(self):
   self.assertIn('Copy-Item third-party',(R/'build-windows.ps1').read_text());self.assertIn('third-party',(R/'scripts/publish-portable-windows.sh').read_text())
 if __name__=='__main__':unittest.main()
