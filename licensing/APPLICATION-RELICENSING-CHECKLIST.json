@@ -1,5 +1,5 @@
 {
-  "manifest_sha256": "2efde047399d543ff1c16028cbe64021b2712d11fbe15683875705594bd93a58",
+  "manifest_sha256": "476b5509e39525b6004d369b0315347dcf0610ef94bae64e69c21eb451caad6e",
   "can_confirm_scope_as_one_manifest": true,
   "decision": "A",
   "copyright_holder_display_name": "XG Launcher (existing public project designation; no natural person or legal entity invented)",
@@ -754,7 +754,7 @@
     },
     {
       "path": "tests/XG.Tests/JavaNativeTests.cs",
-      "sha256": "938e457b075e485e72c3b49b99e4ad1838b3d5aecfed0c6b86e191ebf9916312",
+      "sha256": "82d9e8c6d07eb86be2bdf91c9a9afac93e2381d091936cb2f4c27fc1a34a9067",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",

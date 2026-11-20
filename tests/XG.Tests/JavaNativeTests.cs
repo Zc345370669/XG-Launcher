@@ -60,9 +60,15 @@ internal static class JavaNativeTests
         {
             // Read-only Windows integration hook: exercised only on Windows.
             // No assertion that registry-installed Java exists on every machine.
-            var inventory = await JavaDiscovery.DiscoverAsync(work);
             if (Environment.GetEnvironmentVariable("JAVA_HOME") is { Length: > 0 } home && JavaLocations.Executable(home) is { } configured)
             {
+                // CI 的冷 JDK 首次启动可能受杀毒扫描影响；先独立验证可执行文件，
+                // 不写入 JavaDiscovery 缓存，随后仍验证 JAVA_HOME 的真实枚举与探测。
+                var candidates = JavaLocations.Collect(JavaLocations.Capture(work, null), [], false, default, null);
+                Require(candidates.Contains(configured, StringComparer.OrdinalIgnoreCase), "JAVA_HOME candidate was not enumerated");
+                var warmed = await JavaProbe.ExecuteAsync(configured, TimeSpan.FromSeconds(20), default);
+                Require(warmed != null, "configured Windows JDK could not execute property probe");
+                var inventory = await JavaDiscovery.DiscoverAsync(work);
                 var validated = await JavaDiscovery.InspectPathAsync(configured);
                 Require(validated is not null && inventory.Any(x => StringComparer.OrdinalIgnoreCase.Equals(x.Path, validated.Path)), "Windows JAVA_HOME runtime not discovered");
                 Pass("actual Windows JAVA_HOME runtime and read-only multi-source discovery");
