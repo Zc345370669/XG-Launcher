@@ -88,7 +88,7 @@ internal static class GitHubReleaseFeed
         var maturity = suffix.StartsWith("-alpha", StringComparison.Ordinal) ? 0 :
             suffix.StartsWith("-beta", StringComparison.Ordinal) ? 100000 :
             suffix.StartsWith("-rc", StringComparison.Ordinal) ? 200000 : 300000;
-        if (suffix.Contains('.', StringComparison.Ordinal))
+        if (suffix.Contains('.'))
         {
             if (!int.TryParse(suffix[(suffix.IndexOf('.') + 1)..], out var sequence) ||
                 sequence >= 100000) return false;
