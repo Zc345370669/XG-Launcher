@@ -8,7 +8,7 @@ using XG.Core;
 
 internal static class EmbeddedPublishAudit
 {
-    internal static async Task RunAsync(string assemblyPath)
+    internal static async Task RunAsync(string assemblyPath, string? probePath = null)
     {
         var assembly = Assembly.LoadFile(Path.GetFullPath(assemblyPath));
         using var compliance = assembly.GetManifestResourceStream("XG.Compliance.zip") ?? throw new Exception("Missing compliance resource");
@@ -23,6 +23,7 @@ internal static class EmbeddedPublishAudit
         if (helper.Length < 1024 * 1024 || helper.ReadByte() != 'M' || helper.ReadByte() != 'Z') throw new Exception("Updater is not a published Windows EXE");
         Console.WriteLine("PASS actual publish embeds updater, complete MIT/ISC/third-party notices and byte-identical native corresponding-source archive");
         if (!OperatingSystem.IsWindows()) return;
+        if (probePath == null) throw new Exception("Windows update audit requires the separate restart probe");
         var root = Path.Combine(Path.GetTempPath(), "xg-update-process-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         try
@@ -30,33 +31,114 @@ internal static class EmbeddedPublishAudit
             var updater = Path.Combine(root, "XGUpdater.exe");
             helper.Position = 0;
             await using (var output = File.Create(updater)) await helper.CopyToAsync(output);
-            var install = Path.Combine(root, "install"); Directory.CreateDirectory(install);
-            var executable = Path.Combine(install, "XGLauncher.exe");
-            File.Copy(updater, executable);
-            var userFile = Path.Combine(install, "saves.keep"); await File.WriteAllTextAsync(userFile, "user data fixture");
-            var archive = Path.Combine(root, "update.zip");
-            using (var payload = ZipFile.Open(archive, ZipArchiveMode.Create)) payload.CreateEntryFromFile(updater, "XG-Launcher/XGLauncher.exe");
-            using var stream = File.OpenRead(archive);
-            var digest = Convert.ToHexString(SHA256.HashData(stream)); stream.Close();
-            var plan = Path.Combine(root, "apply.json");
-            await File.WriteAllTextAsync(plan, JsonSerializer.Serialize(new UpdateApplyRequest(archive, digest, install, int.MaxValue, 0)));
-            var start = new ProcessStartInfo(updater) { UseShellExecute = false, CreateNoWindow = true };
-            start.ArgumentList.Add("--apply-update"); start.ArgumentList.Add(plan);
-            using var process = Process.Start(start) ?? throw new Exception("Updater failed to start");
-            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
-            if (process.ExitCode != 0 || await File.ReadAllTextAsync(plan + ".result") != "Updated" ||
-                await File.ReadAllTextAsync(userFile) != "user data fixture") throw new Exception("Real updater process failed");
-            Console.WriteLine("PASS Windows native single-file updater process applies verified package and starts replacement without touching user file (headless process test, not desktop GUI)");
+            foreach (var scenario in new[] { "success", "checksum", "launch-failure", "locked", "parent", "user-data" })
+                await ScenarioAsync(scenario, updater, Path.GetFullPath(probePath), root);
         }
         finally
         {
-            // The replacement fixture is the updater itself with no arguments and immediately exits.
-            for (int attempt = 0; attempt < 20; attempt++)
+            for (int attempt = 0; attempt < 50; attempt++)
             {
                 try { Directory.Delete(root, true); break; }
-                catch (IOException) when (attempt < 19) { await Task.Delay(100); }
-                catch (UnauthorizedAccessException) when (attempt < 19) { await Task.Delay(100); }
+                catch (IOException) when (attempt < 49) { await Task.Delay(100); }
+                catch (UnauthorizedAccessException) when (attempt < 49) { await Task.Delay(100); }
             }
+        }
+    }
+
+    private static async Task ScenarioAsync(string scenario, string updater, string probe, string root)
+    {
+        var folder = Path.Combine(root, scenario); Directory.CreateDirectory(folder);
+        var install = Path.Combine(folder, "install"); Directory.CreateDirectory(install);
+        var executable = Path.Combine(install, "XGLauncher.exe");
+        var success = scenario is "success" or "parent";
+        File.Copy(success ? updater : probe, executable);
+        var original = await File.ReadAllBytesAsync(executable);
+        var preserved = new[] { "minecraft/versions/Test/saves/world.keep", "minecraft/versions/Test/mods/mod.keep",
+            "data/settings.keep", "java/runtime.keep" };
+        foreach (var name in preserved)
+        {
+            var file = Path.Combine(install, name); Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+            await File.WriteAllTextAsync(file, "user fixture");
+        }
+        var stage = Path.Combine(folder, "updates", Guid.NewGuid().ToString("N")); Directory.CreateDirectory(stage);
+        var archive = Path.Combine(stage, "update.zip");
+        using (var payload = ZipFile.Open(archive, ZipArchiveMode.Create))
+        {
+            var entry = payload.CreateEntry("XG-Launcher/XGLauncher.exe");
+            using (var output = entry.Open())
+            {
+                if (scenario == "launch-failure")
+                {
+                    // 通过结构检查的 PE 头仍不能保证 Windows 能执行；必须由真实进程启动验证回滚。
+                    var invalid = new byte[128]; invalid[0] = 0x4d; invalid[1] = 0x5a; invalid[0x3c] = 0x40;
+                    invalid[0x40] = 0x50; invalid[0x41] = 0x45; invalid[0x44] = 0x64; invalid[0x45] = 0x86; output.Write(invalid);
+                }
+                else { using var input = File.OpenRead(probe); input.CopyTo(output); }
+            }
+            if (scenario == "user-data") using (var output = new StreamWriter(payload.CreateEntry("data/settings.keep").Open())) output.Write("forbidden");
+        }
+        string digest;
+        using (var input = File.OpenRead(archive)) digest = Convert.ToHexString(SHA256.HashData(input));
+        if (scenario == "checksum") digest = new string('0', 64);
+        Process? parent = null;
+        FileStream? locked = null;
+        var release = Path.Combine(folder, "release.marker");
+        try
+        {
+            if (scenario == "parent")
+            {
+                var ready = Path.Combine(folder, "parent.marker");
+                var start = new ProcessStartInfo(probe) { UseShellExecute = false, CreateNoWindow = true };
+                start.ArgumentList.Add("--hold-parent"); start.ArgumentList.Add(ready); start.ArgumentList.Add(release);
+                parent = Process.Start(start) ?? throw new Exception("Parent fixture did not start");
+                await UntilAsync(() => File.Exists(ready));
+            }
+            if (scenario == "locked") locked = new FileStream(executable, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var plan = Path.Combine(stage, "apply.json");
+            await File.WriteAllTextAsync(plan, JsonSerializer.Serialize(new UpdateApplyRequest(archive, digest, install,
+                parent?.Id ?? int.MaxValue, parent?.StartTime.ToUniversalTime().Ticks ?? 0)));
+            var startHelper = new ProcessStartInfo(updater) { UseShellExecute = false, CreateNoWindow = true };
+            startHelper.ArgumentList.Add("--apply-update"); startHelper.ArgumentList.Add(plan);
+            using var process = Process.Start(startHelper) ?? throw new Exception("Updater failed to start");
+            if (parent != null)
+            {
+                await UntilAsync(() => File.Exists(plan + ".status") && File.ReadAllText(plan + ".status") == "WaitingForExit");
+                if (process.HasExited || parent.HasExited || !original.SequenceEqual(File.ReadAllBytes(executable)))
+                    throw new Exception("Updater replaced executable before original process exited");
+                await File.WriteAllTextAsync(release, "Release"); await parent.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
+            }
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
+            var outcome = UpdateReceipt.Read(Path.Combine(folder, "updates"), plan + ".result");
+            if (success)
+            {
+                if (process.ExitCode != 0 || outcome != UpdateOutcome.Updated ||
+                    !File.ReadAllBytes(probe).SequenceEqual(File.ReadAllBytes(executable))) throw new Exception("Update did not commit replacement");
+            }
+            else
+            {
+                var expected = scenario switch { "checksum" or "user-data" => UpdateOutcome.InvalidPackage,
+                    "launch-failure" => UpdateOutcome.LaunchFailed, _ => UpdateOutcome.FilesBusy };
+                if (process.ExitCode != 1 || outcome != expected || !original.SequenceEqual(File.ReadAllBytes(executable)))
+                    throw new Exception("Failed update did not preserve/restore original: " + scenario + "/" + outcome);
+            }
+            if (scenario != "locked") await UntilAsync(() => File.Exists(Path.Combine(install, "launched.marker")));
+            foreach (var name in preserved) if (await File.ReadAllTextAsync(Path.Combine(install, name)) != "user fixture") throw new Exception("Updater modified user data");
+            Console.WriteLine("PASS Windows actual updater/restart probe: " + scenario + "; outcome=" + outcome + "; user data preserved (process test, not desktop GUI)");
+        }
+        finally
+        {
+            locked?.Dispose();
+            if (parent != null) { await File.WriteAllTextAsync(release, "Release"); await parent.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30)); parent.Dispose(); }
+        }
+    }
+
+    private static async Task UntilAsync(Func<bool> condition)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        while (true)
+        {
+            try { if (condition()) return; } catch (IOException) { }
+            await Task.Delay(25, timeout.Token);
         }
     }
 }

@@ -11,7 +11,8 @@ try
     var plan = JsonSerializer.Deserialize<UpdateApplyRequest>(await File.ReadAllTextAsync(planFile)) ?? throw new InvalidDataException();
     var executable = Path.Combine(plan.InstallDirectory, "XGLauncher.exe");
     if (!File.Exists(executable) || plan.ParentProcessId < 1) throw new InvalidDataException();
-    // 等原进程真正退出，避免只关闭窗口却仍锁定旧 EXE；不终止游戏或其他进程。
+    Status("WaitingForExit");
+    // 必须等待原进程（包括互斥锁及 EXE 句柄）退出；不终止游戏或其他进程。
     try
     {
         using var parent = Process.GetProcessById(plan.ParentProcessId);
@@ -23,20 +24,35 @@ try
     }
     catch (ArgumentException) { /* 原进程已经退出。 */ }
     originalExited = true; restart = executable;
+    Status("Verifying");
     using (var transaction = UpdateFiles.Prepare(plan))
     {
-        transaction.Apply();
-        Process.Start(new ProcessStartInfo(executable) { UseShellExecute = true, WorkingDirectory = plan.InstallDirectory });
+        Status("Replacing"); transaction.Apply();
+        // 新进程可能立即读取回执，先原子写入；启动失败时回滚并覆盖为失败状态。
+        UpdateReceipt.Write(planFile + ".result", UpdateOutcome.Updated);
+        Status("Restarting"); Restart(executable);
         transaction.Commit();
     }
-    await File.WriteAllTextAsync(planFile + ".result", "Updated");
+    Status("Finished");
     return 0;
 }
 catch (Exception error)
 {
-    // 只记录错误类型；请求内的本地路径和任何用户数据不写入公开诊断。
-    try { await File.WriteAllTextAsync(planFile + ".result", error.GetType().Name); } catch (IOException) { }
+    UpdateReceipt.Write(planFile + ".result", UpdateReceipt.Failure(error));
+    Status("Failed");
     if (originalExited && restart != null && File.Exists(restart))
-        try { Process.Start(new ProcessStartInfo(restart) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(restart) }); } catch (System.ComponentModel.Win32Exception) { }
+        try { Restart(restart); } catch (Exception failure) when (failure is System.ComponentModel.Win32Exception or IOException or InvalidOperationException) { }
     return 1;
+}
+
+void Restart(string executable)
+{
+    var start = new ProcessStartInfo(executable) { UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = Path.GetDirectoryName(executable)! };
+    start.ArgumentList.Add("--update-result"); start.ArgumentList.Add(planFile + ".result");
+    using var child = Process.Start(start) ?? throw new InvalidOperationException("Replacement process did not start.");
+}
+
+void Status(string phase)
+{
+    try { File.WriteAllText(planFile + ".status", phase); } catch (IOException) { } catch (UnauthorizedAccessException) { }
 }

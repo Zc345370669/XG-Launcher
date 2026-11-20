@@ -34,8 +34,31 @@ public sealed partial class MainWindow
         {
             // 测试宿主不访问公网；桌面启动只读取官方公开 Release，不上传本地用户资料。
             if (!startupUpdateChecked && Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime)
-            { startupUpdateChecked = true; await CheckUpdatesAsync(false); }
+            { startupUpdateChecked = true; if (!await ShowUpdateOutcomeAsync(Environment.GetCommandLineArgs())) await CheckUpdatesAsync(false); }
         };
+    }
+
+    internal async Task<bool> ShowUpdateOutcomeAsync(string[] arguments)
+    {
+        var position = Array.IndexOf(arguments, "--update-result");
+        if (position < 0 || position + 1 >= arguments.Length) return false;
+        var outcome = XG.Core.UpdateReceipt.Read(Path.Combine(model.DownloadsDirectory, "updates"), arguments[position + 1]);
+        if (outcome == XG.Core.UpdateOutcome.None) return false;
+        if (outcome == XG.Core.UpdateOutcome.Updated)
+        {
+            status.Text = Localizer.Text("启动器已更新并重新启动。"); compactStatus.Text = status.Text;
+            return false;
+        }
+        var message = outcome switch
+        {
+            XG.Core.UpdateOutcome.InvalidPackage => "更新包校验失败，已保留原程序。请重新下载更新。",
+            XG.Core.UpdateOutcome.AccessDenied => "没有权限替换启动器，已尝试恢复原程序。请检查安装目录权限。",
+            XG.Core.UpdateOutcome.FilesBusy => "启动器文件被占用，已尝试恢复原程序。请关闭占用文件的程序后重试。",
+            XG.Core.UpdateOutcome.LaunchFailed => "新程序无法启动，已尝试恢复原程序。请重新下载更新。",
+            _ => "更新未完成，已尝试恢复原程序。请稍后重试。"
+        };
+        if (!windowClosed) await ErrorAsync(this, message);
+        return true; // 本次失败不立即再次弹出同一更新，用户仍可点击版本号重试。
     }
 
     internal async Task CheckUpdatesAsync(bool manual)

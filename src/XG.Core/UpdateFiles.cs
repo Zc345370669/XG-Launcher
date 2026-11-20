@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Text.Json;
 
 namespace XG.Core;
 
@@ -89,24 +88,82 @@ public static class UpdateFiles
                 var target = Resolve(root, relative); var backup = Resolve(Path.Combine(working, "old"), relative);
                 var existed = File.Exists(target);
                 if (existed) { Directory.CreateDirectory(Path.GetDirectoryName(backup)!); File.Copy(target, backup); }
-                changed.Add((relative, existed));
                 Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                 var temporary = target + "." + Guid.NewGuid().ToString("N") + ".update";
-                try { File.Copy(Resolve(Path.Combine(working, "new"), relative), temporary); File.Move(temporary, target, true); }
+                try { File.Copy(Resolve(Path.Combine(working, "new"), relative), temporary); File.Move(temporary, target, true); changed.Add((relative, existed)); }
                 finally { if (File.Exists(temporary)) File.Delete(temporary); }
             }
         }
         public void Commit() { committed = true; }
+        private static void ReplaceFromBackup(string backup, string target)
+        {
+            var temporary = target + "." + Guid.NewGuid().ToString("N") + ".rollback";
+            try { File.Copy(backup, temporary); File.Move(temporary, target, true); }
+            finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        }
         public void Dispose()
         {
             if (!committed)
                 foreach (var item in changed.AsEnumerable().Reverse())
                 {
                     var target = Resolve(root, item.Relative);
-                    if (item.Existed) File.Copy(Resolve(Path.Combine(working, "old"), item.Relative), target, true);
+                    if (item.Existed) ReplaceFromBackup(Resolve(Path.Combine(working, "old"), item.Relative), target);
                     else if (File.Exists(target)) File.Delete(target);
                 }
-            Directory.Delete(working, true);
+            // 备份恢复失败时异常在上面抛出，保留工作目录供人工恢复。
+            // 已提交后的临时目录清理失败不得把成功更新误报为失败并再次启动程序。
+            try { Directory.Delete(working, true); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
         }
+    }
+}
+
+
+/// <summary>只传递固定状态，不把本地路径、异常正文或凭据带回界面。</summary>
+public enum UpdateOutcome { None, Updated, InvalidPackage, AccessDenied, FilesBusy, LaunchFailed, Failed }
+
+public static class UpdateReceipt
+{
+    public static UpdateOutcome Failure(Exception error) => error switch
+    {
+        InvalidDataException => UpdateOutcome.InvalidPackage,
+        UnauthorizedAccessException => UpdateOutcome.AccessDenied,
+        System.ComponentModel.Win32Exception => UpdateOutcome.LaunchFailed,
+        IOException => UpdateOutcome.FilesBusy,
+        _ => UpdateOutcome.Failed
+    };
+
+    /// <summary>原子写入固定枚举；诊断写入失败不改变已提交的更新结果。</summary>
+    public static void Write(string file, UpdateOutcome outcome)
+    {
+        var temporary = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try { File.WriteAllText(temporary, outcome.ToString()); File.Move(temporary, file, true); }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
+        finally { try { if (File.Exists(temporary)) File.Delete(temporary); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
+    }
+
+    /// <summary>仅读取本次下载暂存根目录内的固定回执，不接受任意命令行路径或链接。</summary>
+    public static UpdateOutcome Read(string stagingRoot, string candidate)
+    {
+        try
+        {
+            var root = Path.GetFullPath(stagingRoot).TrimEnd(Path.DirectorySeparatorChar);
+            var full = Path.GetFullPath(candidate);
+            var parts = Path.GetRelativePath(root, full).Split(Path.DirectorySeparatorChar);
+            if (parts.Length != 2 || !Guid.TryParseExact(parts[0], "N", out _) || parts[1] != "apply.json.result") return UpdateOutcome.None;
+            for (string? path = full; path != null; path = Path.GetDirectoryName(path))
+            {
+                if (File.GetAttributes(path).HasFlag(FileAttributes.ReparsePoint)) return UpdateOutcome.None;
+                if (string.Equals(path, root, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) break;
+            }
+            using var input = File.OpenRead(full);
+            var bytes = new byte[81]; var count = input.ReadAtLeast(bytes, bytes.Length, false);
+            if (count == 0 || count > 80) return UpdateOutcome.None;
+            var text = System.Text.Encoding.UTF8.GetString(bytes, 0, count);
+            return Enum.TryParse<UpdateOutcome>(text, out var outcome) && Enum.GetName(outcome) == text ? outcome : UpdateOutcome.None;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException) { return UpdateOutcome.None; }
     }
 }

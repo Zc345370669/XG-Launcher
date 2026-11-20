@@ -8,6 +8,7 @@ using Avalonia.Headless;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using XGLauncher;
+using XG.Core;
 
 internal static class LauncherUpdateUiTests
 {
@@ -47,6 +48,20 @@ internal static class LauncherUpdateUiTests
         Invoke(updating.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "取消")));
         for (int i = 0; i < 50 && !handler.Cancelled; i++) { Pump(); Thread.Sleep(10); }
         Check(handler.Cancelled && window.IsVisible && !window.OwnedWindows.Any(), "download cancellation did not release HTTP or preserve launcher");
+        var model = (LauncherModel)typeof(MainWindow).GetField("model", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(window)!;
+        var receipts = Path.Combine(model.DownloadsDirectory, "updates");
+        var receipt = Path.Combine(receipts, Guid.NewGuid().ToString("N"), "apply.json.result");
+        Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
+        UpdateReceipt.Write(receipt, UpdateOutcome.LaunchFailed);
+        var failedRestart = window.ShowUpdateOutcomeAsync(["--update-result", receipt]); Pump();
+        var failureDialog = window.OwnedWindows.Single();
+        Check(failureDialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text?.Contains("新程序无法启动") == true), "rollback failure feedback missing");
+        Invoke(failureDialog.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "关闭"))); Pump();
+        Check(failedRestart.IsCompletedSuccessfully && failedRestart.Result, "failed update should suppress immediate automatic retry");
+        File.WriteAllText(receipt, "untrusted private diagnostic fixture");
+        Check(window.ShowUpdateOutcomeAsync(["--update-result", receipt]).GetAwaiter().GetResult() == false && !window.OwnedWindows.Any(), "untrusted receipt shown to user");
+        UpdateReceipt.Write(receipt, UpdateOutcome.Updated);
+        Check(!window.ShowUpdateOutcomeAsync(["--update-result", receipt]).GetAwaiter().GetResult() && !window.OwnedWindows.Any(), "successful restart must not require another confirmation");
         window.Close(); Pump();
         Console.WriteLine("PASS About version text is the only manual update entry; real click checks official release fixture, shows update/no-update prompts and decline performs no download (Linux headless)");
     }

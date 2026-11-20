@@ -54,6 +54,27 @@ internal static class GitHubUpdateTests
             try { using var transaction = UpdateFiles.Prepare(plan with { Sha256 = Convert.ToHexString(SHA256.HashData(malicious)) }); throw new Exception("unsafe package accepted"); }
             catch (InvalidDataException) { }
         }
+        var receipts = Path.Combine(root, "receipts");
+        var receipt = Path.Combine(receipts, Guid.NewGuid().ToString("N"), "apply.json.result");
+        Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
+        foreach (var outcome in Enum.GetValues<UpdateOutcome>())
+        {
+            UpdateReceipt.Write(receipt, outcome);
+            Check(UpdateReceipt.Read(receipts, receipt) == outcome, "receipt roundtrip changed status");
+        }
+        Check(UpdateReceipt.Read(root, receipt) == UpdateOutcome.None, "receipt outside staging root accepted");
+        foreach (var malformed in new[] { "1", "Updated\nprivate diagnostic", new string('x', 2048) })
+        {
+            File.WriteAllText(receipt, malformed);
+            Check(UpdateReceipt.Read(receipts, receipt) == UpdateOutcome.None, "untrusted receipt content accepted");
+        }
+        if (OperatingSystem.IsLinux())
+        {
+            File.Delete(receipt); var originalReceipt = Path.Combine(root, "original-receipt"); File.WriteAllText(originalReceipt, "Updated");
+            File.CreateSymbolicLink(receipt, originalReceipt);
+            Check(UpdateReceipt.Read(receipts, receipt) == UpdateOutcome.None, "symlink receipt accepted");
+        }
+        Console.WriteLine("PASS bounded fixed-status receipts reject arbitrary paths, raw diagnostics, numeric enums, oversized contents and links");
         Console.WriteLine("PASS real update file transaction/rollback replaces old program, preserves accounts/settings/saves/mods, rejects traversal and every user-data write in package");
     }
     private static byte[] Exe() { var bytes = new byte[128]; bytes[0] = 0x4d; bytes[1] = 0x5a; bytes[0x3c] = 0x40; bytes[0x40] = 0x50; bytes[0x41] = 0x45; bytes[0x44] = 0x64; bytes[0x45] = 0x86; return bytes; }
