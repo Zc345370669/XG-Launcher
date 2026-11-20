@@ -50,7 +50,7 @@ internal static class GitHubReleaseFeed
             var tag = release.GetProperty("tag_name").GetString();
             if (tag is null || !TryParseVersion(tag, out var candidate) ||
                 CompareVersions(candidate, current) <= 0 ||
-                (bestVersion is not null && CompareVersions(candidate, bestVersion.Value) <= 0))
+                (bestVersion is not null && CompareVersions(candidate, bestVersion) <= 0))
                 continue;
 
             foreach (var asset in release.GetProperty("assets").EnumerateArray())
