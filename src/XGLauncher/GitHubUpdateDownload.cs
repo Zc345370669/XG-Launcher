@@ -1,106 +1,82 @@
 // SPDX-License-Identifier: MIT
-using System.Buffers;
-using System.IO.Compression;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using XG.Core;
 
 namespace XGLauncher;
 
-/// <summary>
-/// Downloads a GitHub release into an isolated staging directory.
-/// This component deliberately never modifies the running executable or user data.
-/// </summary>
+/// <summary>在隔离目录中流式下载；重定向、大小、散列及 ZIP 写入范围均验证后才允许交给更新器。</summary>
 internal static class GitHubUpdateDownload
 {
     internal sealed record Progress(long Received, long Total, string Stage);
+    internal sealed record StagedUpdate(string Archive);
 
-    internal static async Task<string> StageAsync(
-        GitHubReleaseFeed.ReleaseInfo release,
-        string stagingRoot,
-        IProgress<Progress>? progress,
-        CancellationToken cancellationToken = default)
+    internal static async Task<StagedUpdate> StageAsync(GitHubReleaseFeed.ReleaseInfo release, string stagingRoot,
+        IProgress<Progress>? progress, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(release);
-        if (release.AssetUrl.Scheme != Uri.UriSchemeHttps ||
-            !string.Equals(release.AssetUrl.Host, "github.com", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Update URL must be an official GitHub HTTPS asset.");
-        if (release.Size <= 0 || release.Size > 2L * 1024 * 1024 * 1024)
-            throw new InvalidOperationException("Invalid update size.");
+        using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromMinutes(30) };
+        return await StageAsync(client, release, stagingRoot, progress, cancellationToken);
+    }
 
-        Directory.CreateDirectory(stagingRoot);
+    internal static async Task<StagedUpdate> StageAsync(HttpClient client, GitHubReleaseFeed.ReleaseInfo release,
+        string stagingRoot, IProgress<Progress>? progress, CancellationToken cancellationToken = default)
+    {
+        if (!GitHubReleaseFeed.IsOfficialAsset(release.AssetUrl, release.Tag) || release.Size <= 0 || release.Size > 512L * 1024 * 1024 ||
+            !System.Text.RegularExpressions.Regex.IsMatch(release.Sha256, @"\A[0-9a-fA-F]{64}\z"))
+            throw new InvalidDataException("Invalid official update metadata.");
         var working = Path.Combine(stagingRoot, Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(working);
         var archive = Path.Combine(working, "update.zip");
         try
         {
-            using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("XGLauncher", "0.1"));
-            using var response = await client.GetAsync(release.AssetUrl,
-                HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            if (response.RequestMessage?.RequestUri is not { Scheme: "https" } finalUrl ||
-                !(finalUrl.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) ||
-                  finalUrl.Host.EndsWith(".githubusercontent.com", StringComparison.OrdinalIgnoreCase)))
-                throw new InvalidOperationException("Unexpected update download host.");
-            var reportedLength = response.Content.Headers.ContentLength;
-            if (reportedLength.HasValue && reportedLength.Value != release.Size)
-                throw new InvalidDataException("Update asset length differs from release metadata.");
-
-            await using (var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
-            await using (var target = new FileStream(archive, FileMode.CreateNew, FileAccess.Write,
-                FileShare.None, 81920, useAsync: true))
+            var url = release.AssetUrl;
+            HttpResponseMessage? response = null;
+            try
             {
-                var buffer = ArrayPool<byte>.Shared.Rent(81920);
-                try
+                for (int hop = 0; hop < 6; hop++)
                 {
-                    long received = 0;
-                    int count;
-                    while ((count = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) != 0)
+                    using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request.Headers.UserAgent.ParseAdd("XGLauncher/0.1");
+                    response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                    if ((int)response.StatusCode is not (301 or 302 or 303 or 307 or 308)) break;
+                    var location = response.Headers.Location ?? throw new InvalidDataException("Missing redirect.");
+                    var next = location.IsAbsoluteUri ? location : new Uri(url, location);
+                    response.Dispose(); response = null;
+                    // 在发出下一请求之前验证主机；不接受任意 githubusercontent 子域或降级 HTTP。
+                    if (next.Scheme != "https" || !next.IsDefaultPort || next.UserInfo.Length != 0 ||
+                        !(next.Host is "release-assets.githubusercontent.com" or "objects.githubusercontent.com" ||
+                          GitHubReleaseFeed.IsOfficialAsset(next, release.Tag))) throw new InvalidDataException("Unsafe update redirect.");
+                    url = next;
+                }
+                if (response == null) throw new InvalidDataException("Too many update redirects.");
+                response.EnsureSuccessStatusCode();
+                if (response.Content.Headers.ContentLength is long size && size != release.Size) throw new InvalidDataException("Asset length mismatch.");
+                using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+                await using (var source = await response.Content.ReadAsStreamAsync(cancellationToken))
+                await using (var target = new FileStream(archive, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, true))
+                {
+                    byte[] buffer = new byte[81920]; long received = 0; int count;
+                    while ((count = await source.ReadAsync(buffer, cancellationToken)) > 0)
                     {
                         received += count;
-                        if (received > release.Size)
-                            throw new InvalidDataException("Update exceeds expected size.");
-                        await target.WriteAsync(buffer.AsMemory(0, count), cancellationToken).ConfigureAwait(false);
-                        progress?.Report(new Progress(received, release.Size, "Downloading"));
+                        if (received > release.Size) throw new InvalidDataException("Asset exceeds size.");
+                        hash.AppendData(buffer, 0, count);
+                        await target.WriteAsync(buffer.AsMemory(0, count), cancellationToken);
+                        progress?.Report(new(received, release.Size, "Downloading"));
                     }
-                    if (received != release.Size)
-                        throw new InvalidDataException("Incomplete update download.");
+                    if (received != release.Size || !CryptographicOperations.FixedTimeEquals(hash.GetHashAndReset(), Convert.FromHexString(release.Sha256)))
+                        throw new InvalidDataException("Asset checksum mismatch.");
                 }
-                finally { ArrayPool<byte>.Shared.Return(buffer); }
+                progress?.Report(new(release.Size, release.Size, "Verifying"));
+                await Task.Run(() => { using var verified = UpdateFiles.Prepare(new(archive, release.Sha256, working, 0, 0)); }, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                progress?.Report(new(release.Size, release.Size, "Ready"));
+                return new(archive);
             }
-
-            // Reject traversal, symlinks and zip bombs before extraction.
-            using (var zip = ZipFile.OpenRead(archive))
-            {
-                long expanded = 0;
-                if (zip.Entries.Count > 10000)
-                    throw new InvalidDataException("Too many archive entries.");
-                foreach (var entry in zip.Entries)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var name = entry.FullName.Replace('\\', '/');
-                    if (name.StartsWith('/') || name.Contains(':') ||
-                        name.Split('/').Any(x => x == ".."))
-                        throw new InvalidDataException("Unsafe archive path.");
-                    var unixType = (entry.ExternalAttributes >> 16) & 0xF000;
-                    if (unixType == 0xA000)
-                        throw new InvalidDataException("Symbolic links are not supported.");
-                    expanded = checked(expanded + entry.Length);
-                    if (expanded > 4L * 1024 * 1024 * 1024)
-                        throw new InvalidDataException("Expanded archive exceeds size limit.");
-                }
-            }
-            var extracted = Path.Combine(working, "payload");
-            ZipFile.ExtractToDirectory(archive, extracted);
-            if (!Directory.EnumerateFiles(extracted, "XGLauncher.exe", SearchOption.AllDirectories).Any())
-                throw new InvalidDataException("Update does not contain XGLauncher.exe.");
-            progress?.Report(new Progress(release.Size, release.Size, "Ready"));
-            return extracted;
+            finally { response?.Dispose(); }
         }
         catch
         {
-            try { Directory.Delete(working, recursive: true); } catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
+            try { Directory.Delete(working, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
             throw;
         }
     }

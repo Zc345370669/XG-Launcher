@@ -39,6 +39,8 @@ jobs:
       - run: choco install nsis --version=3.11.0 --yes --no-progress
       - shell: pwsh
         run: ./build-windows.ps1 -MakeNsis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
+      - name: 验证真实发布产物的内嵌许可与独立更新器
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --audit-embedded src/XGLauncher/bin/Release/net10.0/win-x64/XGLauncher.dll
       - uses: actions/upload-artifact@v4
         with:
           name: XGLauncher-v0.1.0-alpha-win-x64

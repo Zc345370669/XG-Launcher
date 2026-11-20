@@ -15,13 +15,21 @@ internal static class VerifiedTransfer
     internal static void SetSpeedLimit(HttpClient client, long bytesPerSecond) =>
         gates.GetOrCreateValue(client).SetSpeedLimit(bytesPerSecond);
 
+    /// <summary>停止此 HTTP 会话拥有的共享传输，并等待文件句柄释放；不影响其他会话。</summary>
+    internal static Task StopForExitAsync(HttpClient client) => gates.GetOrCreateValue(client).StopForExitAsync();
+
+    /// <summary>将下载后的原子提交也纳入退出等待，避免 HTTP 完成后仍写入实例文件。</summary>
+    internal static Task CommitOwnedAsync(HttpClient client, Func<Task> operation) =>
+        gates.GetOrCreateValue(client).RunOwnedAsync(_ => operation());
+
     internal static async Task StageAsync(HttpClient http, Uri uri, string partial, long size, string checksum,
         Action<long, long> progress, Action<string> state, CancellationToken token)
     {
         var identity = Path.GetFullPath(partial) + "|" + uri.AbsoluteUri + "|" + size + "|" + checksum;
         // 同一可信资源共享传输；等待者取消仅停止等待，底层操作继续供其他使用者复用。
-        await SharedResourceCoordinator.RunAsync(identity, async () => {
-            using var commit = await JavaInstallGate.EnterAsync(partial + ".transfer");
+        var gate = gates.GetOrCreateValue(http);
+        await SharedResourceCoordinator.RunAsync(identity, () => gate.RunOwnedAsync(async lifetime => {
+            using var commit = await JavaInstallGate.EnterAsync(partial + ".transfer", lifetime);
             var record = partial + ".identity.json";
             var fingerprint = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(identity)));
             string? previous = null;
@@ -32,18 +40,18 @@ internal static class VerifiedTransfer
                 File.WriteAllText(temporary,System.Text.Json.JsonSerializer.Serialize(new TransferIdentity(fingerprint,status)));
                 File.Move(temporary,record,true);
             }
-            if(await MatchesAsync(partial,size,checksum,CancellationToken.None)) { Save("Verified"); return; }
+            if(await MatchesAsync(partial,size,checksum,lifetime)) { Save("Verified"); return; }
             if(previous != fingerprint || (File.Exists(partial) && new FileInfo(partial).Length >= size)) Reset(partial);
             Save("Pending");
-            var gate = gates.GetOrCreateValue(http);
-            await gate.EnterAsync(CancellationToken.None);
+            await gate.EnterAsync(lifetime);
             try { await StageCoreAsync(http, uri, partial, size, checksum,
                 (bytes,total) => { if(!token.IsCancellationRequested) progress(bytes,total); },
-                text => { if(!token.IsCancellationRequested) state(text); },gate,CancellationToken.None); }
+                text => { if(!token.IsCancellationRequested) state(text); },gate,lifetime); }
+            catch (OperationCanceledException) when (lifetime.IsCancellationRequested) { Save("Pending"); throw; }
             catch { Save("Failed"); throw; }
             finally { gate.Leave(); }
             Save("Verified");
-        },token);
+        }),token);
     }
 
     private sealed record TransferIdentity(string Identity,string State);
@@ -57,6 +65,44 @@ internal static class VerifiedTransfer
         private int limit = 1;
         private long bytesPerSecond;
         private long nextTick;
+        private readonly HashSet<Task> workers = [];
+        private CancellationTokenSource lifetime = new();
+        private bool stopping;
+
+        internal async Task RunOwnedAsync(Func<CancellationToken, Task> operation)
+        {
+            var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            CancellationToken token;
+            lock (sync)
+            {
+                if (stopping) throw new OperationCanceledException();
+                token = lifetime.Token;
+                workers.Add(done.Task);
+            }
+            try { await operation(token); }
+            finally { lock (sync) workers.Remove(done.Task); done.TrySetResult(); }
+        }
+
+        internal async Task StopForExitAsync()
+        {
+            Task[] pending;
+            lock (sync)
+            {
+                if (stopping) throw new InvalidOperationException("正在保存下载任务，请稍后重试。");
+                stopping = true;
+                pending = workers.ToArray();
+            }
+            try
+            {
+                // 取消真实传输，而非只取消共享任务的某个等待者；先释放写入再交给窗口退出。
+                await lifetime.CancelAsync();
+                await Task.WhenAll(pending);
+            }
+            finally
+            {
+                lock (sync) { lifetime.Dispose(); lifetime = new(); stopping = false; }
+            }
+        }
 
         public void SetSpeedLimit(long rate)
         {

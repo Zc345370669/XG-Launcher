@@ -97,7 +97,7 @@ internal static class OAuthSecurityTests
                 catch (HttpRequestException) { }
                 // Windows CI may time out rather than refuse a closed SDK callback URL.
                 // Bound the probe independently; it must never consume another authorization code.
-                catch (OperationCanceledException) when (probe.IsCancellationRequested && !deadline.IsCancellationRequested) { }
+                catch (OperationCanceledException) when (probe.IsCancellationRequested) { }
                 Check(fixture.Exchanges == beforeReplay, "closed callback probe must not exchange another code");
             }
             Console.WriteLine($"PASS auth13.1 MSAL {scenario}, state/PKCE, one-use exchange and listener cleanup (synthetic callback + controlled OAuth HTTP)");

@@ -29,7 +29,7 @@ FunctionEnd
 Section
   SetOutPath "$INSTDIR"
   SetOverwrite on
-  File /r "..\dist\win-x64\*"
+  File "..\dist\win-x64\XG-Launcher\XGLauncher.exe"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateShortcut "$SMPROGRAMS\XG Launcher.lnk" "$INSTDIR\XGLauncher.exe"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\XGLauncher" "DisplayName" "XG Launcher"

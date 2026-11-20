@@ -1,5 +1,5 @@
 """Historical grants and current MIT scope; no third-party relicense inference."""
-import hashlib,json,unittest
+import hashlib,json,unittest,tempfile,subprocess,sys,zipfile
 from pathlib import Path
 R=Path(__file__).resolve().parents[1];S=json.loads((R/'licensing/status.json').read_text());T=(R/'licensing/XGCL-1.0.txt').read_text()
 class ScopeTests(unittest.TestCase):
@@ -13,5 +13,12 @@ class ScopeTests(unittest.TestCase):
   t=(R/'README.md').read_text()
   for p in ['趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。','v0.1.0-alpha','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
  def test_release_provides_native_source_and_notices(self):
-  self.assertIn('Copy-Item third-party',(R/'build-windows.ps1').read_text());self.assertIn('third-party',(R/'scripts/publish-portable-windows.sh').read_text())
+  for script in ['build-windows.ps1','scripts/publish-portable-windows.sh']:
+   self.assertIn('prepare-single-exe.py',(R/script).read_text())
+  with tempfile.TemporaryDirectory() as out:
+   subprocess.run([sys.executable,str(R/'scripts/prepare-single-exe.py'),out],check=True,capture_output=True)
+   with zipfile.ZipFile(Path(out)/'Compliance.zip') as archive:
+    for name in ['LICENSE','THIRD-PARTY-NOTICES.md','licenses/Lucide-LICENSE.txt','third-party/native-sources/libgifcodec-d06d2a6d.tar.gz']:
+     self.assertEqual(archive.read(name),(R/name).read_bytes())
+  self.assertIn('XG.Compliance.zip',(R/'src/XGLauncher/XGLauncher.csproj').read_text())
 if __name__=='__main__':unittest.main()

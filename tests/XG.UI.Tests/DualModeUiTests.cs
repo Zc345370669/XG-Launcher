@@ -80,6 +80,9 @@ internal static class DualModeUiTests
         resources.Resume(rootJob.Id); Check(!resources.IsPaused(rootJob.Id), "shared task resume failed");
         owner.WindowState = WindowState.Minimized; Pump(); Check(!operation.IsCompleted, "minimize stopped task"); owner.WindowState = WindowState.Normal;
         owner.Close(); Pump(); Check(owner.IsVisible && !model.IsDisposed, "active close bypassed safe guard");
+        var exitPrompt = owner.OwnedWindows.Single();
+        Invoke(exitPrompt.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "取消")));
+        Pump(); Check(owner.IsVisible && !operation.IsCompleted, "cancelled exit stopped shared task");
         gate.SetResult(); Wait(() => operation.IsCompleted); Check(operation.IsCompletedSuccessfully, "shared task failed");
         Wait(() => picker.ItemsSource!.Cast<Instance>().Any(x => x.Id == third.Id));
         owner.ToggleMode(); Pump();

@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>WinExe</OutputType><AssemblyName>XGUpdater</AssemblyName></PropertyGroup>
+  <ItemGroup><Compile Include="../XG.Core/UpdateFiles.cs" Link="UpdateFiles.cs" /></ItemGroup>
+</Project>

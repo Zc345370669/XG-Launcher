@@ -8,12 +8,17 @@ using Avalonia.VisualTree;
 using XG.Core;
 using XGLauncher;
 
+if (args.Length == 2 && args[0] == "--audit-embedded") { await EmbeddedPublishAudit.RunAsync(args[1]); return; }
+
 if (args.Contains("--oauth-probe", StringComparer.Ordinal))
 {
     await BrowserAuthorizationProbe.RunAsync();
     return;
 }
 
+var updateFixtureRoot = Path.Combine(Path.GetTempPath(), "xg-update-test-" + Guid.NewGuid().ToString("N"));
+try { Directory.CreateDirectory(updateFixtureRoot); await GitHubUpdateTests.RunAsync(updateFixtureRoot); }
+finally { Directory.Delete(updateFixtureRoot, true); }
 await OAuthSecurityTests.RunAsync();
 Localizer.Set("en-US");
 var forbiddenMessage = Localizer.Text(MicrosoftAccounts.Describe(new LoginException(LoginStage.Minecraft,
@@ -125,6 +130,7 @@ try
     GlobalUiFixTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     StageRailAlignmentTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     StageNodesFinalTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    LauncherUpdateUiTests.Run(temp);
     DirectDownloadTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Console.WriteLine("PASS headless window creation, six navigation pages, persisted instance and launch button");
 }

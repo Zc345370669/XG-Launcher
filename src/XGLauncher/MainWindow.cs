@@ -139,20 +139,8 @@ public sealed partial class MainWindow : Window
                 if (!windowClosed) { status.Text = MicrosoftAccounts.Describe(ex); compactStatus.Text = status.Text; }
             }
         };
-        Closing += (_, e) =>
-        {
-            if (minimizeToTray && !exitRequested && tray != null)
-            {
-                e.Cancel = true; Hide(); return;
-            }
-            if (model.Resources.MainJobs.Any(x => model.Resources.CanControl(x.Id)) || maintenance != 0 || model.Busy.Count != 0 || model.Downloads.Items.Any(x => x.State is "等待中" or "连接中" or "下载中" or "校验中" or "安装中"))
-            {
-                e.Cancel = true;
-                status.Text = "退出前请等待文件操作完成、暂停下载并关闭游戏。";
-                compactStatus.Text = status.Text;
-                exitRequested = false;
-            }
-        };
+        Closing += WindowClosing;
+        ConfigureUpdates();
         Refresh();
     }
 
