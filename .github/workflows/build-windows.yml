@@ -1,5 +1,7 @@
 name: Windows x64 build
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
 
@@ -32,6 +34,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Failed to export tracked source.' }
           Expand-Archive -LiteralPath $archive -DestinationPath $snapshot -Force
           python "$snapshot/scripts/scan-public-source.py" $snapshot --report "$env:RUNNER_TEMP/xg-public-scan.json" --strict-layout
+      - name: 校验发布脚本语法（此步骤不发布）
+        shell: pwsh
+        run: |
+          $parseErrors = $null
+          $tokens = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'scripts/publish-approved-release.ps1'), [ref]$tokens, [ref]$parseErrors) | Out-Null
+          if ($parseErrors.Count -gt 0) { throw ($parseErrors | Out-String) }
       - name: 许可证与安全扫描回归
         run: python -m unittest discover -s tests -p '*tests.py' -v
       - run: dotnet restore XG-Launcher.sln --locked-mode
@@ -51,7 +60,7 @@ jobs:
         run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --live-release-update src/XGLauncher/obj/single-exe-assets/updater/XGUpdater.exe dist/update-probe/XGUpdateProbe.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: XGLauncher-v0.1.0-alpha-win-x64
+          name: XGLauncher-v0.1.1-alpha-win-x64
           path: |
             dist/XGLauncher-Setup-win-x64.exe
             dist/XGLauncher-portable-win-x64.zip
@@ -73,3 +82,23 @@ jobs:
       - run: dotnet restore XG-Launcher.sln --locked-mode
       - run: dotnet build XG-Launcher.sln -c Release --no-restore
       - run: dotnet test XG-Launcher.sln -c Release --no-build --no-restore
+
+  # This one authorized release is triggered only by the explicit merge marker.
+  publish-0-1-1:
+    needs: [build, compile-diagnostic]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.1.1-alpha]')
+    runs-on: windows-2025
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: XGLauncher-v0.1.1-alpha-win-x64
+          path: release-files
+      - name: 发布本次已授权的 v0.1.1-alpha 并验证上传结果
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: ./scripts/publish-approved-release.ps1 -ExpectedCommit $env:GITHUB_SHA

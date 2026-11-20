@@ -21,7 +21,7 @@ internal static class LauncherUpdateUiTests
         Invoke(nav);
         var settings = window.GetVisualDescendants().OfType<SettingsSurface>().Single(); settings.ScrollToSection(6, false); Pump();
         var version = settings.Sections[6].GetVisualDescendants().OfType<Button>().Single(x => x.Name == "VersionUpdateLink");
-        Check(version.Content is string value && value.StartsWith("v0.1.0-alpha"), "version is not the clickable entry");
+        Check(version.Content is string value && value.StartsWith("v" + typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion.Split('+')[0]), "version is not the clickable entry");
         Check(!settings.Sections[6].GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, "检查更新")), "extra check-update button added");
         Invoke(version); Pump();
         var dialog = window.OwnedWindows.Single();

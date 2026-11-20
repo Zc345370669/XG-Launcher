@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using XG.Core;
 
 internal static class EmbeddedPublishAudit
@@ -32,7 +34,7 @@ internal static class EmbeddedPublishAudit
             helper.Position = 0;
             await using (var output = File.Create(updater)) await helper.CopyToAsync(output);
             var errors = new List<Exception>();
-            foreach (var scenario in new[] { "success", "checksum", "launch-failure", "locked", "parent", "user-data" })
+            foreach (var scenario in new[] { "success", "checksum", "launch-failure", "locked", "parent", "user-data", "unicode", "denied", "interrupted" })
                 try { await ScenarioAsync(scenario, updater, Path.GetFullPath(probePath), root); }
                 catch (Exception error) { errors.Add(new Exception("Updater scenario: " + scenario, error)); }
             if (errors.Count != 0) throw new AggregateException(errors);
@@ -48,13 +50,14 @@ internal static class EmbeddedPublishAudit
         }
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     private static async Task ScenarioAsync(string scenario, string updater, string probe, string root)
     {
-        var folder = Path.Combine(root, scenario); Directory.CreateDirectory(folder);
+        var folder = Path.Combine(root, scenario == "unicode" ? "中文 路径 ' & 测试" : scenario); Directory.CreateDirectory(folder);
         var install = Path.Combine(folder, "install"); Directory.CreateDirectory(install);
         var executable = Path.Combine(install, "XGLauncher.exe");
-        var success = scenario is "success" or "parent";
-        File.Copy(success ? updater : probe, executable);
+        var success = scenario is "success" or "parent" or "unicode" or "interrupted";
+        File.Copy(success || scenario == "denied" ? updater : probe, executable);
         var original = await File.ReadAllBytesAsync(executable);
         var preserved = new[] { "minecraft/versions/Test/saves/world.keep", "minecraft/versions/Test/mods/mod.keep",
             "data/settings.keep", "java/runtime.keep" };
@@ -85,10 +88,11 @@ internal static class EmbeddedPublishAudit
         if (scenario == "checksum") digest = new string('0', 64);
         Process? parent = null;
         FileStream? locked = null;
+        DirectorySecurity? originalPermissions = null;
         var release = Path.Combine(folder, "release.marker");
         try
         {
-            if (scenario == "parent")
+            if (scenario is "parent" or "interrupted")
             {
                 var ready = Path.Combine(folder, "parent.marker");
                 var start = new ProcessStartInfo(probe) { UseShellExecute = false, CreateNoWindow = true };
@@ -97,6 +101,15 @@ internal static class EmbeddedPublishAudit
                 await UntilAsync(() => File.Exists(ready));
             }
             if (scenario == "locked") locked = new FileStream(executable, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (scenario == "denied")
+            {
+                var directory = new DirectoryInfo(install);
+                originalPermissions = directory.GetAccessControl();
+                var restricted = directory.GetAccessControl();
+                restricted.AddAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().User!, FileSystemRights.Write | FileSystemRights.Delete,
+                    InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Deny));
+                directory.SetAccessControl(restricted);
+            }
             var plan = Path.Combine(stage, "apply.json");
             await File.WriteAllTextAsync(plan, JsonSerializer.Serialize(new UpdateApplyRequest(archive, digest, install,
                 parent?.Id ?? int.MaxValue, parent?.StartTime.ToUniversalTime().Ticks ?? 0)));
@@ -108,31 +121,43 @@ internal static class EmbeddedPublishAudit
                 await UntilAsync(() => File.Exists(plan + ".status") && File.ReadAllText(plan + ".status") == "WaitingForExit");
                 if (process.HasExited || parent.HasExited || !original.SequenceEqual(File.ReadAllBytes(executable)))
                     throw new Exception("Updater replaced executable before original process exited");
+                if (scenario == "interrupted")
+                {
+                    process.Kill(true); await process.WaitForExitAsync();
+                    if (!original.SequenceEqual(File.ReadAllBytes(executable))) throw new Exception("Interrupted wait changed original executable");
+                }
                 await File.WriteAllTextAsync(release, "Release"); await parent.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
             }
             await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
+            int exitCode = process.ExitCode;
+            if (scenario == "interrupted")
+            {
+                using var retry = Process.Start(startHelper) ?? throw new Exception("Interrupted updater retry did not start");
+                await retry.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60)); exitCode = retry.ExitCode;
+            }
             var outcome = UpdateReceipt.Read(Path.Combine(folder, "updates"), plan + ".result");
             if (success)
             {
-                if (process.ExitCode != 0 || outcome != UpdateOutcome.Updated ||
+                if (exitCode != 0 || outcome != UpdateOutcome.Updated ||
                     !File.ReadAllBytes(probe).SequenceEqual(File.ReadAllBytes(executable))) throw new Exception("Update did not commit replacement");
             }
             else
             {
                 var expected = scenario switch { "checksum" or "user-data" => UpdateOutcome.InvalidPackage,
-                    "launch-failure" => UpdateOutcome.LaunchFailed, _ => UpdateOutcome.FilesBusy };
+                    "launch-failure" => UpdateOutcome.LaunchFailed, "denied" => UpdateOutcome.AccessDenied, _ => UpdateOutcome.FilesBusy };
                 // Windows 删除共享被拒时可能返回 ERROR_ACCESS_DENIED，而不是 SHARING_VIOLATION。
                 // 两种结果都必须保持原 EXE 完整，不能因此放宽文件恢复断言。
                 var expectedOutcome = scenario == "locked" ? outcome is UpdateOutcome.FilesBusy or UpdateOutcome.AccessDenied : outcome == expected;
-                if (process.ExitCode != 1 || !expectedOutcome || !original.SequenceEqual(File.ReadAllBytes(executable)))
+                if (exitCode != 1 || !expectedOutcome || !original.SequenceEqual(File.ReadAllBytes(executable)))
                     throw new Exception("Failed update did not preserve/restore original: " + scenario + "/" + outcome);
             }
-            if (scenario != "locked") await UntilAsync(() => File.Exists(Path.Combine(install, "launched.marker")));
+            if (scenario is not ("locked" or "denied")) await UntilAsync(() => File.Exists(Path.Combine(install, "launched.marker")));
             foreach (var name in preserved) if (await File.ReadAllTextAsync(Path.Combine(install, name)) != "user fixture") throw new Exception("Updater modified user data");
             Console.WriteLine("PASS Windows actual updater/restart probe: " + scenario + "; outcome=" + outcome + "; user data preserved (process test, not desktop GUI)");
         }
         finally
         {
+            if (originalPermissions != null) new DirectoryInfo(install).SetAccessControl(originalPermissions);
             locked?.Dispose();
             if (parent != null) { await File.WriteAllTextAsync(release, "Release"); await parent.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30)); parent.Dispose(); }
         }

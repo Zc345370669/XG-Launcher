@@ -15,7 +15,7 @@ internal static class LiveReleaseUpdateSmoke
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Live replacement smoke test requires Windows");
         using var deadline = new CancellationTokenSource(TimeSpan.FromMinutes(5));
         using var http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromMinutes(4) };
-        var current = "v" + (typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0] ?? "0.1.0-alpha");
+        var current = "v" + (typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0] ?? "0.1.1-alpha");
         var available = await GitHubReleaseFeed.CheckAsync(http, current, true, deadline.Token);
         Console.WriteLine("LIVE current=" + current + "; offered=" + (available?.Tag ?? "none (no newer compatible release)"));
         // 这是隔离测试的旧版本输入，不改生产程序集版本号，也不声称当前玩家已经有新版本。

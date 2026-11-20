@@ -74,10 +74,7 @@ using var stream = AssetLoader.Open(new Uri("avares://XGLauncher/Assets/XG.png")
             Label(".NET：" + RuntimeInformation.FrameworkDescription + " · " + Environment.Version, 11));
         var project = Column(Label("作者 / 维护者：Zc345370669", 15, true),
             Label("主许可证：MIT License"), Label("开发方式：AI 辅助开发"),
-            OfficialRepositoryLink(),
-            Action("查看 MIT License", () => OpenLegalAsync(false)),
-            Action("第三方许可证", () => OpenLegalAsync(true)),
-            Action("导出完整许可与对应源码", ExportComplianceAsync));
+            OfficialRepositoryLink());
         project.Name = "OfficialProjectInformation";
         foreach (var item in project.Children) item.HorizontalAlignment = HorizontalAlignment.Center;
         foreach (var label in project.Children.OfType<TextBlock>()) label.TextAlignment = TextAlignment.Center;

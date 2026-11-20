@@ -62,7 +62,9 @@ public sealed partial class MainWindow
             Label("游戏及模组资源使用官方渠道；下载文件会校验后再安装。用户数据保留于本地工作目录。"));
         var legal = new LegalBrowser(this);
         var about = AboutPage();
-        var sections = new Control[] { general, appearance, notifications, backup, security, legal, about }
+        var export = Action("导出完整许可与对应源码", ExportComplianceAsync);
+        export.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+        var sections = new Control[] { general, appearance, notifications, backup, security, Column(legal, export), about }
             .Select((item, index) => (Control)new Border
             {
                 Name = $"SettingsSection{index}", Child = item, Background = Brushes.Transparent, MinHeight = 120, Padding = new(19, 14),

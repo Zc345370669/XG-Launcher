@@ -93,13 +93,17 @@ internal static class DualModeUiTests
         var link = about.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x) == MainWindow.OfficialRepository);
         string? opened = null; owner.OpenExternalLink = url => { opened = url; return Task.CompletedTask; }; Invoke(link);
         Check(opened == "https://github.com/Zc345370669/XG-Launcher", "official repository handler wrong");
-        foreach (var label in new[] { "查看 MIT License", "第三方许可证" })
-        {
-            Invoke(about.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, label)));
-            var legal = owner.GetVisualDescendants().OfType<LegalBrowser>().Single();
-            Check(label == "查看 MIT License" ? legal.DocumentBody?.Text == LegalCatalog.Read("XGLauncher-MIT.txt") : legal.Page == "third-party", "legal entry wrong or incomplete");
-            Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "返回关于")));
-        }
+        Check(!about.GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, "查看 MIT License") || Equals(x.Content, "第三方许可证") || Equals(x.Content, "导出完整许可与对应源码")), "duplicate legal actions remained in About");
+        settings.ScrollToSection(5, false); Pump();
+        var legal = settings.Sections[5].GetVisualDescendants().OfType<LegalBrowser>().Single();
+        Invoke(legal.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "自身许可证"))); Pump();
+        Invoke(legal.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "查看内置说明"))); Pump();
+        Check(legal.DocumentBody?.Text == LegalCatalog.Read("XGLauncher-MIT.txt"), "MIT entry missing from existing legal section");
+        legal.ShowOverview(); Pump();
+        Invoke(legal.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "第三方许可证"))); Pump();
+        Wait(() => legal.GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, LegalCatalog.ThirdParty.First().Project + " · " + LegalCatalog.ThirdParty.First().Id)));
+        Check(settings.Sections[5].GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, "导出完整许可与对应源码")), "compliance export lost");
+        settings.ScrollToSection(6, false); Pump();
         owner.Width = 600; owner.Height = 420; Pump(); settings.ContentScroll.Offset = new Vector(0, settings.ContentScroll.Extent.Height); Pump(); Capture("phase17-about-small-linux-headless");
         owner.ToggleMode(); Pump(); owner.Width = 350; owner.Height = 380; Pump(); Capture("phase17-compact-minimum-linux-headless");
         owner.Close(); Pump(); Check(model.IsDisposed, "model HTTP lifetime not released");

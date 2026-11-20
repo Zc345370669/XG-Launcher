@@ -2,7 +2,7 @@
 
 > 趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。
 
-面向 **Windows 10/11 x64** 的 Minecraft Java 版启动器，使用 C# / .NET 10 / Avalonia UI。当前版本 **v0.1.0-alpha**，仍在测试中，请备份重要存档。
+面向 **Windows 10/11 x64** 的 Minecraft Java 版启动器，使用 C# / .NET 10 / Avalonia UI。当前版本 **v0.1.1-alpha**，仍在测试中，请备份重要存档。
 
 **作者 / 维护者：Zc345370669** · [官方仓库](https://github.com/Zc345370669/XG-Launcher) · [AI 辅助开发说明](AI-DEVELOPMENT.md)
 
