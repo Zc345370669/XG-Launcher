@@ -6,6 +6,7 @@ on:
 env:
   AVALONIA_TELEMETRY_OPTOUT: "1"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  PYTHONUTF8: "1"
 
 permissions:
   contents: read
@@ -45,3 +46,16 @@ jobs:
             dist/XGLauncher-Setup-win-x64.exe
             dist/XGLauncher-portable-win-x64.zip
           if-no-files-found: error
+
+  # Diagnostic-only: compile the proposed code even if the independent
+  # license/provenance audit above fails. This job never packages or publishes.
+  compile-diagnostic:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore XG-Launcher.sln --locked-mode
+      - run: dotnet build XG-Launcher.sln -c Release --no-restore
+      - run: dotnet test XG-Launcher.sln -c Release --no-build --no-restore
