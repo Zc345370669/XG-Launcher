@@ -8,12 +8,19 @@ using Avalonia.VisualTree;
 using XG.Core;
 using XGLauncher;
 
+if (args.Length is 3 or 4 && args[0] == "--live-release-update") { await LiveReleaseUpdateSmoke.RunAsync(args[1], args[2], args.Length == 4 ? args[3] : "v0.0.0"); return; }
+
+if (args.Length is 2 or 3 && args[0] == "--audit-embedded") { await EmbeddedPublishAudit.RunAsync(args[1], args.Length == 3 ? args[2] : null); return; }
+
 if (args.Contains("--oauth-probe", StringComparer.Ordinal))
 {
     await BrowserAuthorizationProbe.RunAsync();
     return;
 }
 
+var updateFixtureRoot = Path.Combine(Path.GetTempPath(), "xg-update-test-" + Guid.NewGuid().ToString("N"));
+try { Directory.CreateDirectory(updateFixtureRoot); await GitHubUpdateTests.RunAsync(updateFixtureRoot); }
+finally { Directory.Delete(updateFixtureRoot, true); }
 await OAuthSecurityTests.RunAsync();
 Localizer.Set("en-US");
 var forbiddenMessage = Localizer.Text(MicrosoftAccounts.Describe(new LoginException(LoginStage.Minecraft,
@@ -125,6 +132,7 @@ try
     GlobalUiFixTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     StageRailAlignmentTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     StageNodesFinalTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
+    LauncherUpdateUiTests.Run(temp);
     DirectDownloadTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Console.WriteLine("PASS headless window creation, six navigation pages, persisted instance and launch button");
 }

@@ -234,7 +234,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                             uri.Host is "piston-data.mojang.com" or "launcher.mojang.com" or "libraries.minecraft.net" or
                                 "resources.download.minecraft.net" or "piston-meta.mojang.com" or "launchermeta.mojang.com")
                         {
-                            await SharedResourceCoordinator.RunAsync("commit|" + Path.GetFullPath(target) + "|" + checksum,async () => {
+                            await SharedResourceCoordinator.RunAsync("commit|" + Path.GetFullPath(target) + "|" + checksum,() => VerifiedTransfer.CommitOwnedAsync(http, async () => {
                                 using var commit = await JavaInstallGate.EnterAsync(target + ".resource-commit");
                                 if (!await VerifiedTransfer.MatchesAsync(target, file.Size, checksum, CancellationToken.None)) {
                                     var part = target + ".xg-part";
@@ -242,7 +242,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                                     File.Move(part,target,overwrite:true);VerifiedTransfer.ClearMetadata(part);
                                 }
                                 await file.ExecuteUpdateTask(CancellationToken.None);
-                            },token);
+                            }),token);
                         }
                         else
                         {

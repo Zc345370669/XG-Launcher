@@ -18,6 +18,9 @@ public sealed class ResourceOperations
     private readonly string index;
     private readonly List<ResourceOperation> operations;
     private readonly Dictionary<Guid, ResourceControl> active = [];
+    private readonly Dictionary<Guid, TaskCompletionSource> completions = [];
+    private readonly HashSet<Guid> suspending = [];
+    private bool preparingExit;
     private readonly Dictionary<Guid, long> lastCheckpoint = [];
     private static bool Terminal(string state) => state is "已完成" or "失败" or "已取消";
     public bool CanRecover(Guid id) => !active.ContainsKey(id) &&
@@ -109,6 +112,7 @@ public sealed class ResourceOperations
     public async Task<T> RunAsync<T>(string name, string kind, string source, string target,
         Func<Action<string>, Task<T>> run, ResourceRecovery? recovery = null)
     {
+        if (preparingExit && current.Value == null) throw new InvalidOperationException("正在保存下载任务，请稍后重试。");
         if (current.Value is { } parent) await parent.Control.WaitIfPausedAsync();
         var item = current.Value is { } owner
             ? operations.LastOrDefault(x => x.ParentId == owner.Id && x.Kind == kind) : null;
@@ -127,6 +131,7 @@ public sealed class ResourceOperations
 
     public Task<T> RetryAsync<T>(Guid id, Func<Action<string>, Task<T>> run)
     {
+        if (preparingExit) throw new InvalidOperationException("正在保存下载任务，请稍后重试。");
         if (!CanRecover(id)) throw new InvalidOperationException("此任务目前不可恢复。");
         return ExecuteAsync(operations.Single(x => x.Id == id), run);
     }
@@ -146,6 +151,8 @@ public sealed class ResourceOperations
         using var control = new ResourceControl(parent?.Control.Token ?? default, status => Set(status));
         current.Value = (item.Id, control);
         active.Add(item.Id, control);
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        completions.Add(item.Id, completion);
         try
         {
             Set("等待中");
@@ -159,7 +166,8 @@ public sealed class ResourceOperations
         }
         catch (OperationCanceledException) when (control.Token.IsCancellationRequested)
         {
-            Set("已取消");
+            // 退出是挂起，不是用户取消；保留恢复描述及部分文件，重启后重新校验。
+            Set(suspending.Contains(item.Id) ? (item.Recovery != null ? "等待恢复" : "已暂停") : "已取消");
             throw;
         }
         catch (Exception error)
@@ -180,6 +188,8 @@ public sealed class ResourceOperations
             samples.Remove(item.Id);
             lastCheckpoint.Remove(item.Id);
             current.Value = parent;
+            completions.Remove(item.Id);
+            completion.TrySetResult();
         }
 
         void Set(string stage, string? error = null)
@@ -245,6 +255,28 @@ public sealed class ResourceOperations
         }
         ProgressChanged?.Invoke(operations[i]);
         Aggregate(operations[i].ParentId);
+    }
+
+    /// <summary>
+    /// 在既有调度上下文中停止任务并写入可恢复状态；原子加载器步骤沿用延迟取消策略。
+    /// </summary>
+    /// <remarks>调用方应同时禁止界面发起新操作；等待期间不阻塞 UI 线程，也不删除部分下载文件。</remarks>
+    public async Task SuspendForExitAsync()
+    {
+        if (preparingExit) throw new InvalidOperationException("正在保存下载任务，请稍后重试。");
+        preparingExit = true;
+        try
+        {
+            var roots = MainJobs.Where(x => CanControl(x.Id)).ToArray();
+            foreach (var root in roots)
+                foreach (var id in Descendants(root.Id).Prepend(root.Id)) suspending.Add(id);
+            var pending = completions.Values.Select(x => x.Task).ToArray();
+            foreach (var root in roots) Cancel(root.Id);
+            await Task.WhenAll(pending);
+            // 只有所有执行体释放文件句柄后，才允许调用方关闭窗口并释放 HTTP 客户端。
+            InstanceStore.WriteJson(index, operations);
+        }
+        finally { suspending.Clear(); preparingExit = false; }
     }
 
     public void ClearCompleted()

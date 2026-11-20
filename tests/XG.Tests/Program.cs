@@ -26,6 +26,7 @@ var root = Path.Combine(Path.GetTempPath(), "xg-test-" + Guid.NewGuid().ToString
 try
 {
     var store = new InstanceStore(root);
+    await ShutdownTests.RunAsync(root);
     await JavaNativeTests.RunAsync(root);
     await Phase9TransferTests.RunAsync(root);
     await Phase10Tests.RunAsync(root);

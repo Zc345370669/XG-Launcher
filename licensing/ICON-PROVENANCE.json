@@ -14,7 +14,7 @@
   "reviewed_files": [
     {
       "path": "src/XGLauncher/MainWindow.cs",
-      "sha256": "5e40d6e2d8d7734ef2d8dbecbd6e9035db27254dd421aee3d967df380e3aa2d3"
+      "sha256": "4caf8430246057ebb5834192051bbca303812962af393290c19f8922ebd8340b"
     },
     {
       "path": "src/XGLauncher/TitleBar.cs",
@@ -31,5 +31,6 @@
   "window_rounding_snapshot_note": "Current source hash refresh only; no geometry or icon asset replaced; previous evidence retained in history/window-rounding-baseline.",
   "adaptive_combo_snapshot_note": "Active source hashes only; pinned SVG assets unchanged; trash-2 resolves to the canonical trash asset per pinned upstream aliases metadata in LUCIDE-ASSETS.json.",
   "global_ui_snapshot_note": "Source hashes updated; pinned wrench/shapes SVG sources and hashes in LUCIDE-ASSETS.json, existing SVGs and original licenses unchanged.",
-  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance."
+  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance.",
+  "auto_update_note": "Current project-owned MainWindow wiring hash refreshed; no SVG geometry, raw license bytes or upstream evidence changed."
 }

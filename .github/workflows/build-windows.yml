@@ -1,11 +1,14 @@
 name: Windows x64 build
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
 
 env:
   AVALONIA_TELEMETRY_OPTOUT: "1"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  PYTHONUTF8: "1"
 
 permissions:
   contents: read
@@ -15,6 +18,10 @@ jobs:
     runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
@@ -27,6 +34,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Failed to export tracked source.' }
           Expand-Archive -LiteralPath $archive -DestinationPath $snapshot -Force
           python "$snapshot/scripts/scan-public-source.py" $snapshot --report "$env:RUNNER_TEMP/xg-public-scan.json" --strict-layout
+      - name: 校验发布脚本语法（此步骤不发布）
+        shell: pwsh
+        run: |
+          $parseErrors = $null
+          $tokens = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'scripts/publish-approved-release.ps1'), [ref]$tokens, [ref]$parseErrors) | Out-Null
+          if ($parseErrors.Count -gt 0) { throw ($parseErrors | Out-String) }
       - name: 许可证与安全扫描回归
         run: python -m unittest discover -s tests -p '*tests.py' -v
       - run: dotnet restore XG-Launcher.sln --locked-mode
@@ -38,10 +52,71 @@ jobs:
       - run: choco install nsis --version=3.11.0 --yes --no-progress
       - shell: pwsh
         run: ./build-windows.ps1 -MakeNsis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
+      - name: 构建独立的更新重启测试程序（不进入发布包）
+        run: dotnet publish tests/XG.Update.Probe -c Release -r win-x64 --self-contained true -p:XgWindowsPublish=true -p:RestoreLockedMode=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none -p:DebugSymbols=false -o dist/update-probe
+      - name: 验证内嵌许可及更新成功、回滚、占用和父进程等待
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --audit-embedded src/XGLauncher/bin/Release/net10.0/win-x64/XGLauncher.dll dist/update-probe/XGUpdateProbe.exe
+      - name: 公网官方 Release 隔离更新实测（模拟旧版本，不发布 Release）
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --live-release-update src/XGLauncher/obj/single-exe-assets/updater/XGUpdater.exe dist/update-probe/XGUpdateProbe.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: XGLauncher-v0.1.0-alpha-win-x64
+          name: XGLauncher-v0.1.1-alpha-win-x64
           path: |
             dist/XGLauncher-Setup-win-x64.exe
             dist/XGLauncher-portable-win-x64.zip
           if-no-files-found: error
+
+  # Diagnostic-only: compile the proposed code even if the independent
+  # license/provenance audit above fails. This job never packages or publishes.
+  compile-diagnostic:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore XG-Launcher.sln --locked-mode
+      - run: dotnet build XG-Launcher.sln -c Release --no-restore
+      - run: dotnet test XG-Launcher.sln -c Release --no-build --no-restore
+
+  # This one authorized release is triggered only by the explicit merge marker.
+  publish-0-1-1:
+    needs: [build, compile-diagnostic]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.1.1-alpha]')
+    runs-on: windows-2025
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: XGLauncher-v0.1.1-alpha-win-x64
+          path: release-files
+      - name: 发布本次已授权的 v0.1.1-alpha 并验证上传结果
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: ./scripts/publish-approved-release.ps1 -ExpectedCommit $env:GITHUB_SHA
+
+  verify-published-update:
+    needs: publish-0-1-1
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: 构建只读公网验收工具
+        shell: pwsh
+        run: |
+          dotnet build tests/XG.UI.Tests -c Release -p:RestoreLockedMode=true
+          $flags = @('-c','Release','-r','win-x64','--self-contained','true','-p:XgWindowsPublish=true','-p:RestoreLockedMode=true','-p:PublishSingleFile=true','-p:IncludeNativeLibrariesForSelfExtract=true','-p:EnableCompressionInSingleFile=true','-p:DebugType=none','-p:DebugSymbols=false')
+          dotnet publish src/XG.Updater @flags -o dist/verify-updater
+          dotnet publish tests/XG.Update.Probe @flags -o dist/verify-probe
+      - name: 实测 v0.1.0 检测已发布新版并下载、替换和启动（隔离目录）
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --live-release-update dist/verify-updater/XGUpdater.exe dist/verify-probe/XGUpdateProbe.exe v0.1.0-alpha

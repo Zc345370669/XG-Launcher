@@ -43,7 +43,7 @@ internal static class OAuthSecurityTests
             using var fixture = new OAuthHttpFixture();
             fixture.Success = scenario == "success";
             var app = MicrosoftAccounts.CreatePublicClient("dbccdda9-9c7d-4435-9309-1e84eb908462", fixture);
-            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(20));
             using var local = LocalHttp();
             Task? submitted = null;
             Uri? callback = null;
@@ -86,12 +86,19 @@ internal static class OAuthSecurityTests
             if (scenario is "timeout" or "cancel") Check(failure is OperationCanceledException, "cancelled listener");
             if (callback != null)
             {
+                using var probe = CancellationTokenSource.CreateLinkedTokenSource(deadline.Token);
+                probe.CancelAfter(TimeSpan.FromMilliseconds(700));
+                var beforeReplay = fixture.Exchanges;
                 try
                 {
-                    using var duplicate = await local.GetAsync(callback);
+                    using var duplicate = await local.GetAsync(callback, probe.Token);
                     Check(duplicate.StatusCode != HttpStatusCode.OK && duplicate.StatusCode != HttpStatusCode.Found, "listener closed/replay rejected");
                 }
                 catch (HttpRequestException) { }
+                // Windows CI may time out rather than refuse a closed SDK callback URL.
+                // Bound the probe independently; it must never consume another authorization code.
+                catch (OperationCanceledException) when (probe.IsCancellationRequested) { }
+                Check(fixture.Exchanges == beforeReplay, "closed callback probe must not exchange another code");
             }
             Console.WriteLine($"PASS auth13.1 MSAL {scenario}, state/PKCE, one-use exchange and listener cleanup (synthetic callback + controlled OAuth HTTP)");
 

@@ -22,9 +22,13 @@ public sealed class Downloads
     public int SpeedLimitMiB { get; private set; }
     private readonly HashSet<Guid> cancelled = [];
     private readonly Dictionary<Guid, CancellationTokenSource> active = [];
+    private readonly Dictionary<Guid, TaskCompletionSource> completions = [];
+    private bool preparingExit;
     private readonly List<Download> items;
     public event Action? Changed;
     public IReadOnlyList<Download> Items => items.AsReadOnly();
+    /// <summary>暂停只取消等待者时，底层共享传输仍可能写入；退出必须等待其释放。</summary>
+    public bool HasPendingWrites => VerifiedTransfer.HasPendingWrites(http);
 
     public Downloads(HttpClient http, string root, string? portableRoot = null)
     {
@@ -89,6 +93,23 @@ public sealed class Downloads
         VerifiedTransfer.Reset(job.Target + "." + id.ToString("N") + ".part");
         items[position] = job with { State = "已取消", Error = null };
         Persist();
+    }
+
+    /// <summary>暂停活动和排队中的传输，保留续传文件并等待句柄释放后保存队列。</summary>
+    public async Task PauseForExitAsync()
+    {
+        if (preparingExit) throw new InvalidOperationException("正在保存下载任务，请稍后重试。");
+        preparingExit = true;
+        try
+        {
+            var pending = completions.Values.Select(x => x.Task).ToArray();
+            foreach (var source in active.Values.ToArray()) source.Cancel();
+            // 单个暂停只解除等待；退出必须等待同一 HTTP 会话拥有的真实共享传输停止写入。
+            await VerifiedTransfer.StopForExitAsync(http);
+            await Task.WhenAll(pending);
+            Persist();
+        }
+        finally { preparingExit = false; }
     }
 
     public void ClearCompleted()
@@ -159,10 +180,12 @@ public sealed class Downloads
     public async Task<bool> RunAsync(Guid id, Action changed, Action<long, long> progress, Func<bool> mayCommit)
     {
         var job = items.Single(x => x.Id == id);
-        if (job.State is "已完成" or "已取消" || active.ContainsKey(id)) return false;
+        if (preparingExit || job.State is "已完成" or "已取消" || active.ContainsKey(id)) return false;
         Validate(job.File);
         using var source = new CancellationTokenSource();
         active.Add(id, source);
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        completions.Add(id, completion);
         var token = source.Token;
         var acquired = false;
         var temporary = job.Target + "." + id.ToString("N") + ".part";
@@ -213,6 +236,8 @@ public sealed class Downloads
             Dispatch();
             active.Remove(id);
             cancelled.Remove(id);
+            completions.Remove(id);
+            completion.TrySetResult();
         }
         return false;
     }
