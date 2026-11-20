@@ -55,7 +55,7 @@ public sealed partial class MainWindow
                 return;
             }
             if (!manual && OwnedWindows.Any(x => x.IsVisible)) return;
-            if (await ConfirmAsync($"发现新版本 {release.Tag}。是否下载更新并自动重启？游戏、存档、模组、配置和 Java 将保留。"))
+            if (await PromptUpdateAsync(release))
                 await ShowUpdateDialogAsync(release);
         }
         catch (OperationCanceledException) when (windowClosed) { }
@@ -64,6 +64,16 @@ public sealed partial class MainWindow
             if (manual && !windowClosed) await ErrorAsync(this, "检查更新失败，请检查网络后重试。");
         }
         finally { checkingUpdate = false; }
+    }
+
+    private async Task<bool> PromptUpdateAsync(GitHubReleaseFeed.ReleaseInfo release)
+    {
+        var dialog = Dialog("版本更新");
+        var accepted = false;
+        dialog.SetBody(Label($"发现新版本 {release.Tag}。是否下载更新并自动重启？游戏、存档、模组、配置和 Java 将保留。"),
+            CloseDialog(dialog, "取消"), Action("更新", () => { accepted = true; dialog.Close(); return Task.CompletedTask; }, true));
+        await dialog.ShowDialog(this);
+        return accepted;
     }
 
     private async Task ShowUpdateDialogAsync(GitHubReleaseFeed.ReleaseInfo release)

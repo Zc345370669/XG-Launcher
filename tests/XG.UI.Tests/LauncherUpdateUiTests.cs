@@ -40,7 +40,7 @@ internal static class LauncherUpdateUiTests
         handler.Stall = true;
         Invoke(version); Pump();
         dialog = window.OwnedWindows.Single();
-        Invoke(dialog.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "确认"))); Pump();
+        Invoke(dialog.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "更新"))); Pump();
         var updating = window.OwnedWindows.Single();
         Check(updating.GetVisualDescendants().OfType<ProgressBar>().Count() == 1 &&
             updating.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text?.Contains("正在下载更新") == true), "real update progress dialog missing");
