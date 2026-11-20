@@ -13,6 +13,8 @@ try {
     if ($archive.Entries.Count -ne 1 -or $archive.Entries[0].FullName -ne 'XG-Launcher/XGLauncher.exe') { throw 'Unexpected release ZIP layout.' }
 } finally { $archive.Dispose() }
 # No clobber flag: an existing release/tag is never silently overwritten.
+$existingTag = (git ls-remote --tags origin "refs/tags/$tag" | Out-String).Trim()
+if ($existingTag.Length -ne 0) { throw 'Release tag already exists; inspect it manually instead of overwriting.' }
 gh release create $tag $asset --repo $env:GH_REPO --target $ExpectedCommit --title 'XG Launcher v0.1.1-alpha' --prerelease --latest=false --notes-file docs/releases/v0.1.1-alpha.md
 $metadata = gh api "repos/$env:GH_REPO/releases/tags/$tag" | ConvertFrom-Json
 $uploaded = @($metadata.assets | Where-Object name -eq 'XGLauncher-portable-win-x64.zip')

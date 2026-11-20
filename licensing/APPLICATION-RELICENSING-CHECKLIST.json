@@ -1,5 +1,5 @@
 {
-  "manifest_sha256": "59f1a3c4b1f0f4c8f56082f88dca63c2f9b655834ef2c737136ff88f70c92ad1",
+  "manifest_sha256": "2128cfc7c1ebadec1ad5520bf0fb56b58ecfbe980cdcd29fe5d377d4752213d1",
   "can_confirm_scope_as_one_manifest": true,
   "decision": "A",
   "copyright_holder_display_name": "XG Launcher (existing public project designation; no natural person or legal entity invented)",
@@ -7,7 +7,7 @@
   "rows": [
     {
       "path": ".github/workflows/build-windows.yml",
-      "sha256": "4f50fb6e58a5fe4c0ed3009b69cb34be11ae818c5dfb55eca8cd00b1d0fecc87",
+      "sha256": "ddba6d7a3cc25d0943293f6351d6dfe766f79dee00fcb4dbda5fe64e42416923",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",
@@ -970,7 +970,7 @@
     },
     {
       "path": "tests/XG.UI.Tests/Program.cs",
-      "sha256": "b1fd58019d0850e404a24deee2cd26e89f0eaa87380fa9ec74122273682aa559",
+      "sha256": "0645af094dd87b029175f07b1194ec494062e92156e1586b2a4bf473e90cc478",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",

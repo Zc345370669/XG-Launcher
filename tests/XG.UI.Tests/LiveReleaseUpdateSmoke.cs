@@ -10,7 +10,7 @@ using XGLauncher;
 /// <summary>仅供 Windows CI：使用官方公网 Release，在临时目录模拟旧版本，不发布或修改任何 Release。</summary>
 internal static class LiveReleaseUpdateSmoke
 {
-    internal static async Task RunAsync(string updater, string probe)
+    internal static async Task RunAsync(string updater, string probe, string installedFixtureTag = "v0.0.0")
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Live replacement smoke test requires Windows");
         using var deadline = new CancellationTokenSource(TimeSpan.FromMinutes(5));
@@ -19,8 +19,9 @@ internal static class LiveReleaseUpdateSmoke
         var available = await GitHubReleaseFeed.CheckAsync(http, current, true, deadline.Token);
         Console.WriteLine("LIVE current=" + current + "; offered=" + (available?.Tag ?? "none (no newer compatible release)"));
         // 这是隔离测试的旧版本输入，不改生产程序集版本号，也不声称当前玩家已经有新版本。
-        var release = await GitHubReleaseFeed.CheckAsync(http, "v0.0.0", true, deadline.Token) ?? throw new Exception("No compatible public Release for live test");
-        Console.WriteLine("LIVE simulated-installed=v0.0.0; candidate=" + release.Tag + "; bytes=" + release.Size);
+        var release = await GitHubReleaseFeed.CheckAsync(http, installedFixtureTag, true, deadline.Token) ?? throw new Exception("No compatible public Release for live test");
+        Console.WriteLine("LIVE simulated-installed=" + installedFixtureTag + "; candidate=" + release.Tag + "; bytes=" + release.Size);
+        if (installedFixtureTag == "v0.1.0-alpha" && release.Tag != current) throw new Exception("Published update did not select the tested version");
         var root = Path.Combine(Path.GetTempPath(), "xg-live-release-" + Guid.NewGuid().ToString("N"));
         var install = Path.Combine(root, "install"); Directory.CreateDirectory(install);
         Process? launcher = null;

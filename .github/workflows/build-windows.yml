@@ -102,3 +102,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: ./scripts/publish-approved-release.ps1 -ExpectedCommit $env:GITHUB_SHA
+
+  verify-published-update:
+    needs: publish-0-1-1
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: 构建只读公网验收工具
+        shell: pwsh
+        run: |
+          dotnet build tests/XG.UI.Tests -c Release -p:RestoreLockedMode=true
+          $flags = @('-c','Release','-r','win-x64','--self-contained','true','-p:XgWindowsPublish=true','-p:RestoreLockedMode=true','-p:PublishSingleFile=true','-p:IncludeNativeLibrariesForSelfExtract=true','-p:EnableCompressionInSingleFile=true','-p:DebugType=none','-p:DebugSymbols=false')
+          dotnet publish src/XG.Updater @flags -o dist/verify-updater
+          dotnet publish tests/XG.Update.Probe @flags -o dist/verify-probe
+      - name: 实测 v0.1.0 检测已发布新版并下载、替换和启动（隔离目录）
+        run: dotnet tests/XG.UI.Tests/bin/Release/net10.0/XG.UI.Tests.dll --live-release-update dist/verify-updater/XGUpdater.exe dist/verify-probe/XGUpdateProbe.exe v0.1.0-alpha
