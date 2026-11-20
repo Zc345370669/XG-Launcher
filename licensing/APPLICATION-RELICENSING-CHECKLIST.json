@@ -1,5 +1,5 @@
 {
-  "manifest_sha256": "2128cfc7c1ebadec1ad5520bf0fb56b58ecfbe980cdcd29fe5d377d4752213d1",
+  "manifest_sha256": "734c73ca4c6f017f4c4f00fc627791575e8b4de85fea7fd15a43c2aa960f0bbd",
   "can_confirm_scope_as_one_manifest": true,
   "decision": "A",
   "copyright_holder_display_name": "XG Launcher (existing public project designation; no natural person or legal entity invented)",
@@ -25,7 +25,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "8e5043d9399407fc868520137be0d185fcb177aaa7a14cbfc03c7dbda053370d",
+      "sha256": "0ca090180eb9aa46ed5fd48b7971be568fb20523f0c42c52f2184de6eca48bb7",
       "current_project_license_record": "MIT project-owned scope",
       "third_party_copy_identified": false,
       "rights_confirmation": "maintainer declaration recorded; no external developer submissions declared; third-party exclusions remain",
