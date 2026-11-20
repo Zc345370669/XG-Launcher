@@ -820,7 +820,7 @@
   "正在保存下载任务，请稍后重试。": "Saving download tasks. Please retry shortly.",
   "启动器已更新并重新启动。": "The launcher has updated and restarted.",
   "更新包校验失败，已保留原程序。请重新下载更新。": "Update verification failed. The original application was retained. Download the update again.",
-  "没有权限替换启动器，已尝试恢复原程序。请检查安装目录权限。": "Permission to replace the launcher was denied. Restoration was attempted. Check installation folder permissions.",
+  "启动器文件被占用或没有替换权限，已尝试恢复原程序。请关闭占用程序并检查安装目录权限。": "Launcher files are in use or replacement permission was denied. Restoration was attempted. Close programs using these files and check installation folder permissions.",
   "启动器文件被占用，已尝试恢复原程序。请关闭占用文件的程序后重试。": "Launcher files are in use. Restoration was attempted. Close programs using these files and retry.",
   "新程序无法启动，已尝试恢复原程序。请重新下载更新。": "The replacement could not start. Restoration was attempted. Download the update again.",
   "更新未完成，已尝试恢复原程序。请稍后重试。": "The update did not finish. Restoration was attempted. Retry later."

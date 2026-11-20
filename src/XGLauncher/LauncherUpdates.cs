@@ -52,7 +52,7 @@ public sealed partial class MainWindow
         var message = outcome switch
         {
             XG.Core.UpdateOutcome.InvalidPackage => "更新包校验失败，已保留原程序。请重新下载更新。",
-            XG.Core.UpdateOutcome.AccessDenied => "没有权限替换启动器，已尝试恢复原程序。请检查安装目录权限。",
+            XG.Core.UpdateOutcome.AccessDenied => "启动器文件被占用或没有替换权限，已尝试恢复原程序。请关闭占用程序并检查安装目录权限。",
             XG.Core.UpdateOutcome.FilesBusy => "启动器文件被占用，已尝试恢复原程序。请关闭占用文件的程序后重试。",
             XG.Core.UpdateOutcome.LaunchFailed => "新程序无法启动，已尝试恢复原程序。请重新下载更新。",
             _ => "更新未完成，已尝试恢复原程序。请稍后重试。"

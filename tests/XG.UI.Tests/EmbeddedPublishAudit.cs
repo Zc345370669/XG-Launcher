@@ -31,8 +31,11 @@ internal static class EmbeddedPublishAudit
             var updater = Path.Combine(root, "XGUpdater.exe");
             helper.Position = 0;
             await using (var output = File.Create(updater)) await helper.CopyToAsync(output);
+            var errors = new List<Exception>();
             foreach (var scenario in new[] { "success", "checksum", "launch-failure", "locked", "parent", "user-data" })
-                await ScenarioAsync(scenario, updater, Path.GetFullPath(probePath), root);
+                try { await ScenarioAsync(scenario, updater, Path.GetFullPath(probePath), root); }
+                catch (Exception error) { errors.Add(new Exception("Updater scenario: " + scenario, error)); }
+            if (errors.Count != 0) throw new AggregateException(errors);
         }
         finally
         {
@@ -118,7 +121,10 @@ internal static class EmbeddedPublishAudit
             {
                 var expected = scenario switch { "checksum" or "user-data" => UpdateOutcome.InvalidPackage,
                     "launch-failure" => UpdateOutcome.LaunchFailed, _ => UpdateOutcome.FilesBusy };
-                if (process.ExitCode != 1 || outcome != expected || !original.SequenceEqual(File.ReadAllBytes(executable)))
+                // Windows 删除共享被拒时可能返回 ERROR_ACCESS_DENIED，而不是 SHARING_VIOLATION。
+                // 两种结果都必须保持原 EXE 完整，不能因此放宽文件恢复断言。
+                var expectedOutcome = scenario == "locked" ? outcome is UpdateOutcome.FilesBusy or UpdateOutcome.AccessDenied : outcome == expected;
+                if (process.ExitCode != 1 || !expectedOutcome || !original.SequenceEqual(File.ReadAllBytes(executable)))
                     throw new Exception("Failed update did not preserve/restore original: " + scenario + "/" + outcome);
             }
             if (scenario != "locked") await UntilAsync(() => File.Exists(Path.Combine(install, "launched.marker")));
