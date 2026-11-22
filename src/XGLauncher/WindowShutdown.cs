@@ -24,7 +24,7 @@ public sealed partial class MainWindow
             e.Cancel = true;
             status.Text = "请先关闭正在运行的游戏，或等待文件操作结束。";
             compactStatus.Text = status.Text;
-            pendingUpdatePlan = null; updateExitAuthorized = false;
+            AbortUpdateExit();
             exitRequested = false;
             return;
         }
@@ -35,7 +35,7 @@ public sealed partial class MainWindow
         try
         {
             if (!updateExitAuthorized && !await ConfirmAsync("保存下载进度并退出？下次打开可从下载管理恢复任务。"))
-            { pendingUpdatePlan = null; updateExitAuthorized = false; exitRequested = false; return; }
+            { AbortUpdateExit(); exitRequested = false; return; }
             IsEnabled = false;
             status.Text = "正在保存下载任务，等待当前安装步骤安全结束…";
             compactStatus.Text = status.Text;
@@ -55,7 +55,7 @@ public sealed partial class MainWindow
         {
             var message = new GameLogSanitizer(null).Redact(error.Message);
             status.Text = message; compactStatus.Text = message;
-            pendingUpdatePlan = null; updateExitAuthorized = false;
+            AbortUpdateExit();
             exitRequested = false;
             IsEnabled = true;
             if (!windowClosed) await ErrorAsync(this, message);

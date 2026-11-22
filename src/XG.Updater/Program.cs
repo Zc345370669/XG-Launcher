@@ -36,8 +36,9 @@ internal sealed class UpdateApplication : Application
 /// <summary>独立进程在主程序退出后继续显示真实步骤；替换阶段不接受强制取消。</summary>
 internal sealed class UpdateWindow : Window
 {
-    private readonly TextBlock state = new() { TextWrapping = TextWrapping.Wrap };
-    private readonly ProgressBar progress = new() { Height = 4, Minimum = 0, Maximum = 1, IsIndeterminate = true };
+    private readonly TextBlock state = new() { Text = "正在准备更新…", TextWrapping = TextWrapping.Wrap };
+    private readonly ProgressBar progress = new() { Height = 4, Minimum = 0, Maximum = 100 };
+    private readonly TextBlock percent = new() { Text = "0%", HorizontalAlignment = HorizontalAlignment.Right };
     private readonly TextBlock details = new() { TextWrapping = TextWrapping.Wrap, FontSize = 11 };
     private readonly Button cancel = new() { Content = "取消更新", HorizontalAlignment = HorizontalAlignment.Right };
     private readonly CancellationTokenSource cancellation = new();
@@ -48,7 +49,14 @@ internal sealed class UpdateWindow : Window
         MinHeight = 180; MaxHeight = 600; SizeToContent = SizeToContent.Height; CanResize = false;
         WindowStartupLocation = WindowStartupLocation.CenterScreen; SystemDecorations = SystemDecorations.Full;
         Background = Brushes.White; Foreground = Brushes.Black;
-        var body = new StackPanel { Spacing = 12, Margin = new(18), Children = { state, progress, new Expander { Header = "文件详情", Content = new ScrollViewer { Content = details, MaxHeight = 220, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled } }, cancel } };
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), ColumnSpacing = 8 };
+        header.Children.Add(state);
+        Grid.SetColumn(percent, 1);
+        header.Children.Add(percent);
+        var body = new StackPanel { Spacing = 12, Margin = new(18), Children =
+        {
+            header, progress, details, cancel
+        } };
         Content = body;
         cancel.Click += (_, _) => { if (finished) Close(); else if (!critical) cancellation.Cancel(); };
         Closing += (_, e) => { if (!finished) { e.Cancel = true; if (!critical) cancellation.Cancel(); } };
@@ -57,6 +65,12 @@ internal sealed class UpdateWindow : Window
     }
     private void ShowStage(string text, string detail)
     { state.Text = text; details.Text = detail; }
+    private void SetProgress(double value)
+    {
+        progress.Value = value;
+        percent.Text = $"{Math.Floor(progress.Value):0}%";
+    }
+
     private async Task RunAsync(string planFile)
     {
         UpdateApplyRequest? plan = null; byte[]? originalHash = null; var parentExited = false;
@@ -75,27 +89,55 @@ internal sealed class UpdateWindow : Window
             if (Screens.ScreenFromWindow(this) is { } screen)
             { Width = Math.Min(360, screen.WorkingArea.Width / screen.Scaling - 20); MaxHeight = Math.Max(140, screen.WorkingArea.Height / screen.Scaling - 24); }
             await using (var original = File.OpenRead(executable)) originalHash = await SHA256.HashDataAsync(original, cancellation.Token);
-            ShowStage("等待主程序安全退出…", $"目标版本：{plan.TargetVersion}\n文件：XGLauncher.exe\n下载 SHA-256：{plan.Sha256}\n不修改游戏、账号、配置或 Java。");
-            try
+            var fileDetails = $"目标版本：{plan.TargetVersion}\n文件：{plan.Release?.AssetName ?? Path.GetFileName(plan.Archive)}\nSHA-256：{plan.Sha256}";
+            if (plan.Release is { } release)
             {
-                using var parent = Process.GetProcessById(plan.ParentProcessId);
-                if (parent.StartTime.ToUniversalTime().Ticks == plan.ParentStartTicks)
+                if (release.Version != plan.TargetVersion || release.Sha256 != plan.Sha256 ||
+                    plan.CurrentVersion == null || !GitHubUpdates.AllowedChannel(plan.CurrentVersion, release.Version) ||
+                    GitHubUpdates.CompareVersions(release.Version, plan.CurrentVersion) <= 0)
+                    throw new InvalidDataException("更新版本不匹配。");
+                ShowStage("正在下载更新…", fileDetails);
+                using var http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromMinutes(10) };
+                var downloaded = await new GitHubUpdates(http).DownloadAsync(release, Path.GetDirectoryName(planFile)!, value =>
                 {
-                    using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation.Token); limit.CancelAfter(TimeSpan.FromMinutes(2));
-                    await parent.WaitForExitAsync(limit.Token);
-                }
+                    SetProgress(value * .85);
+                    details.Text = $"{fileDetails}\n已下载 {release.Size * value / 100 / 1048576d:0.00} / {release.Size / 1048576d:0.00} MiB";
+                }, cancellation.Token);
+                if (!string.Equals(downloaded, plan.Archive, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidDataException("更新文件路径不匹配。");
             }
-            catch (ArgumentException) { /* 原进程已经退出。 */ }
-            parentExited = true;
-            cancellation.Token.ThrowIfCancellationRequested();
-            ShowStage("正在再次校验更新文件…", details.Text ?? "");
+            SetProgress(85);
+            ShowStage("正在校验更新文件…", details.Text ?? fileDetails);
             using (var transaction = await Task.Run(() => UpdateFiles.Prepare(plan), cancellation.Token))
             {
                 cancellation.Token.ThrowIfCancellationRequested();
-                critical = true; cancel.IsEnabled = false;
-                ShowStage("正在备份并替换程序…", "只替换经过校验的程序文件，失败将恢复备份。\n" + details.Text);
+                critical = true;
+                cancel.IsEnabled = false;
+                if (plan.Release != null) File.WriteAllText(planFile + ".ready", "");
+                SetProgress(90);
+                state.Text = "等待主程序安全退出…";
+                using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation.Token);
+                limit.CancelAfter(TimeSpan.FromMinutes(3));
+                try
+                {
+                    using var parent = Process.GetProcessById(plan.ParentProcessId);
+                    if (parent.StartTime.ToUniversalTime().Ticks != plan.ParentStartTicks)
+                        throw new InvalidDataException("主程序进程已变更。");
+                    while (!parent.HasExited)
+                    {
+                        if (File.Exists(planFile + ".abort")) throw new OperationCanceledException();
+                        await Task.Delay(120, limit.Token);
+                    }
+                }
+                catch (ArgumentException) { }
+                if (plan.Release != null && !File.Exists(planFile + ".exit"))
+                    throw new OperationCanceledException("没有收到主程序的安全退出确认。");
+                parentExited = true;
+                cancellation.Token.ThrowIfCancellationRequested();
+                state.Text = "正在备份并替换程序…";
                 await Task.Run(transaction.Apply);
-                ShowStage("正在启动新版并等待确认…", "新版主窗口须在 45 秒内确认初始化。未确认将恢复旧版。\n" + details.Text);
+                SetProgress(97);
+                state.Text = "正在启动新版…";
                 var nonce = Guid.NewGuid().ToString("N"); var confirmation = UpdateAcknowledgment.PathFor(nonce);
                 using var child = Process.Start(new ProcessStartInfo(executable) { UseShellExecute = false, WorkingDirectory = plan.InstallDirectory,
                     ArgumentList = { "--xg-update-ack", nonce } }) ?? throw new IOException("新版本未能启动。");
@@ -112,10 +154,9 @@ internal sealed class UpdateWindow : Window
                 }
                 finally { if (File.Exists(confirmation)) File.Delete(confirmation); }
             }
-            progress.IsIndeterminate = false; progress.Value = 1;
+            SetProgress(100);
             ShowStage("更新完成，新版已启动。", details.Text ?? "");
-            await File.WriteAllTextAsync(planFile + ".result", "Updated");
-            try { File.Delete(plan.Archive); File.Delete(planFile); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+            try { await File.WriteAllTextAsync(planFile + ".result", "Updated"); File.Delete(plan.Archive); File.Delete(planFile + ".ready"); File.Delete(planFile + ".exit"); File.Delete(planFile); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
             finished = true; Close();
         }
         catch (Exception error)
@@ -134,7 +175,7 @@ internal sealed class UpdateWindow : Window
                 }
                 catch (Exception recoveryError) { Trace.TraceWarning(recoveryError.GetType().Name); }
             }
-            ShowStage(error is OperationCanceledException ? "更新已取消。" : "更新失败。", (recovered ? "已恢复并重新打开原版本。\n" : "未确认更新成功；用户数据未在更新范围内。\n") + error.GetType().Name);
+            ShowStage(error is OperationCanceledException ? "更新已取消。" : "更新失败。", (recovered ? "已恢复并重新打开原版本。\n" : "未确认更新成功；用户数据未在更新范围内。\n") + error.Message);
             try { await File.WriteAllTextAsync(planFile + ".result", error.GetType().Name); } catch (IOException) { }
         }
     }

@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace XG.Core;
 
 public sealed record UpdateTheme(string Background, string Text, string Accent, string Border, bool Dark);
-public sealed record UpdateApplyRequest(string Archive, string Sha256, string InstallDirectory, int ParentProcessId, long ParentStartTicks, string? TargetVersion = null, UpdateTheme? Theme = null);
+public sealed record UpdateApplyRequest(string Archive, string Sha256, string InstallDirectory, int ParentProcessId, long ParentStartTicks, string? TargetVersion = null, UpdateTheme? Theme = null, LauncherRelease? Release = null, string? CurrentVersion = null);
 
 /// <summary>更新只替换包内的程序与许可文件；游戏、账号、存档和配置不属于写入范围。</summary>
 public static class UpdateFiles

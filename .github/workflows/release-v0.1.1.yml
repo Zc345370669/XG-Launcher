@@ -65,22 +65,22 @@ jobs:
           grep -Fq '<Version>0.1.1</Version>' Directory.Build.props || exit 0
           zip_name=XGLauncher-portable-win-x64.zip
           existing=false
+          branch_sha=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq .object.sha)
+          test "$branch_sha" = "$GITHUB_SHA"
           if gh release view v0.1.1 >/dev/null 2>&1; then
             gh release view v0.1.1 --json isDraft --jq '.isDraft' | grep -Fxq false
-            if gh release view v0.1.1 --json assets --jq '.assets[].name' | grep -Fxq "$zip_name"; then
-              exit 0
-            fi
             existing=true
-            gh release download v0.1.1 --pattern XGLauncher.exe --dir release --clobber
           fi
           mkdir -p release/legacy/tools
           cp release/XGLauncher.exe LICENSE release/legacy/
           cp release/XGUpdater.exe release/legacy/tools/
           (cd release/legacy && zip -q -0 "../$zip_name" XGLauncher.exe LICENSE tools/XGUpdater.exe)
+          (cd release && sha256sum XGLauncher.exe "$zip_name" > SHA256SUMS.txt)
           if "$existing"; then
-            gh release upload v0.1.1 "release/$zip_name"
+            gh release upload v0.1.1 release/XGLauncher.exe "release/$zip_name" release/SHA256SUMS.txt --clobber
+            gh api --method PATCH "repos/$GH_REPO/git/refs/tags/v0.1.1" -f sha="$GITHUB_SHA" -F force=true --jq .object.sha
+            gh release edit v0.1.1 --notes-file RELEASE_NOTES.md --latest
           else
-            (cd release && sha256sum XGLauncher.exe "$zip_name" > SHA256SUMS.txt)
             gh release create v0.1.1 release/XGLauncher.exe "release/$zip_name" release/SHA256SUMS.txt \
               --target "$GITHUB_SHA" --title 'XG Launcher v0.1.1' --notes-file RELEASE_NOTES.md --latest
           fi
