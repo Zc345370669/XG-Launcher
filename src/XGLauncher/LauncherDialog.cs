@@ -15,6 +15,29 @@ internal sealed class LauncherDialog : Window
     private readonly ScrollViewer scroller;
     private Border? messageHost;
     private readonly Border footerFrame;
+    private readonly Border modalShade = CreateShade();
+
+    internal static Border CreateShade() => new()
+    {
+        Background = new SolidColorBrush(Color.FromArgb(33, 0, 0, 0)),
+        IsHitTestVisible = false,
+        IsVisible = false,
+        ZIndex = 100
+    };
+
+    internal new async Task ShowDialog(Window owner)
+    {
+        var shade = owner switch
+        {
+            LauncherDialog dialog => dialog.modalShade,
+            MainWindow main => main.GetModalShade(),
+            _ => null
+        };
+        var previous = shade?.IsVisible ?? false;
+        if (shade != null) shade.IsVisible = true;
+        try { await base.ShowDialog(owner); }
+        finally { if (shade != null) shade.IsVisible = previous; }
+    }
 
     internal LauncherDialog(string title, Window owner, bool editor)
     {
@@ -34,7 +57,7 @@ internal sealed class LauncherDialog : Window
         var ownerHeight = owner.ClientSize.Height;
         Height = Math.Clamp(editor ? Math.Max(460, Math.Min(650, ownerHeight - 32)) : 158, MinHeight, MaxHeight);
         SizeToContent = SizeToContent.Manual;
-        Background = ThemePalette.Panel;
+        Background = ThemePalette.DialogSurface;
         FontFamily = owner.FontFamily;
 
         var close = new Button { Content = new LucideIcon("x", 15), Width = 43, Height = 42, Padding = new(0), CornerRadius = new(7),
@@ -47,11 +70,18 @@ internal sealed class LauncherDialog : Window
             Text = title, FontSize = 16, FontWeight = FontWeight.SemiBold,
             VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis
         };
-        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), Margin = new(14, 0, 0, 0), Height = WindowChrome.CaptionHeight };
-        header.Children.Add(titleLabel);
+        var dragArea = new Border
+        {
+            Name = "DialogTitleDragArea",
+            Background = Brushes.Transparent,
+            Padding = new(14, 0, 0, 0),
+            Child = titleLabel
+        };
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), Height = WindowChrome.CaptionHeight };
+        header.Children.Add(dragArea);
         Grid.SetColumn(close, 1);
         header.Children.Add(close);
-        titleLabel.PointerPressed += (_, e) =>
+        dragArea.PointerPressed += (_, e) =>
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) BeginMoveDrag(e);
         };
@@ -71,6 +101,8 @@ internal sealed class LauncherDialog : Window
         else { messageHost = new Border(); Grid.SetRow(messageHost,1); layout.Children.Add(messageHost); }
         Grid.SetRow(footerFrame, 2);
         layout.Children.Add(footerFrame);
+        Grid.SetRowSpan(modalShade, 3);
+        layout.Children.Add(modalShade);
         var surface = new Border { Name = "DialogSurface", Child = layout };
         Content = surface;
         WindowChrome.Attach(this, surface);
@@ -88,8 +120,10 @@ internal sealed class LauncherDialog : Window
     {
         Width = Math.Min(preferredWidth, MaxWidth); MinHeight = Math.Min(220, MaxHeight);
         content.Measure(new Size(Math.Max(100, Width - 36), double.PositiveInfinity));
-        Height = Math.Clamp(content.DesiredSize.Height + WindowChrome.CaptionHeight + 26,
-            MinHeight, Math.Min(MaxHeight, 620));
+        Footer.Measure(new Size(Math.Max(100, Width - 30), double.PositiveInfinity));
+        var footerHeight = Footer.IsVisible ? Footer.DesiredSize.Height + 16 : 0;
+        Height = Math.Clamp(content.DesiredSize.Height + WindowChrome.CaptionHeight + footerHeight + 26,
+            MinHeight, Math.Min(MaxHeight, 650));
         SizeToContent = SizeToContent.Manual;
     }
 

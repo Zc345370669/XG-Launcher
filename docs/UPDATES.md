@@ -1,28 +1,29 @@
-# 启动器更新
+# GitHub 在线更新约定
 
-启动时后台读取官方公开 Release；发现可用新版后提示“更新 / 暂不更新”。手动入口只有“设置 → 关于”中的版本号文字，没有旁置检查按钮。取消提示不会下载或替换程序。
+唯一来源：`https://github.com/Zc345370669/XG-Launcher` 的公开 Releases。客户端不需要 GitHub Token，不发送玩家账号或游戏目录。
 
-点击更新进入更新页，下载并校验完成后点击“安装更新并重启”。下载任务会先保存为可恢复状态，原子加载器步骤等待安全结束。独立的 `tools/XGUpdater.exe` 在原启动器进程退出后替换程序并重启；它是 Windows GUI 子系统程序，不使用 CMD/PowerShell 安装脚本。便携包须完整解压，不能只复制主 EXE。
+## 玩家流程
 
-## 发布者准备
+启动后台检测，或在设置 → 关于点击版本号。只对更高且符合通道的版本提示；稳定版不提示预发布，beta 不回到 alpha。发现新版后确认或取消，取消不下载。后台自动检查每次启动只触发一次。
 
-1. 在源码中按实际版本更新 `Directory.Build.props`，构建、测试及发布。
-2. 手动在官方仓库创建 Release，并使用高于当前版的语义版本标签，如 `v0.1.0-alpha.1`。相同版本号重新上传不会被当作新版；Alpha 标签也参与检查。
-3. 上传构建得到的完整 `XGLauncher-portable-win-x64.zip`，或 `XGLauncher_v<版本>_Windows_x64.zip`（例如 `XGLauncher_v0.1.0-alpha.1_Windows_x64.zip`）。ZIP 根目录包含 `XGLauncher.exe`、`LICENSE`、`licenses/` 和 `tools/XGUpdater.exe`，不能外包一层目录。
-4. Release 资源必须具有 GitHub API 提供的 `sha256:` digest。缺少校验值、没有兼容 Windows x64 包、草稿或版本不高于当前版时，不提供该包更新。源码 ZIP 和 GitHub Actions 产物不会自动成为 Release 更新。
+确认后打开独立紧凑更新窗口，显示下载百分比、容量、速度、剩余时间和可展开来源/校验详情，不切换主窗口模式。100% 指下载完成，随后仍有结构校验、安全退出、文件替换和启动确认阶段。
 
-本项目工作流只构建并上传产物，不自动创建 Tag、Release 或推送。实际发布由维护者确认后操作。
+下载只接受官方 GitHub Release 路径和允许的 GitHub 资源重定向。校验来自官方 Release API 的 SHA-256 digest 和长度后暂存，再次检查 x64 PE。内嵌更新器等待主程序真实退出，仅替换允许的程序文件；新 EXE 必须在 45 秒内完成主窗口打开并返回随机确认标记，否则恢复备份并重开旧版。
 
-## 隐私与文件范围
+`.minecraft`、存档、模组、配置、账号和系统 Java 不属于更新写入或删除范围。关键替换阶段不提供强制取消，下载阶段可以取消。下载失败或原进程两分钟内未退出不会替换程序。更新状态结果类型写入本地计划目录，不记录令牌。
 
-请求只读取官方仓库的公开版本和资源；不发送账号、令牌、游戏路径、存档、设备标识或设置，不嵌入 GitHub Token。网络服务仍可看到常规连接信息。下载仅接受官方 Release 地址及受限的 GitHub 资源重定向，校验真实长度和 SHA-256。
+## 维护者后续手动发布
 
-更新只覆盖包内的 `XGLauncher.exe`、`LICENSE`、`licenses/` 与 `tools/XGUpdater.exe`。旧主程序被替换；不会按文件夹名批量删除未知文件，也不改变实例或账号数据格式。`minecraft/`、`data/`、存档、模组、光影、账号缓存和设置均不在允许写入范围。包路径越界、重复文件或目录链接会被拒绝。
+本轮不创建标签、不创建 Release、不推送，也不触发远程工作流。维护者另行授权发布时：
 
-文件替换先备份再提交；替换或启动新进程时报错会回滚已替换文件。原进程两分钟内未退出时不执行替换。启动新进程成功不等于已验证其全部界面和游戏功能；异常结果类型保留在本地更新暂存目录的 `.result` 文件，不记录凭据。正在运行的游戏仍须先关闭。
+1. 更新项目版本并通过 Restore、Build、Test、单文件 Publish。
+2. 使用高于已发布版本的语义版本标签，例如 `v0.1.0-alpha.1`。相同版本号不会提示更新，禁止降级。
+3. 上传实际发布的 **`XGLauncher.exe`**；不需要玩家下载 ZIP。EXE 内含更新器、许可与必要对应源码。
+4. 确保 GitHub Release API 的该资源包含 `sha256:` digest。没有可信校验信息就拒绝更新，不能靠放宽校验解决。
+5. 发布前实际完成 Windows 自替换、失败回滚、存档保留、UAC 和重启测试。
+
+客户端仍兼容历史 `XGLauncher-portable-win-x64.zip`、版本化 Windows ZIP 及单 EXE 包装 ZIP；同一版本优先直接 EXE。旧客户端是否能消费新资源需按其实际代码验证，不能假定所有旧版都支持直接 EXE；必要时先手动更新一次。
 
 ## 验证边界
 
-自动测试覆盖公开 Release 响应、版本比较、校验、拒绝非官方地址、文件替换与回滚、保留用户数据，以及版本号点击和取消更新。网络使用受控响应，未假称真实线上 Release 更新通过。Windows 更新器等待退出、实际替换和重启仍需 Windows 实机验收。
-
-API 依据：[Releases](https://docs.github.com/en/rest/releases/releases) · [Release assets / digest](https://docs.github.com/en/rest/releases/assets)。
+本地受控 HTTP、真实文件事务、版本通道与无头 UI 测试可证明相应逻辑路径，但不能证明 Windows HWND、MSI、UAC 或真实线上发布更新已经通过。本轮运行在 Linux，Windows 实机自更新验证未完成。

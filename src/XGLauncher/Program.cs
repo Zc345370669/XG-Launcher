@@ -30,7 +30,15 @@ public sealed class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
             desktop.MainWindow = new MainWindow();
+            if (desktop.Args is ["--xg-update-ack", var nonce] && Guid.TryParseExact(nonce, "N", out _) && desktop.MainWindow is MainWindow { HasLoadedWorkspace: true })
+                desktop.MainWindow.Opened += (_, _) =>
+                {
+                    try { XG.Core.UpdateAcknowledgment.Write(nonce); }
+                    catch (Exception error) when (error is IOException or UnauthorizedAccessException) { System.Diagnostics.Trace.TraceWarning(error.GetType().Name); }
+                };
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }

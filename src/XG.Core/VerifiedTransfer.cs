@@ -18,6 +18,10 @@ internal static class VerifiedTransfer
     /// <summary>停止此 HTTP 会话拥有的共享传输，并等待文件句柄释放；不影响其他会话。</summary>
     internal static Task StopForExitAsync(HttpClient client) => gates.GetOrCreateValue(client).StopForExitAsync();
 
+    // 网络结束后的本地提交也属于会话：退出需等待原子写入完成，不能只等待 HTTP 请求。
+    internal static Task CommitOwnedAsync(HttpClient client, Func<Task> operation) =>
+        gates.GetOrCreateValue(client).RunOwnedAsync(_ => operation());
+
     internal static async Task StageAsync(HttpClient http, Uri uri, string partial, long size, string checksum,
         Action<long, long> progress, Action<string> state, CancellationToken token)
     {

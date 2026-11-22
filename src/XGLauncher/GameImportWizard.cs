@@ -1,68 +1,334 @@
 // SPDX-License-Identifier: MIT
-using System.IO.Compression;
-using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using Avalonia.Media;
+using Avalonia.Threading;
 using XG.Core;
+
 namespace XGLauncher;
-public sealed partial class MainWindow {
- private Button PersonalIcon(string icon,string hint,Func<Task> action) {
-  var button=Action("",action);button.Width=36;button.Height=36;button.Padding=new(8);
-  button.Content=new LucideIcon(icon,18);
-  ToolTip.SetTip(button,hint);Avalonia.Automation.AutomationProperties.SetName(button,hint);return button;
- }
- private async Task GameImportWizardAsync() {
-  var dialog=Dialog("导入游戏",editor:true);using var cancel=new CancellationTokenSource();
-  var type=Picker(["整合包","已有 Minecraft 游戏","其他启动器实例","模组 JAR"],title:"导入类型");
-  var source=Input("文件或目录");var name=Input("新实例名称");var version=Input("Minecraft 版本");var loader=Picker(["原版","Forge","NeoForge","Fabric","Quilt"],title:"加载器类型");var build=Input("加载器版本（如适用）");
-  var target=new UnifiedExpandableSelect { Title="模组目标实例", ItemsSource=model.Store.Entries.ToArray(), DisplayMember=x=>x is Instance i?i.Name+" · "+i.Version:x?.ToString()??"", SelectedIndex=0 };var info=Label("");string? analyzed=null;string? temporary=null;var running=false;string[] jars=[];string? planSource=null;int planType=-1;
-  var previousJobs=model.Resources.MainJobs.Select(x=>x.Id).ToHashSet();var cancelling=false;
-  void CancelJobs(){if(!cancel.IsCancellationRequested||!running||cancelling)return;cancelling=true;try{foreach(var job in model.Resources.MainJobs.Where(x=>!previousJobs.Contains(x.Id)&&x.Recovery?.Type=="pack"&&model.Resources.CanControl(x.Id)))model.Resources.Cancel(job.Id);}finally{cancelling=false;}}
-  model.Resources.Changed+=CancelJobs;
-  bool IsModrinth(string? path){if(!File.Exists(path))return false;using var zip=ZipFile.OpenRead(path!);return zip.GetEntry("modrinth.index.json")!=null;}
-  async Task Analyze() {
-   if(running)return;
-   if(temporary!=null){Directory.Delete(temporary,true);temporary=null;}analyzed=null;
-   planSource=source.Text;planType=type.SelectedIndex;
-   if(type.SelectedIndex==3){info.Text=$"{jars.Length} JAR files → {target.SelectedItem}";return;}
-   var path=source.Text??"";
-   if(File.Exists(path)) {
-    using var archive=ZipFile.OpenRead(path);
-    if(archive.GetEntry("modrinth.index.json") is {} index){using var document=JsonDocument.Parse(index.Open());name.Text=document.RootElement.GetProperty("name").GetString();var dependencies=document.RootElement.GetProperty("dependencies");version.Text=dependencies.GetProperty("minecraft").GetString();loader.SelectedItem="原版";build.Text="";foreach(var mapping in new[]{("forge","Forge"),("neoforge","NeoForge"),("fabric-loader","Fabric"),("quilt-loader","Quilt")})if(dependencies.TryGetProperty(mapping.Item1,out var selected)){loader.SelectedItem=mapping.Item2;build.Text=selected.GetString();}info.Text="Modrinth 清单：使用现有校验及下载任务系统导入。";return;}
-    temporary=Path.Combine(model.DownloadsDirectory,"import-"+Guid.NewGuid().ToString("N"));
-    await GameImport.ExtractZipAsync(path,temporary,cancel.Token);path=temporary;
-    var manifest=Path.Combine(path,"manifest.json");
-    if(File.Exists(manifest)) {
-     using var doc=JsonDocument.Parse(File.ReadAllText(manifest));var data=doc.RootElement;
-     if(data.TryGetProperty("files",out var files)&&files.GetArrayLength()>0){var missing=string.Join("\n",files.EnumerateArray().Select(x=>"projectID="+x.GetProperty("projectID").GetInt64()+" · fileID="+x.GetProperty("fileID").GetInt64()));info.Text=missing;throw new InvalidDataException("CurseForge 文件需合法提供，当前无法自动取得这些项目文件。请手动提供完整游戏目录。\n"+missing);}
-     var mc=data.GetProperty("minecraft");version.Text=mc.GetProperty("version").GetString();name.Text=data.TryGetProperty("name",out var title)?title.GetString():"Imported pack";
-     if(mc.TryGetProperty("modLoaders",out var modloaders))foreach(var item in modloaders.EnumerateArray()){var id=item.GetProperty("id").GetString()??"";foreach(var kind in new[]{"forge","neoforge","fabric","quilt"})if(id.StartsWith(kind+"-",StringComparison.OrdinalIgnoreCase)){loader.SelectedItem=kind switch{"forge"=>"Forge","neoforge"=>"NeoForge","fabric"=>"Fabric",_=>"Quilt"};build.Text=id[(kind.Length+1)..];}}
-     var overrides=data.TryGetProperty("overrides",out var entry)?entry.GetString():"overrides";analyzed=InstanceStore.SafeFile(path,overrides??"overrides");if(!Directory.Exists(analyzed))Directory.CreateDirectory(analyzed);
-     info.Text="CurseForge manifest · files[] empty · overrides only";return;
+
+public sealed partial class MainWindow
+{
+    private Button PersonalIcon(string icon, string hint, Func<Task> action)
+    {
+        var button = Action("", action);
+        button.Width = button.Height = 36;
+        button.Padding = new(8);
+        button.Content = new LucideIcon(icon, 18);
+        ToolTip.SetTip(button, hint);
+        Avalonia.Automation.AutomationProperties.SetName(button, hint);
+        return button;
     }
-   }
-   var inspection=GameImport.InspectDirectory(path);analyzed=inspection.Root;version.Text=inspection.Version??"";loader.SelectedItem=inspection.Loader;build.Text=inspection.LoaderVersion;info.Text=$"{inspection.Format}\n{inspection.Root}\n请确认版本和加载器。缺失资源由正常安装流程校验后补齐。";
-  }
-  var choose=Action("选择来源",async()=>{
-   if(running)return;
-   if(type.SelectedIndex is 1 or 2){var items=await dialog.StorageProvider.OpenFolderPickerAsync(new());source.Text=items.FirstOrDefault()?.TryGetLocalPath();}
-   else{var files=await dialog.StorageProvider.OpenFilePickerAsync(new(){AllowMultiple=type.SelectedIndex==3});jars=files.Select(x=>x.TryGetLocalPath()).OfType<string>().ToArray();source.Text=jars.FirstOrDefault();}
-   if(!string.IsNullOrWhiteSpace(source.Text))await Analyze();
-  });
-  void UpdateFields(){var mods=type.SelectedIndex==3;foreach(var field in new Control[]{name,version,loader,build})field.IsVisible=!mods;target.IsVisible=mods;}
-  type.SelectionChanged+=(_,_)=>{if(!running){planType=-1;analyzed=null;UpdateFields();}};UpdateFields();
-  var execute=Action("确认并导入",async()=>{
-   if(running)return;if(planSource!=source.Text||planType!=type.SelectedIndex)throw new InvalidOperationException("来源已改变，请重新分析。");running=true;foreach(var field in new Control[]{source,name,version,loader,build,target,type})field.IsEnabled=false;maintenance++;
-   try {
-    if(type.SelectedIndex==3){if(jars.Length==0)throw new InvalidOperationException("请选择 JAR 文件。");var instance=target.SelectedItem as Instance??throw new InvalidOperationException("请先选择游戏实例。");EnsureIdle(instance);foreach(var jar in jars){cancel.Token.ThrowIfCancellationRequested();LocalMods.Import(jar,model.ModsFolder(instance));}info.Text="模组导入完成。";}
-    else if(IsModrinth(source.Text)){if(model.Store.Entries.Any(x=>x.Name.Equals(name.Text,StringComparison.OrdinalIgnoreCase)))throw new InvalidDataException("An instance with this name exists; choose another name.");var imported=await model.QueuePackAsync(name.Text??"Imported pack",null,source.Text,progress=>info.Text=progress);model.Selected=imported with {Name=name.Text??imported.Name,Pack=false};model.Store.Save(model.Selected);info.Text="整合包导入完成";}
-    else{if(analyzed==null)throw new InvalidOperationException("请先分析来源。");model.Selected=await GameImport.ImportDirectoryAsync(model.Store,analyzed,name.Text??"",version.Text??"",loader.SelectedItem as string??"原版",string.IsNullOrWhiteSpace(build.Text)?null:build.Text,new Progress<MigrationFile>(x=>info.Text=x.RelativePath),cancel.Token);info.Text="导入完成；启动前将重新验证资源。";}
-    Refresh();
-   }finally{maintenance--;running=false;foreach(var field in new Control[]{source,name,version,loader,build,target,type})field.IsEnabled=true;}
-  });
-  dialog.SetBody(Column(type,source,choose,Action("重新分析",Analyze),info,name,version,loader,build,target),Action("取消导入",()=>{cancel.Cancel();CancelJobs();return Task.CompletedTask;}),CloseDialog(dialog),execute);
-  dialog.Closing+=(_,e)=>{if(running){cancel.Cancel();e.Cancel=true;}};
-  try{await dialog.ShowDialog(this);}finally{model.Resources.Changed-=CancelJobs;if(temporary!=null&&Directory.Exists(temporary))Directory.Delete(temporary,true);}
- }
+
+    private Task GameImportWizardAsync() => GameImportWizardAsync(async dialog =>
+    {
+        var folders = await dialog.StorageProvider.OpenFolderPickerAsync(new() { AllowMultiple = false });
+        return folders.FirstOrDefault()?.TryGetLocalPath();
+    });
+
+    internal async Task GameImportWizardAsync(Func<LauncherDialog, Task<string?>> selectFolder)
+    {
+        var dialog = Dialog("导入游戏", editor: true);
+        using var lifetime = new CancellationTokenSource();
+        CancellationTokenSource? scanJob = null;
+        string? source = null;
+        var importing = false;
+        var rows = new List<(GameImportCandidate Candidate, CheckBox Selected, TextBox Version, UnifiedExpandableSelect Loader, TextBox Build)>();
+        var results = Column();
+        StackPanel? content = null;
+        var info = Label("智能识别 Minecraft 游戏");
+        var sourceLabel = Label("");
+        var copy = new RadioButton { Content = "复制导入", IsChecked = true };
+        var reference = new RadioButton { Content = "引用原目录" };
+        var keep = new CheckBox { Content = "保留模组、配置、存档、资源包、光影、设置和截图", IsChecked = true };
+        var shared = Label("其他启动器和 XG Launcher 可能共用游戏文件、配置和存档。");
+        var completeResources = new CheckBox { Content = "导入后自动补齐缺失资源", IsChecked = true };
+        var modes = Column(Row(copy, reference), keep, shared, completeResources);
+        var resultsScroll = new ScrollViewer
+        {
+            Content = results,
+            MaxHeight = 340,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled
+        };
+        IdleScrollbar.Attach(resultsScroll);
+        shared.IsVisible = modes.IsVisible = false;
+        Button execute = null!;
+        Button choose = null!;
+        Button rescan = null!;
+        bool Valid((GameImportCandidate Candidate, CheckBox Selected, TextBox Version, UnifiedExpandableSelect Loader, TextBox Build) row) =>
+            Instance.IsValidVersion(row.Version.Text?.Trim()) &&
+            (row.Loader.SelectedItem as string == "原版" || Instance.IsValidVersion(row.Build.Text?.Trim()));
+        bool CanImport() => !importing && scanJob == null && rows.Any(x => x.Selected.IsChecked == true) &&
+            rows.Where(x => x.Selected.IsChecked == true).All(Valid);
+        void Update()
+        {
+            shared.IsVisible = reference.IsChecked == true;
+            keep.IsVisible = !shared.IsVisible;
+            completeResources.IsVisible = rows.Count(x => x.Selected.IsChecked == true) == 1;
+            execute.IsEnabled = CanImport();
+        }
+
+        void AddRow(GameImportCandidate candidate)
+        {
+            var inspection = candidate.Inspection;
+            var box = new CheckBox { Content = candidate.Name, IsChecked = rows.Count == 0 };
+            var version = Input("Minecraft 版本", inspection.Version);
+            var loader = Picker(["原版", "Forge", "NeoForge", "Fabric", "Quilt"], title: "加载器类型");
+            loader.SelectedItem = inspection.Loader;
+            var build = Input("加载器版本", inspection.LoaderVersion);
+            var edit = Column(version, loader, build);
+            edit.IsVisible = !Instance.IsValidVersion(inspection.Version) ||
+                (inspection.Loader != "原版" && !Instance.IsValidVersion(inspection.LoaderVersion));
+            void UpdateBuild() { build.IsVisible = loader.SelectedItem as string != "原版"; Update(); }
+            box.IsCheckedChanged += (_, _) => Update();
+            version.TextChanged += (_, _) => Update();
+            loader.SelectionChanged += (_, _) => UpdateBuild();
+            build.TextChanged += (_, _) => Update();
+            rows.Add((candidate, box, version, loader, build));
+            UpdateBuild();
+            var requiredJava = JavaVersionPolicy.Recommend(inspection.Version ?? "");
+            var summary = Label(string.Join(" · ", new[] { inspection.Version ?? "版本待补充", inspection.Loader,
+                inspection.LoaderVersion, inspection.Format, requiredJava.HasValue ? $"Java {requiredJava}" : null }.OfType<string>()));
+            var toggle = Action("编辑识别信息", () => { edit.IsVisible = !edit.IsVisible; return Task.CompletedTask; });
+            results.Children.Add(Column(box, summary, Label(candidate.Profile), Label(candidate.Status), toggle, edit));
+        }
+
+        async Task ScanAsync()
+        {
+            if (source == null || importing || scanJob != null) return;
+            var path = source;
+            using var job = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);
+            scanJob = job;
+            choose.IsEnabled = rescan.IsEnabled = false;
+            rows.Clear();
+            results.Children.Clear();
+            modes.IsVisible = false;
+            info.Text = "正在扫描…";
+            Update();
+            try
+            {
+                var (scan, manual) = await Task.Run(() =>
+                {
+                    var found = GameImport.Scan(path, job.Token);
+                    return (found, found.Instances.Count == 0 ? GameImport.ManualCandidate(path) : null);
+                }, job.Token);
+                if (job.IsCancellationRequested) return;
+                var java = new Dictionary<int, string>();
+                if (scan.Instances.Count > 0)
+                {
+                    info.Text = $"已识别 {scan.Instances.Count} 个实例，正在检查 Java…";
+                    using var deadline = CancellationTokenSource.CreateLinkedTokenSource(job.Token);
+                    deadline.CancelAfter(TimeSpan.FromSeconds(2));
+                    foreach (var major in scan.Instances.Select(x => JavaVersionPolicy.Recommend(x.Inspection.Version ?? ""))
+                        .OfType<int>().Distinct().Take(5))
+                    {
+                        try
+                        {
+                            var runtime = await JavaDiscovery.CompatibleAsync(null, model.Store.ManagedJavaRoot, major,
+                                model.Store.JavaSearchRoots(), deadline.Token);
+                            java[major] = runtime == null ? $"未检测到 Java {major}" : $"已检测到 Java {major}";
+                        }
+                        catch (OperationCanceledException) when (deadline.IsCancellationRequested) { break; }
+                    }
+                }
+                if (job.IsCancellationRequested) return;
+                foreach (var item in scan.Instances)
+                {
+                    var major = JavaVersionPolicy.Recommend(item.Inspection.Version ?? "");
+                    var runtime = major.HasValue ? java.GetValueOrDefault(major.Value) ?? $"Java {major} 待校验" : "Java 版本待校验";
+                    AddRow(item with { Status = item.Status + " · " + runtime });
+                }
+                info.Text = rows.Count == 0 ? "未找到有效的 Minecraft 实例，请选择游戏目录或具体版本目录。"
+                    : $"已识别 {rows.Count} 个实例。启动前将校验 Java、游戏文件和加载器依赖。";
+                if (scan.Issues.Count > 0)
+                {
+                    info.Text += $" {scan.Issues.Count} 项无法读取或解析，其他结果仍可导入。";
+                    WriteImportDiagnostics(scan.Issues);
+                    results.Children.Add(new Expander { Header = "扫描详情", Content = Label(string.Join("\n", scan.Issues.Take(20))) });
+                }
+                if (manual != null)
+                {
+                    results.Children.Add(Action("手动补充实例信息", () =>
+                    {
+                        results.Children.Clear();
+                        AddRow(manual);
+                        modes.IsVisible = true;
+                        if (content != null) dialog.FitContent(content, 490);
+                        return Task.CompletedTask;
+                    }));
+                }
+                modes.IsVisible = rows.Count > 0;
+                if (content != null) dialog.FitContent(content, 490);
+            }
+            catch (OperationCanceledException) when (job.IsCancellationRequested) { }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException)
+            {
+                WriteImportDiagnostics([error.ToString()]);
+                info.Text = "无法扫描该目录，请检查文件夹权限、路径和文件完整性。";
+            }
+            finally
+            {
+                scanJob = null;
+                choose.IsEnabled = rescan.IsEnabled = true;
+                Update();
+            }
+        }
+
+        choose = Action("选择游戏或其他启动器的目录", async () =>
+        {
+            if (await selectFolder(dialog) is not { } path) return;
+            source = path;
+            sourceLabel.Text = path;
+            await ScanAsync();
+        });
+        rescan = Action("重新扫描", ScanAsync);
+        rescan.IsEnabled = false;
+        execute = Action("导入游戏", async () =>
+        {
+            if (!CanImport()) return;
+            var selected = rows.Where(x => x.Selected.IsChecked == true).ToArray();
+            var useReference = reference.IsChecked == true;
+            var completeAfterImport = selected.Length == 1 && completeResources.IsChecked == true;
+            importing = true;
+            maintenance++;
+            choose.IsEnabled = rescan.IsEnabled = results.IsEnabled = modes.IsEnabled = false;
+            Update();
+            var errors = new List<string>();
+            var sharedConflicts = new List<string>();
+            var imported = 0;
+            Instance? importedInstance = null;
+            try
+            {
+                foreach (var row in selected)
+                {
+                    var version = row.Version.Text!.Trim();
+                    var kind = (string)row.Loader.SelectedItem!;
+                    var build = kind == "原版" ? null : row.Build.Text?.Trim();
+                    var candidate = row.Candidate;
+                    var referencePath = candidate.Isolated ? candidate.Profile : candidate.Inspection.Root;
+                    var sourceKey = candidate.Profile;
+                    if (model.Store.Entries.Any(x => string.Equals(x.ImportSource, sourceKey, StringComparison.OrdinalIgnoreCase) &&
+                        x.Version == version && x.Loader == kind && x.LoaderVersion == build &&
+                        (x.ReferencedGameDirectory != null) == useReference))
+                    {
+                        errors.Add(candidate.Name + "：已导入该来源和版本。");
+                        continue;
+                    }
+                    var instance = new Instance(Guid.NewGuid(), model.Store.AvailableName(candidate.Name), version, kind,
+                        LoaderVersion: build, AutomaticMemory: true, AutomaticResolution: true,
+                        ReferencedGameDirectory: useReference ? referencePath : null, ImportSource: sourceKey);
+                    try
+                    {
+                        info.Text = "正在导入 " + candidate.Name + "…";
+                        if (useReference)
+                        {
+                            _ = model.Store.GameDirectoryFor(instance);
+                            model.Store.Save(instance);
+                        }
+                        else
+                        {
+                            var preserve = keep.IsChecked == true;
+                            var progress = new Progress<MigrationFile>(file => { if (importing) info.Text = "正在复制 " + file.RelativePath; });
+                            await Task.Run(() => GameImport.CopyCandidateAsync(model.Store, instance, candidate, preserve, progress, lifetime.Token, sharedConflicts.Add), lifetime.Token);
+                        }
+                        model.Selected = instance;
+                        importedInstance = instance;
+                        imported++;
+                    }
+                    catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
+                    {
+                        WriteImportDiagnostics([error.ToString()]);
+                        errors.Add(candidate.Name + "：导入失败。" + error.Message);
+                    }
+                }
+                if (sharedConflicts.Count > 0) WriteImportDiagnostics(sharedConflicts);
+                if (imported > 0)
+                {
+                    Refresh();
+                    status.Text = sharedConflicts.Count == 0 ? $"已导入 {imported} 个实例。" :
+                        $"已导入 {imported} 个实例。保留了 {sharedConflicts.Count} 个同名共享文件，请先校验安装。详情见 game-import.log。";
+                }
+                info.Text = $"已登记 {imported} 个实例。缺失资源可通过实例的安装或修复入口补齐。"
+                    + (errors.Count == 0 ? "" : "\n" + string.Join("\n", errors));
+            }
+            finally
+            {
+                maintenance--;
+                importing = false;
+                choose.IsEnabled = rescan.IsEnabled = results.IsEnabled = modes.IsEnabled = true;
+                Update();
+            }
+            if (errors.Count != 0 || importedInstance == null) return;
+            dialog.Close();
+            if (completeAfterImport) await CompleteImportedGameAsync(importedInstance);
+        }, true);
+        copy.IsCheckedChanged += (_, _) => Update();
+        reference.IsCheckedChanged += (_, _) => Update();
+        var sourceActions = new WrapPanel { ItemSpacing = 8, Children = { choose, rescan } };
+        content = Column(Label("游戏文件夹"), sourceActions, sourceLabel, info, modes, resultsScroll);
+        dialog.SetBody(content, CloseDialog(dialog), execute);
+        dialog.FitContent(content, 490);
+        execute.IsDefault = true;
+        dialog.Closing += (_, e) => { if (importing) e.Cancel = true; else lifetime.Cancel(); };
+        Update();
+        await dialog.ShowDialog(this);
+    }
+    private async Task CompleteImportedGameAsync(Instance instance)
+    {
+        try
+        {
+            status.Text = "正在检查导入实例的资源…";
+            await PrepareImportedGameAsync(
+                () => model.Game.InspectInstallationAsync(instance),
+                () =>
+                {
+                    section = 4;
+                    downloadTab = 0;
+                    Refresh();
+                    return model.InstallInstanceAsync(instance, message =>
+                        Dispatcher.UIThread.Post(() => status.Text = message));
+                });
+            if (windowClosed) return;
+            section = 1;
+            status.Text = "导入完成，启动资源已就绪。";
+        }
+        catch (OperationCanceledException)
+        {
+            status.Text = "已取消安装。导入的实例可在个人游玩中继续使用。";
+        }
+        catch (Exception error)
+        {
+            await ErrorAsync(this, "实例已导入。自动补齐资源失败：" + error.Message);
+        }
+        finally
+        {
+            installationStates.Remove(instance.Id);
+            if (!windowClosed) Refresh();
+        }
+    }
+
+    internal static async Task PrepareImportedGameAsync(Func<Task<string>> inspect, Func<Task> install)
+    {
+        if (await inspect() != "已安装")
+        {
+            await install();
+            if (await inspect() != "已安装")
+                throw new IOException("启动文件尚未通过校验，请在下载管理或个人游玩中检查安装状态。");
+        }
+    }
+
+    private void WriteImportDiagnostics(IEnumerable<string> issues)
+    {
+        var details = issues.Select(x => new GameLogSanitizer(null).Redact(x)).ToArray();
+        try
+        {
+            var path = Path.Combine(model.Store.Root, "game-import.log");
+            File.AppendAllLines(path, details.Select(x => $"[{DateTimeOffset.Now:O}] {x}"));
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            System.Diagnostics.Trace.TraceWarning(string.Join("\n", details));
+        }
+    }
+
 }

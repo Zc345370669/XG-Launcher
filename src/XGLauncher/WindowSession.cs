@@ -27,10 +27,10 @@ internal static class WindowPlacement
 }
 internal sealed record WindowSession(bool Compact = false, ModeGeometry? Full = null, ModeGeometry? Small = null)
 {
-    internal static WindowSession Load(string path)
+    internal static WindowSession Load(string path, bool defaultCompact = false)
     {
-        try { return JsonSerializer.Deserialize<WindowSession>(File.ReadAllText(path)) ?? new(); }
-        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new(); }
+        try { return JsonSerializer.Deserialize<WindowSession>(File.ReadAllText(path)) ?? new(defaultCompact); }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new(defaultCompact); }
     }
 }
 
@@ -74,7 +74,7 @@ public sealed partial class MainWindow
         windowShell = new Border { Name = "WindowShell", Background = ThemePalette.Background, BorderBrush = ThemePalette.Line,
             BorderThickness = new(1), Child = layout };
         WindowChrome.Attach(this, windowShell);
-        windowSession = WindowSession.Load(WindowSessionPath);
+        windowSession = WindowSession.Load(WindowSessionPath, model.PortableSession);
         fullBody.IsVisible = !IsCompact;
         compactBody.IsVisible = IsCompact;
         UpdateCaptionMode();

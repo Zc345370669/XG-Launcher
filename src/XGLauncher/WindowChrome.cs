@@ -73,11 +73,11 @@ internal static class WindowChrome
         {
             this.window = window; this.surface = surface;
             window.TransparencyLevelHint = [WindowTransparencyLevel.None];
-            window.Background = ThemePalette.Background;
-            window.TransparencyBackgroundFallback = ThemePalette.Background;
+            window.Background = window is LauncherDialog ? ThemePalette.DialogSurface : ThemePalette.Background;
+            window.TransparencyBackgroundFallback = window is LauncherDialog ? ThemePalette.DialogSurface : ThemePalette.Background;
             window.Foreground = ThemePalette.Text;
 
-            surface.Background = ThemePalette.Background;
+            surface.Background = window is LauncherDialog ? ThemePalette.DialogSurface : ThemePalette.Background;
             surface.CornerRadius = new(0); surface.Clip = null; surface.ClipToBounds = false; surface.Opacity = 1;
             surface.UseLayoutRounding = true; window.UseLayoutRounding = true;
             ConfigureFrame(); Update();
@@ -87,12 +87,15 @@ internal static class WindowChrome
             window.SizeChanged += Sized; window.PropertyChanged += Changed;
             ThemePalette.Background.PropertyChanged += ThemeChanged;
             ThemePalette.Line.PropertyChanged += ThemeChanged;
+            ThemePalette.DialogBorder.PropertyChanged += ThemeChanged;
         }
         private void ConfigureFrame()
         {
-            // 原生可缩放框架与DWM圆角能力分离：Windows10或圆角请求失败时仍保留系统缩放/分屏条件。
-            window.SystemDecorations = nativeFrame ? SystemDecorations.Full : SystemDecorations.None;
-            window.ExtendClientAreaToDecorationsHint = nativeFrame;
+            var useNativeFrame = nativeFrame && (window is not LauncherDialog || native);
+            window.SystemDecorations = useNativeFrame ? SystemDecorations.Full : SystemDecorations.None;
+            window.ExtendClientAreaToDecorationsHint = useNativeFrame;
+            window.TransparencyLevelHint = window is LauncherDialog && nativeFrame && !native
+                ? [WindowTransparencyLevel.Transparent, WindowTransparencyLevel.None] : [WindowTransparencyLevel.None];
             window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
             window.ExtendClientAreaTitleBarHeightHint = 0;
         }
@@ -114,9 +117,21 @@ internal static class WindowChrome
             {
                 if (native && opened && window.WindowState != WindowState.Minimized && !NativeWindowRounding.TryApply(window)) { native = false; ConfigureFrame(); }
                 // 顶层轮廓由DWM负责，不能再叠加HRGN或第二层客户端圆角遮罩。
-                surface.Clip = null; surface.CornerRadius = new(0);
-                surface.BorderBrush = ThemePalette.Line;
-                surface.BorderThickness = ClientBorder(window.RenderScaling, nativeFrame, window.WindowState == WindowState.Maximized);
+                surface.Clip = null;
+                if (window is LauncherDialog)
+                {
+                    // An opaque top-level cannot expose pixels outside a rounded client surface.
+                    var transparent = !native && window.WindowState == WindowState.Normal &&
+                        window.ActualTransparencyLevel == WindowTransparencyLevel.Transparent;
+                    window.Background = transparent ? Brushes.Transparent : ThemePalette.DialogSurface;
+                    surface.CornerRadius = new(transparent ? 8 : 0);
+                }
+                else
+                {
+                    surface.CornerRadius = new(0);
+                }
+                surface.BorderBrush = window is LauncherDialog ? ThemePalette.DialogBorder : ThemePalette.Line;
+                surface.BorderThickness = ClientBorder(window.RenderScaling, nativeFrame && (window is not LauncherDialog || native), window.WindowState == WindowState.Maximized);
             }
             finally { updating = false; }
         }
@@ -166,6 +181,7 @@ internal static class WindowChrome
             window.RemoveHandler(InputElement.PointerPressedEvent, Pressed); window.PointerMoved -= Moved; window.PointerReleased -= Released; window.PointerCaptureLost -= CaptureLost;
             window.Opened -= Opened; window.Closed -= Closed; window.ScalingChanged -= Scaled; window.SizeChanged -= Sized; window.PropertyChanged -= Changed;
             ThemePalette.Background.PropertyChanged -= ThemeChanged; ThemePalette.Line.PropertyChanged -= ThemeChanged;
+            ThemePalette.DialogBorder.PropertyChanged -= ThemeChanged;
         }
     }
 }

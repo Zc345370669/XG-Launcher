@@ -12,16 +12,19 @@ namespace XG.Core;
 public sealed class InstanceMinecraftPath : MinecraftPath
 {
     private readonly string version;
+    private readonly string metadataDirectory;
     private readonly string? shared;
-    public InstanceMinecraftPath(InstanceStore store, Instance instance) : base(Flatten(store, instance))
+    public InstanceMinecraftPath(InstanceStore store, Instance instance) : base(store.GameDirectoryFor(instance))
     {
         version = instance.Version; shared = store.SharedMinecraft;
-        Versions = BasePath;
+        metadataDirectory = Flatten(store, instance);
+        Versions = metadataDirectory;
         if (shared != null)
         {
             Library = Path.Combine(shared, "libraries"); Assets = Path.Combine(shared, "assets");
-            Runtime = store.ManagedJavaRoot;
         }
+        // CmlLib and loader installers may write Minecraft runtime files here.
+        Runtime = store.LegacyManagedJavaRoot;
     }
     private static string Flatten(InstanceStore store, Instance instance)
     {
@@ -29,20 +32,20 @@ public sealed class InstanceMinecraftPath : MinecraftPath
         FlatVersionLayout.Upgrade(store.Root, directory, store.SharedMinecraft);
         return directory;
     }
-    public override string GetVersionJsonPath(string versionName) => InstanceStore.SafeFile(BasePath, versionName + ".json");
+    public override string GetVersionJsonPath(string versionName) => InstanceStore.SafeFile(metadataDirectory, versionName + ".json");
     public override string GetVersionJarPath(string versionName)
     {
-        var local = InstanceStore.SafeFile(BasePath, versionName + ".jar");
+        var local = InstanceStore.SafeFile(metadataDirectory, versionName + ".jar");
         // 旧实例已有独立本体时继续使用；否则同一原版版本的客户端 JAR 可在加载器实例间共用。
         return versionName == version && shared != null && !File.Exists(local)
             ? InstanceStore.SafeFile(InstanceStore.SafeFile(Path.Combine(shared, "versions"), versionName), versionName + ".jar") : local;
     }
-    public override string GetNativePath(string versionName) => InstanceStore.SafeFile(Path.Combine(BasePath, "natives"), versionName);
+    public override string GetNativePath(string versionName) => InstanceStore.SafeFile(Path.Combine(metadataDirectory, "natives"), versionName);
 
     public IEnumerable<string> MetadataFiles()
     {
-        if (Directory.Exists(BasePath))
-            foreach (var file in Directory.EnumerateFiles(BasePath, "*.json", SearchOption.TopDirectoryOnly))
+        if (Directory.Exists(metadataDirectory))
+            foreach (var file in Directory.EnumerateFiles(metadataDirectory, "*.json", SearchOption.TopDirectoryOnly))
             {
                 if (Path.GetFileName(file).StartsWith('.')) continue;
                 yield return file;
@@ -55,7 +58,7 @@ public sealed class InstanceMinecraftPath : MinecraftPath
     }
     public bool IsVersionResource(string? path) => path != null &&
         (string.Equals(Path.GetFullPath(path), Path.GetFullPath(GetVersionJarPath(version)), StringComparison.OrdinalIgnoreCase) ||
-         string.Equals(Path.GetDirectoryName(Path.GetFullPath(path)), Path.TrimEndingDirectorySeparator(Path.GetFullPath(BasePath)), StringComparison.OrdinalIgnoreCase)
+         string.Equals(Path.GetDirectoryName(Path.GetFullPath(path)), Path.TrimEndingDirectorySeparator(Path.GetFullPath(metadataDirectory)), StringComparison.OrdinalIgnoreCase)
          && Path.GetExtension(path) is ".json" or ".jar");
 
     public MinecraftLauncherParameters CreateParameters(HttpClient http, bool installedOnly = false)
@@ -80,7 +83,7 @@ public sealed class InstanceMinecraftPath : MinecraftPath
                     using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(file, cancellationToken));
                     var data = doc.RootElement;
                     if (data.ValueKind != JsonValueKind.Object || !data.TryGetProperty("id", out var id) ||
-                        id.GetString() is not { } name || name != Path.GetFileNameWithoutExtension(file) ||
+                        id.ValueKind != JsonValueKind.String || id.GetString() is not { } name || name != Path.GetFileNameWithoutExtension(file) ||
                         !Instance.IsValidVersion(name) || (!data.TryGetProperty("mainClass", out _) && !data.TryGetProperty("inheritsFrom", out _))) continue;
                     result.AddVersion(new LocalVersionMetadata(new JsonVersionMetadataModel { Id = name, Type = "local" }, file));
                 }

@@ -15,7 +15,7 @@ public sealed partial class MainWindow
         using var lifetime = new CancellationTokenSource();
         CancellationTokenSource? loaderJob = null;
         var dialog = Dialog(existing is null ? createTitle ?? "创建实例" : "编辑实例", editor: true);
-        var name = Input("实例名称", existing?.Name);
+        var name = Input(existing == null ? "实例名称（可选，留空自动命名）" : "实例名称", existing?.Name);
         var versionPicker = new MinecraftVersionPicker("Minecraft 版本", false);
         var versions = versionPicker.Select;
         var loader = Picker(["原版", "NeoForge", "Forge", "Fabric", "Quilt"], title: "加载器类型");
@@ -53,7 +53,7 @@ public sealed partial class MainWindow
             var autoMemory = automatic.SelectedIndex == 0;
             var autoResolution = resolution.SelectedIndex == 0;
             var manualJava = javaMode.SelectedIndex == 1 ? java.Text?.Trim() : null;
-            if (title.Length is 0 or > 80) Error(0, title.Length == 0 ? "请输入实例名称。" : "实例名称不能超过 80 个字符。");
+            if (title.Length > 80) Error(0, "实例名称不能超过 80 个字符。");
             if (!Instance.IsValidVersion(game)) Error(1, game == null ? "请选择 Minecraft 版本。" : "Minecraft 版本标识无效。");
             if (game != null && kind != "原版" && (selected == null || verifiedGame != game || verifiedLoader != kind))
                 Error(2, "请先选择已确认兼容的加载器版本。");
@@ -103,9 +103,11 @@ public sealed partial class MainWindow
                 Avalonia.Threading.Dispatcher.UIThread.Post(() => first.BringIntoView(), Avalonia.Threading.DispatcherPriority.Loaded);
                 return;
             }
+            var suggestedName = title.Length == 0 ? "Minecraft " + game + (kind == "原版" ? "" : " " + kind) : title;
+            title = model.Store.AvailableName(suggestedName, existing?.Id);
             var instance = new Instance(existing?.Id ?? Guid.NewGuid(), title, game!,
                 kind, model.Store.StoreJavaPath(manualJava), mb, w, h, existing?.LastPlayed, existing?.Pack ?? false,
-                kind == "原版" ? null : selected, autoMemory, autoResolution);
+                kind == "原版" ? null : selected, autoMemory, autoResolution, existing?.ReferencedGameDirectory, existing?.ImportSource);
             EnsureIdle(instance);
             model.Store.Save(instance);
             installationStates.Remove(instance.Id);
@@ -231,9 +233,14 @@ public sealed partial class MainWindow
         }
         var javaSettings = InstanceJavaSettings(dialog, versions, javaMode, java, lifetime.Token);
         advanced.Children.Add(Column(javaSettings, fields[5],Label("实例目录"), Label(existing == null ? model.Store.InstanceRoot : model.Store.DirectoryFor(existing)),fields[6]));
+        var loaderVersionGroup = Column(Label("加载器版本"), choices, loaderStatus, fields[2], retryLoader);
+        void UpdateLoaderFields() => loaderVersionGroup.IsVisible = loader.SelectedItem as string != "原版";
+        loader.SelectionChanged += (_, _) => UpdateLoaderFields();
+        UpdateLoaderFields();
         var panel = Column(name, fields[0], versions, versionStatus, fields[1], retryVersions,
-            Label("加载器类型"), loader, Label("加载器版本"), choices, loaderStatus, fields[2], retryLoader,
+            Label("加载器类型"), loader, loaderVersionGroup,
             Label("内存"), automatic, memory, memoryStatus, fields[3], Label("分辨率"), resolution, dimensions, fields[4], advanced);
+        save.IsDefault = true;
         dialog.SetBody(panel, CloseDialog(dialog), save);
         dialog.Opened += async (_, _) => await LoadVersionsAsync(false);
         dialog.Closed += (_, _) => lifetime.Cancel();

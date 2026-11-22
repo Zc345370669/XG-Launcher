@@ -35,6 +35,7 @@ internal static class JavaLocations
             }
         }
         else common.AddRange(["/usr/lib/jvm", "/usr/java", "/opt/java"]);
+        if (OperatingSystem.IsWindows()) common.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XGLauncher", "runtimes"));
         return new(managed, Environment.GetEnvironmentVariable("JAVA_HOME"), Environment.GetEnvironmentVariable("JDK_HOME"),
             Environment.GetEnvironmentVariable("PATH"), common, OperatingSystem.IsWindows() ? ReadWindowsRegistry(token) : [], extra?.ToArray() ?? []);
     }

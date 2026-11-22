@@ -59,7 +59,7 @@ public static class InstallationReceipt
                 if (verified.Size != file.Size || !verified.Hash.Equals(file.Sha256, StringComparison.OrdinalIgnoreCase)) return "文件损坏";
             }
             if (receipt.JavaMajor > 0 && await JavaDiscovery.CompatibleAsync(ResolvePath(store, receipt.Java),
-                Path.Combine(store.SharedMinecraft ?? store.Root, "runtimes"), receipt.JavaMajor) == null) return "文件损坏";
+                store.ManagedJavaRoot, receipt.JavaMajor) == null) return "文件损坏";
             return "已安装";
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or ArgumentException or NotSupportedException or InvalidOperationException) { return "文件损坏"; }

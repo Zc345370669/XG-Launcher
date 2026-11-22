@@ -56,7 +56,7 @@ internal static class LegalCatalog
     private static IReadOnlyList<LegalDocument> Matching(string prefix, string project, string role) =>
         Files.Where(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).Select(x => File(x, project, role)).ToArray();
     internal static IReadOnlyList<CreditProject> Credits => new[] {
-        new CreditProject("PCL", "目录架构参考", new[] { File("PCL-DIRECTORY-ARCHITECTURE-REFERENCE.md", "PCL", "目录架构思路参考鸣谢；未引入 PCL 源码或资源，不是其许可证正文") }),
+        new CreditProject("PCL2", "目录架构参考", new[] { File("PCL-DIRECTORY-ARCHITECTURE-REFERENCE.md", "PCL2", "目录架构思路参考鸣谢；未引入 PCL2 源码或资源，不是其许可证正文") }),
         new CreditProject("Mojang Studios", "游戏元数据与资源服务", new[] { Eula, Guidelines }),
         new CreditProject("Microsoft", "账号服务与身份库", new[] { Online("microsoft-terms", "Microsoft", "Microsoft 服务协议", "https://www.microsoft.com/en-US/servicesagreement") }
             .Concat(Matching("Microsoft.Identity.Client", "Microsoft MSAL", "随程序分发的身份库；此许可不替代微软服务条款")).ToArray()),

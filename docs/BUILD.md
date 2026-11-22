@@ -1,6 +1,6 @@
 # 构建、测试与发布
 
-使用仓库根目录的 `global.json`（SDK 10.0.404）。应用版本为v0.1.0-alpha；SDK、NuGet和程序集技术版本不应替换成应用版本。目标平台Windows x64，Avalonia版本见项目和锁文件。
+使用仓库根目录的 `global.json`（SDK 10.0.404）。应用版本为 v0.1.1；SDK、NuGet和程序集技术版本不应替换成应用版本。目标平台Windows x64，Avalonia版本见项目和锁文件。
 
 ## 干净源码检查
 
@@ -30,13 +30,13 @@ dotnet build XG-Launcher.sln -c Release --no-restore -p:GenerateDocumentationFil
 
 ## Windows发布
 
-安装官方NSIS 3.11后执行：
+默认发布不需要 NSIS，执行：
 
 ```powershell
 pwsh ./build-windows.ps1
 ```
 
-脚本检查NSIS版本，使用独立Windows锁文件进行自包含单文件发布，保留原生库自解压标志，复制许可及对应原生配套源码，输出 `dist/win-x64/`、`dist/XGLauncher-portable-win-x64.zip` 和安装程序。不要仅分发随意复制的EXE而遗漏发布目录中的许可材料。
+脚本使用 Windows 锁文件进行自包含单文件发布，输出 `dist/win-x64/XG-Launcher/XGLauncher.exe`。许可、对应原生源码和独立更新器均内置，可离线导出。不要分发普通 build 目录的 EXE 冒充完整单文件 publish。只有显式传 `-BuildInstaller` 才构建历史可选 NSIS 安装包，此时要求 NSIS 3.11。
 
 只需交叉发布检查时：
 
@@ -48,4 +48,6 @@ XG_DOTNET=dotnet bash scripts/publish-portable-windows.sh <输出目录>
 
 ## GitHub Actions
 
-`.github/workflows/build-windows.yml`使用windows-2025、global.json、锁定恢复、Release构建、全部Python回归、`dotnet test`、XML文档检查、NSIS发布和产物上传。仅接受手动/PR触发，contents权限只读，没有创建Tag、Release或推送步骤。静态检查工作流不等于它已在GitHub运行。
+`.github/workflows/build-windows.yml`使用windows-2025、global.json、锁定恢复、Release构建、全部Python回归、`dotnet test`、XML文档检查、单 EXE 发布和产物上传。仅接受手动/PR触发，contents权限只读，没有创建Tag、Release或推送步骤。静态检查工作流不等于它已在GitHub运行。
+
+Windows 发布脚本先构建内置更新器和完整合规 ZIP，再编译进主 EXE。面向玩家的 Release 资源只需 `XGLauncher.exe`；本轮不执行远程发布。普通开发构建仍可编译测试，Windows 发布必须使用脚本提供完整内置资源。

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace XG.Core;
 
 public static class LocalMods
 {
-    public static void Import(string source, string directory)
+    public static bool Import(string source, string directory)
     {
         var filename = Path.GetFileName(source);
         if (!filename.EndsWith(".jar", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("请选择 JAR 文件。");
@@ -19,7 +20,20 @@ public static class LocalMods
         try
         {
             File.Copy(source, temporary);
-            File.Move(temporary, target, false);
+            try
+            {
+                File.Move(temporary, target, false);
+                return true;
+            }
+            catch (IOException) when (File.Exists(target))
+            {
+                using var incoming = File.OpenRead(temporary);
+                using var existing = File.OpenRead(target);
+                if (incoming.Length == existing.Length &&
+                    CryptographicOperations.FixedTimeEquals(SHA256.HashData(incoming), SHA256.HashData(existing)))
+                    return false;
+                throw new IOException($"同名模组内容不同，已保留现有文件。来源：{source}；目标：{target}。");
+            }
         }
         finally { File.Delete(temporary); }
     }

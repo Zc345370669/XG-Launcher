@@ -73,6 +73,14 @@ internal static class ShutdownTests
         Console.WriteLine("PASS exit pauses running and queued Modrinth transfers without cancelling/deleting their resumable data");
 
         Check(handler.Released, "real shared HTTP worker remained alive after exit");
+        var copying = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finishCopy = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var commit = VerifiedTransfer.CommitOwnedAsync(http, async () => { copying.SetResult(); await finishCopy.Task; });
+        await copying.Task;
+        var exitWhileCopying = VerifiedTransfer.StopForExitAsync(http);
+        Check(!exitWhileCopying.IsCompleted, "exit skipped a local file commit after HTTP completed");
+        finishCopy.SetResult(); await exitWhileCopying.WaitAsync(TimeSpan.FromSeconds(3)); await commit;
+
         using var otherHandler = new Stalled(); using var other = new HttpClient(otherHandler);
         var independent = VerifiedTransfer.StageAsync(other, file.Url, Path.Combine(modRoot, "other.part"), file.Size, file.Sha512,
             (_, _) => { }, _ => { }, default);

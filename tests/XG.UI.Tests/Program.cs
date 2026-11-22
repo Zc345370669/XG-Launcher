@@ -97,6 +97,15 @@ try
         .Concat(Enumerable.Range(0, 180).Select(x => new GameService.OfficialVersion("fixture-" + x, "release"))).ToArray());
     store.Save(new Instance(Guid.NewGuid(), "Test Survival", "1.21.1"));
     store.Save(new Instance(Guid.NewGuid(), "Fabric 1.21.1", "1.21.1", "Fabric", LoaderVersion: "0.16.4"));
+    var installedMods = Path.Combine(store.DirectoryFor(store.Entries[0]), "mods");
+    Directory.CreateDirectory(installedMods);
+    for (var index = 0; index < 18; index++)
+        File.WriteAllText(Path.Combine(installedMods, $"scroll-fixture-{index:D2}.jar"), "layout fixture");
+    var otherVersion = new Instance(Guid.NewGuid(), "Other Minecraft", "1.20.1");
+    store.Save(otherVersion);
+    var otherMods = Path.Combine(store.DirectoryFor(otherVersion), "mods");
+    Directory.CreateDirectory(otherMods);
+    File.WriteAllText(Path.Combine(otherMods, "other-version.jar"), "layout fixture");
     using var catalog = new HttpClient(new CatalogFixture());
     var window = new MainWindow(temp, new Modrinth(catalog), catalog);
     window.Show();
@@ -115,6 +124,29 @@ try
     if (!window.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "Test Survival"))
         throw new Exception("Saved instance did not appear in Personal.");
     if (!window.GetVisualDescendants().OfType<Button>().Any(x => x.Content is string text && text is "下载" or "校验中")) throw new Exception("Missing installation button");
+    Click("模组管理");
+    Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+    AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+    var installedList = window.GetVisualDescendants().OfType<StackPanel>().Single(x => x.Name == "InstalledModsList");
+    var gameVersions = installedList.Children.OfType<TextBlock>().Select(x => x.Text).ToArray();
+    if (!gameVersions.Contains("Minecraft 1.21.1") || !gameVersions.Contains("Minecraft 1.20.1"))
+        throw new Exception("Installed mods were not grouped by Minecraft version.");
+    var installedScroll = installedList.GetVisualAncestors().OfType<ScrollViewer>().First();
+    if (installedScroll.Extent.Height <= installedScroll.Viewport.Height)
+        throw new Exception("Installed mod cards did not contribute to scroll extent.");
+    installedScroll.Offset = new Vector(0, installedScroll.Extent.Height);
+    Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+    AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+    var lastMod = installedList.Children.OfType<Border>().Last();
+    var lastBottom = lastMod.TranslatePoint(new Point(0, lastMod.Bounds.Height), installedScroll);
+    if (lastBottom == null || lastBottom.Value.Y > installedScroll.Bounds.Height || lastBottom.Value.Y < lastMod.Bounds.Height)
+        throw new Exception("The last installed mod could not be scrolled fully into view.");
+    Console.WriteLine("PASS installed mods grouped by game version and last card scrolls fully into view");
+    Directory.Delete(installedMods, true);
+    store.Remove(otherVersion, true);
+    window.Close();
+    window = new MainWindow(temp, new Modrinth(catalog), catalog);
+    window.Show();
     ResponsiveUiTests.Run(window, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Phase12UiTests.Run(window, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     Phase13UiTests.Run(window, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
@@ -133,6 +165,7 @@ try
     DirectDownloadTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     WindowShutdownTests.Run(temp);
     LauncherUpdateUiTests.Run(temp);
+    LocalFinalUiTests.Run(temp);
     Console.WriteLine("PASS headless window creation, six navigation pages, persisted instance and launch button");
 }
 finally { Directory.Delete(temp, true); }

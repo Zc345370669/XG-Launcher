@@ -10,7 +10,15 @@ public sealed partial class MainWindow
     private TextBlock? downloadBadge;
     private readonly HashSet<Guid> notifiedInstallations = [];
     private bool notificationsEnabled = true;
-    private int UnfinishedDownloads => model.Resources.UnfinishedCount + model.Downloads.Items.Count(x => x.State is not ("已完成" or "已取消"));
+    private static bool InDownloadTab(string state, int tab) => tab switch
+    {
+        1 => state is "已完成" or "已取消",
+        2 => state == "失败",
+        _ => state is not ("已完成" or "已取消" or "失败")
+    };
+    private int CountDownloads(int tab) => model.Resources.MainJobs.Count(x => InDownloadTab(x.State, tab)) +
+        model.Downloads.Items.Count(x => InDownloadTab(x.State, tab));
+    private int UnfinishedDownloads => CountDownloads(0);
     private void UpdateBadge()
     {
         if (downloadBadge == null) return;

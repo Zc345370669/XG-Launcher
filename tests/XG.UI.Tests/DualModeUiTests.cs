@@ -93,13 +93,11 @@ internal static class DualModeUiTests
         var link = about.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x) == MainWindow.OfficialRepository);
         string? opened = null; owner.OpenExternalLink = url => { opened = url; return Task.CompletedTask; }; Invoke(link);
         Check(opened == "https://github.com/Zc345370669/XG-Launcher", "official repository handler wrong");
-        foreach (var label in new[] { "查看 MIT License", "第三方许可证" })
-        {
-            Invoke(about.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, label)));
-            var legal = owner.GetVisualDescendants().OfType<LegalBrowser>().Single();
-            Check(label == "查看 MIT License" ? legal.DocumentBody?.Text == LegalCatalog.Read("XGLauncher-MIT.txt") : legal.Page == "third-party", "legal entry wrong or incomplete");
-            Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "返回关于")));
-        }
+        Check(!about.GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, "查看 MIT License") || Equals(x.Content, "第三方许可证")), "duplicate About license entry returned");
+        var legal = settings.Sections[5].GetVisualDescendants().OfType<LegalBrowser>().Single();
+        legal.ShowDocument(LegalCatalog.File("XGLauncher-MIT.txt", "XG Launcher"), legal.ShowOverview); Pump();
+        Check(legal.DocumentBody?.Text == LegalCatalog.Read("XGLauncher-MIT.txt"), "integrated MIT legal text incomplete");
+        legal.ShowThirdParty(); Pump(); Check(legal.Page == "third-party", "integrated third-party section missing"); legal.ShowOverview();
         owner.Width = 600; owner.Height = 420; Pump(); settings.ContentScroll.Offset = new Vector(0, settings.ContentScroll.Extent.Height); Pump(); Capture("phase17-about-small-linux-headless");
         owner.ToggleMode(); Pump(); owner.Width = 350; owner.Height = 380; Pump(); Capture("phase17-compact-minimum-linux-headless");
         owner.Close(); Pump(); Check(model.IsDisposed, "model HTTP lifetime not released");

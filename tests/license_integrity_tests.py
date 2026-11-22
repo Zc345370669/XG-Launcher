@@ -30,10 +30,12 @@ class LicenseIntegrityTests(unittest.TestCase):
             self.assertTrue(row['documents'], row['name'])
             self.assertTrue(all((LICENSES / d).is_file() for d in row['documents']), row['name'])
 
-    def test_nsis_pinned_and_zlib(self):
+    def test_optional_nsis_pinned_and_zlib(self):
         self.assertIn('v3.11', (ROOT / 'build-windows.ps1').read_text())
         workflow = next((ROOT / '.github/workflows').glob('*')).read_text()
-        self.assertIn('--version=3.11.0', workflow)
+        self.assertNotIn('choco install nsis', workflow)
+        self.assertIn('dist/win-x64/XG-Launcher/XGLauncher.exe', workflow)
+        self.assertIn('if ($BuildInstaller)', (ROOT / 'build-windows.ps1').read_text())
         self.assertIn('SetCompressor /FINAL zlib', (ROOT / 'installer/XGLauncher.nsi').read_text())
         self.assertIn('SPECIAL EXCEPTION', (LICENSES / 'NSIS-COPYRIGHT.txt').read_text().upper())
 

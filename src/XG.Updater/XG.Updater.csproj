@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>WinExe</OutputType><AssemblyName>XGUpdater</AssemblyName></PropertyGroup>
-  <ItemGroup><Compile Include="../XG.Core/UpdateFiles.cs" Link="UpdateFiles.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../XG.Core/UpdateFiles.cs" Link="UpdateFiles.cs" /><Compile Include="../XG.Core/UpdateAcknowledgment.cs" Link="UpdateAcknowledgment.cs" /></ItemGroup>
+  <ItemGroup><PackageReference Include="Avalonia.Desktop" Version="11.3.23" /><PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.23" /></ItemGroup>
 </Project>

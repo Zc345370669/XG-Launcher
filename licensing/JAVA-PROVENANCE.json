@@ -17,7 +17,7 @@
     },
     {
       "path": "src/XG.Core/JavaLocations.cs",
-      "sha256": "a9b3474d8e92166f7f0a8dfc74b47bf5103a611d516f7dfc2ac2d199d5d65a76"
+      "sha256": "37c5d0014696bc7bdaf6589bfbc0df4612bbc7590524d258d9fd2259bfab52a8"
     },
     {
       "path": "src/XG.Core/JavaProbe.cs",
@@ -36,5 +36,6 @@
   "native_rewrite_preserved_in_v15": true,
   "current_module_old_python_reference_required": false,
   "maintainer_confirms_current_module_not_old_python": true,
-  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance."
+  "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance.",
+  "local_only_final_note": "Local-only revision: official Java MSI/default-directory discovery, .minecraft isolation and update UI integration. No new third-party source or icon geometry imported; historical qualifications remain."
 }

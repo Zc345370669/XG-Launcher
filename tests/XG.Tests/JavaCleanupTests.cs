@@ -25,9 +25,9 @@ internal static class JavaCleanupTests
         var external=Path.Combine(root,"external-runtime");Directory.CreateDirectory(external);var outside=Path.Combine(external,"java.exe");await File.WriteAllTextAsync(outside,"external");
         Check(await JavaInstallerCleanup.AfterVerifiedAsync(managed,outside,[raw])==0&&File.Exists(part),"external Java authorized managed cache cleanup");
         var workspace=Path.Combine(root,"clean-portable");var store=new InstanceStore(Path.Combine(workspace,"data"),Path.Combine(workspace,"minecraft"));
-        Check(store.ManagedJavaRoot==Path.Combine(workspace,"minecraft","runtimes"),"fresh workspace scatters Java at launcher root");
+        Check(store.ManagedJavaRoot==(OperatingSystem.IsWindows()?Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"XGLauncher","runtimes"):Path.Combine(workspace,"minecraft","runtimes")),"fresh workspace scatters Java at launcher root");
         Directory.CreateDirectory(Path.Combine(workspace,"runtimes"));
-        Check(new InstanceStore(store.Root,store.SharedMinecraft).ManagedJavaRoot==Path.Combine(workspace,"runtimes"),"existing Java root no longer resolved");
+        Check(new InstanceStore(store.Root,store.SharedMinecraft).LegacyManagedJavaRoot==Path.Combine(workspace,"runtimes"),"existing Java root no longer resolved");
         Console.WriteLine("PASS verified Java cleanup removes only owned archives/valid-target temporary downloads, preserves real runtime ZIPs/failed or external installs; fresh shared Java under minecraft with old-root compatibility (controlled files)");
     }
     private static void Check(bool value,string message){if(!value)throw new Exception(message);}

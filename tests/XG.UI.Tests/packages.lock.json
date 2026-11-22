@@ -257,7 +257,7 @@
           "Avalonia.Themes.Fluent": "[11.3.23, )",
           "Microsoft.Identity.Client": "[4.61.3, )",
           "Microsoft.Identity.Client.Extensions.Msal": "[4.61.3, )",
-          "XG.Core": "[0.1.0-alpha, )"
+          "XG.Core": "[0.1.1, )"
         }
       }
     }

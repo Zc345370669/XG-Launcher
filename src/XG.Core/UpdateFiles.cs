@@ -5,7 +5,8 @@ using System.Text.Json;
 
 namespace XG.Core;
 
-public sealed record UpdateApplyRequest(string Archive, string Sha256, string InstallDirectory, int ParentProcessId, long ParentStartTicks);
+public sealed record UpdateTheme(string Background, string Text, string Accent, string Border, bool Dark);
+public sealed record UpdateApplyRequest(string Archive, string Sha256, string InstallDirectory, int ParentProcessId, long ParentStartTicks, string? TargetVersion = null, UpdateTheme? Theme = null);
 
 /// <summary>更新只替换包内的程序与许可文件；游戏、账号、存档和配置不属于写入范围。</summary>
 public static class UpdateFiles
@@ -43,22 +44,35 @@ public static class UpdateFiles
         try
         {
             var staged = Path.Combine(working, "new"); Directory.CreateDirectory(staged);
-            using var zip = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+            var directExe = stream.ReadByte() == 'M' && stream.ReadByte() == 'Z'; stream.Position = 0;
             var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase); long total = 0;
+            if (directExe)
+            {
+                if (stream.Length > 512L * 1024 * 1024) throw new InvalidDataException("更新程序过大。");
+                _ = Resolve(request.InstallDirectory, "XGLauncher.exe");
+                using var output = File.Create(Resolve(staged, "XGLauncher.exe")); stream.CopyTo(output);
+                names.Add("XGLauncher.exe");
+            }
+            else
+            {
+            using var zip = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+            var singleExe = zip.Entries.Count(x => !x.FullName.EndsWith('/')) == 1 && zip.GetEntry("XG-Launcher/XGLauncher.exe") != null;
             if (zip.Entries.Count > 10000) throw new InvalidDataException("更新文件过多。");
             foreach (var entry in zip.Entries)
             {
                 if (entry.FullName.EndsWith('/')) continue;
+                var relative = singleExe ? "XGLauncher.exe" : entry.FullName;
                 total += entry.Length;
-                if (total > 768L * 1024 * 1024 || !names.Add(entry.FullName) || ((entry.ExternalAttributes >> 16) & 0xF000) == 0xA000)
+                if (total > 768L * 1024 * 1024 || !names.Add(relative) || ((entry.ExternalAttributes >> 16) & 0xF000) == 0xA000)
                     throw new InvalidDataException("更新包结构无效。");
-                var target = Resolve(staged, entry.FullName);
-                _ = Resolve(request.InstallDirectory, entry.FullName);
+                var target = Resolve(staged, relative);
+                _ = Resolve(request.InstallDirectory, relative);
                 Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                 entry.ExtractToFile(target);
             }
-            if (!names.Contains("XGLauncher.exe") || !names.Contains("LICENSE") || !names.Contains("tools/XGUpdater.exe"))
+            if (!names.Contains("XGLauncher.exe") || !singleExe && (!names.Contains("LICENSE") || !names.Contains("tools/XGUpdater.exe")))
                 throw new InvalidDataException("更新包缺少程序或许可证。");
+            }
             using (var exe = File.OpenRead(Path.Combine(staged, "XGLauncher.exe")))
             using (var reader = new BinaryReader(exe))
             {
@@ -88,10 +102,9 @@ public static class UpdateFiles
                 var target = Resolve(root, relative); var backup = Resolve(Path.Combine(working, "old"), relative);
                 var existed = File.Exists(target);
                 if (existed) { Directory.CreateDirectory(Path.GetDirectoryName(backup)!); File.Copy(target, backup); }
-                changed.Add((relative, existed));
                 Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                 var temporary = target + "." + Guid.NewGuid().ToString("N") + ".update";
-                try { File.Copy(Resolve(Path.Combine(working, "new"), relative), temporary); File.Move(temporary, target, true); }
+                try { File.Copy(Resolve(Path.Combine(working, "new"), relative), temporary); File.Move(temporary, target, true); changed.Add((relative, existed)); }
                 finally { if (File.Exists(temporary)) File.Delete(temporary); }
             }
         }
@@ -102,10 +115,16 @@ public static class UpdateFiles
                 foreach (var item in changed.AsEnumerable().Reverse())
                 {
                     var target = Resolve(root, item.Relative);
-                    if (item.Existed) File.Copy(Resolve(Path.Combine(working, "old"), item.Relative), target, true);
+                    if (item.Existed)
+                    {
+                        var restoring = target + "." + Guid.NewGuid().ToString("N") + ".rollback";
+                        try { File.Copy(Resolve(Path.Combine(working, "old"), item.Relative), restoring); File.Move(restoring, target, true); }
+                        finally { if (File.Exists(restoring)) File.Delete(restoring); }
+                    }
                     else if (File.Exists(target)) File.Delete(target);
                 }
-            Directory.Delete(working, true);
+            try { Directory.Delete(working, true); }
+            catch (Exception e) when (committed && e is IOException or UnauthorizedAccessException) { /* 成功后的缓存清理失败不能撤销已完成更新。 */ }
         }
     }
 }

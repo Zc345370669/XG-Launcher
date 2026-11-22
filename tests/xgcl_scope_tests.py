@@ -11,7 +11,16 @@ class ScopeTests(unittest.TestCase):
  def test_resource_matches_current_license(self):self.assertIn('XGLauncher-MIT.txt',(R/'src/XGLauncher/XGLauncher.csproj').read_text());self.assertIn('<PackageLicenseExpression>MIT',(R/'Directory.Build.props').read_text())
  def test_readme_intro_and_current_license(self):
   t=(R/'README.md').read_text()
-  for p in ['一个趁 ChatGPT 订阅到期前，让 AI 写着玩的 Minecraft Java 版启动器。','v0.1.0-alpha','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
+  for p in ['docs/history/README.md','v0.1.1','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
  def test_release_provides_native_source_and_notices(self):
-  self.assertIn('Copy-Item third-party',(R/'build-windows.ps1').read_text());self.assertIn('third-party',(R/'scripts/publish-portable-windows.sh').read_text())
+  import subprocess,sys,tempfile,zipfile
+  for script in ['build-windows.ps1','scripts/publish-portable-windows.sh']:self.assertIn('prepare-single-exe.py',(R/script).read_text())
+  self.assertIn('XG.Compliance.zip',(R/'src/XGLauncher/XGLauncher.csproj').read_text())
+  with tempfile.TemporaryDirectory() as output:
+   subprocess.run([sys.executable,str(R/'scripts/prepare-single-exe.py'),output],check=True,capture_output=True)
+   with zipfile.ZipFile(Path(output)/'Compliance.zip') as archive:
+    for folder in ['licenses','licensing','third-party']:
+     for file in (R/folder).rglob('*'):
+      if file.is_file():self.assertEqual(file.read_bytes(),archive.read(file.relative_to(R).as_posix()))
+    self.assertEqual((R/'LICENSE').read_bytes(),archive.read('LICENSE'))
 if __name__=='__main__':unittest.main()

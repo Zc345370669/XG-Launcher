@@ -82,7 +82,7 @@ internal static class Phase13UiTests
             else Check(legal.DocumentBody!.Text == legal.CurrentDocument.Read(), "original legal text modified");
         }
         Check(LegalCatalog.Files.Count > 50 && LegalCatalog.Files.All(x => LegalCatalog.Read(x).Length > 0), "embedded license resources missing");
-        var pcl = LegalCatalog.Credits.Single(x => x.Name == "PCL");
+        var pcl = LegalCatalog.Credits.Single(x => x.Name == "PCL2");
         Check(pcl.Role == "目录架构参考" && pcl.Documents.Single().Resource == "PCL-DIRECTORY-ARCHITECTURE-REFERENCE.md", "PCL architecture credit missing");
         legal.OpenProject(pcl); Pump();
         Check(legal.DocumentBody!.Text!.Contains("未复制", StringComparison.Ordinal) &&

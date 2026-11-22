@@ -48,7 +48,7 @@
     "src/XGLauncher/AccountRegistry.cs:9"
   ],
   " 副本": [
-    "src/XG.Core/Instances.cs:172"
+    "src/XG.Core/Instances.cs:177"
   ],
   " 已选中": [
     "src/XGLauncher/AppearanceSettings.cs:41"
@@ -115,36 +115,36 @@
     "src/XGLauncher/InstanceJavaSettings.cs:33"
   ],
   "Java {0} 未就绪，请在创建或编辑实例中选择兼容运行时。": [
-    "src/XG.Core/GameService.cs:197"
+    "src/XG.Core/GameService.cs:200"
   ],
   "Java 安装临时文件清理未完成：": [
-    "src/XG.Core/JavaInstallerCleanup.cs:51"
+    "src/XG.Core/JavaInstallerCleanup.cs:63"
   ],
   "Java 安装临时目录暂时无法清理：": [
-    "src/XG.Core/JavaInstallerCleanup.cs:54"
+    "src/XG.Core/JavaInstallerCleanup.cs:66"
   ],
   "Java 安装或兼容性检查失败：": [
-    "src/XG.Core/GameService.cs:204"
+    "src/XG.Core/GameService.cs:207"
   ],
   "Java 安装检查": [
     "src/XGLauncher/DownloadRecovery.cs:103"
   ],
   "Java 清理前检查未完成：": [
-    "src/XG.Core/JavaInstallerCleanup.cs:27"
+    "src/XG.Core/JavaInstallerCleanup.cs:35"
   ],
   "Java 环境": [
     "src/XGLauncher/DownloadRecovery.cs:90",
     "src/XGLauncher/StageRail.cs:192",
-    "src/XG.Core/GameService.cs:181",
-    "src/XG.Core/GameService.cs:190",
-    "src/XG.Core/GameService.cs:194"
+    "src/XG.Core/GameService.cs:184",
+    "src/XG.Core/GameService.cs:193",
+    "src/XG.Core/GameService.cs:197"
   ],
   "Java 运行环境": [
     "src/XGLauncher/InstanceJavaSettings.cs:10",
     "src/XGLauncher/InstanceJavaSettings.cs:42"
   ],
   "Java 进程未能启动（系统错误 {0}）。请检查 Java 路径和运行权限。": [
-    "src/XGLauncher/LauncherModel.cs:94"
+    "src/XGLauncher/LauncherModel.cs:95"
   ],
   "JEI 物品管理器": [
     "src/XGLauncher/OnlineCatalog.cs:25"
@@ -184,10 +184,10 @@
   "Minecraft 官方": [
     "src/XGLauncher/DownloadRecovery.cs:87",
     "src/XGLauncher/DownloadRecovery.cs:103",
-    "src/XG.Core/GameService.cs:183",
-    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:186",
     "src/XG.Core/GameService.cs:188",
-    "src/XG.Core/GameService.cs:190"
+    "src/XG.Core/GameService.cs:191",
+    "src/XG.Core/GameService.cs:193"
   ],
   "Minecraft 所有权": [
     "src/XG.Core/MinecraftAuthentication.cs:352"
@@ -297,8 +297,8 @@
     "src/XGLauncher/CatalogPages.cs:216",
     "src/XGLauncher/CatalogPages.cs:226",
     "src/XG.Core/Downloads.cs:51",
-    "src/XG.Core/GameService.cs:223",
-    "src/XG.Core/VerifiedTransfer.cs:211"
+    "src/XG.Core/GameService.cs:226",
+    "src/XG.Core/VerifiedTransfer.cs:215"
   ],
   "下载中 {0}%": [
     "src/XGLauncher/InstanceActions.cs:37"
@@ -307,7 +307,7 @@
     "src/XGLauncher/MainWindow.cs:233"
   ],
   "下载地址发生重定向。": [
-    "src/XG.Core/VerifiedTransfer.cs:190"
+    "src/XG.Core/VerifiedTransfer.cs:194"
   ],
   "下载完成": [
     "src/XGLauncher/CatalogPages.cs:374"
@@ -326,17 +326,20 @@
     "src/XGLauncher/CompactDownloadForm.cs:64"
   ],
   "下载文件超过声明大小。": [
-    "src/XG.Core/VerifiedTransfer.cs:228"
+    "src/XG.Core/VerifiedTransfer.cs:232"
   ],
   "下载服务器返回 HTTP {0}。": [
-    "src/XG.Core/VerifiedTransfer.cs:295"
+    "src/XG.Core/VerifiedTransfer.cs:299"
+  ],
+  "下载校验完成，正在检查更新包结构…": [
+    "src/XGLauncher/LauncherUpdates.cs:125"
   ],
   "下载游戏实例": [
     "src/XGLauncher/CompactMode.cs:38",
     "src/XGLauncher/CompactMode.cs:125"
   ],
   "下载目录没有写入权限。": [
-    "src/XG.Core/VerifiedTransfer.cs:298"
+    "src/XG.Core/VerifiedTransfer.cs:302"
   ],
   "下载管理": [
     "src/XGLauncher/MainWindow.cs:19",
@@ -346,10 +349,16 @@
     "src/XG.Core/Downloads.cs:43"
   ],
   "下载连接失败，请检查网络后重试。": [
-    "src/XG.Core/VerifiedTransfer.cs:296"
+    "src/XG.Core/VerifiedTransfer.cs:300"
   ],
   "下载连接超时，请重试。": [
-    "src/XG.Core/VerifiedTransfer.cs:297"
+    "src/XG.Core/VerifiedTransfer.cs:301"
+  ],
+  "下载速度：{0} MB/s": [
+    "src/XGLauncher/LauncherUpdates.cs:123"
+  ],
+  "下载速度：0.00 MB/s": [
+    "src/XGLauncher/LauncherUpdates.cs:106"
   ],
   "下载量": [
     "src/XGLauncher/OnlineCatalog.cs:51"
@@ -465,7 +474,7 @@
   ],
   "兼容 Java 尚未就绪，无法安装加载器。": [
     "src/XG.Core/InstallerJava.cs:10",
-    "src/XG.Core/GameService.cs:444"
+    "src/XG.Core/GameService.cs:464"
   ],
   "内存": [
     "src/XGLauncher/InstanceEditor.cs:236"
@@ -597,7 +606,7 @@
     "src/XGLauncher/CompactDownloadForm.cs:26"
   ],
   "加载器安装后的版本配置未通过验证。": [
-    "src/XG.Core/GameService.cs:336"
+    "src/XG.Core/GameService.cs:356"
   ],
   "加载器版本": [
     "src/XGLauncher/InstanceEditor.cs:23",
@@ -607,8 +616,8 @@
     "src/XGLauncher/GameImportWizard.cs:18"
   ],
   "加载器版本与游戏版本不兼容。": [
-    "src/XG.Core/GameService.cs:275",
-    "src/XG.Core/GameService.cs:296"
+    "src/XG.Core/GameService.cs:295",
+    "src/XG.Core/GameService.cs:316"
   ],
   "加载器类型": [
     "src/XGLauncher/GameImportWizard.cs:18",
@@ -616,7 +625,7 @@
     "src/XGLauncher/InstanceEditor.cs:235"
   ],
   "加载器配置的游戏版本不匹配。": [
-    "src/XG.Core/GameService.cs:280"
+    "src/XG.Core/GameService.cs:300"
   ],
   "加载失败，点击重试": [
     "src/XGLauncher/OnlineCatalog.cs:211"
@@ -659,20 +668,20 @@
     "src/XG.Core/GameImport.cs:21",
     "src/XG.Core/GameImport.cs:29",
     "src/XG.Core/Instances.cs:10",
-    "src/XG.Core/Instances.cs:112",
+    "src/XG.Core/Instances.cs:117",
     "src/XG.Core/InstanceSynchronization.cs:34",
     "src/XG.Core/Modrinth.cs:51",
     "src/XG.Core/Modrinth.cs:78",
-    "src/XG.Core/GameService.cs:182",
-    "src/XG.Core/GameService.cs:182",
-    "src/XG.Core/GameService.cs:260",
+    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:280",
     "src/XG.Core/ExistingInstallation.cs:47"
   ],
   "原选版本不兼容，已调整。": [
     "src/XGLauncher/InstanceEditor.cs:187"
   ],
   "发现新版本": [
-    "src/XGLauncher/LauncherUpdates.cs:90"
+    "src/XGLauncher/LauncherUpdates.cs:92"
   ],
   "发现版本 {0}": [
     "src/XGLauncher/CatalogPages.cs:95"
@@ -691,6 +700,9 @@
   ],
   "取消导入": [
     "src/XGLauncher/GameImportWizard.cs:64"
+  ],
+  "取消更新": [
+    "src/XGLauncher/LauncherUpdates.cs:110"
   ],
   "取消此资源任务？": [
     "src/XGLauncher/CatalogPages.cs:300"
@@ -750,7 +762,7 @@
     "src/XGLauncher/CompactMode.cs:130"
   ],
   "启动器更新": [
-    "src/XGLauncher/LauncherUpdates.cs:119"
+    "src/XGLauncher/LauncherUpdates.cs:111"
   ],
   "启动失败": [
     "src/XGLauncher/CompactMode.cs:128",
@@ -780,7 +792,7 @@
     "src/XGLauncher/CatalogPages.cs:31"
   ],
   "在线替换程序仅支持 Windows。": [
-    "src/XGLauncher/LauncherUpdates.cs:104"
+    "src/XGLauncher/LauncherUpdates.cs:143"
   ],
   "备份与恢复": [
     "src/XGLauncher/SettingsPage.cs:24"
@@ -865,14 +877,14 @@
     "src/XG.Core/PackImporter.cs:86",
     "src/XG.Core/Downloads.cs:51",
     "src/XG.Core/Downloads.cs:216",
-    "src/XG.Core/GameService.cs:259",
+    "src/XG.Core/GameService.cs:279",
     "src/XG.Core/InstallationProgress.cs:42"
   ],
   "安装到「{0}」？\nMinecraft {1} · {2}\n{3}{4}": [
     "src/XGLauncher/OnlineCatalog.cs:445"
   ],
   "安装后的必要资源或 Java 未通过最终校验。": [
-    "src/XG.Core/GameService.cs:375"
+    "src/XG.Core/GameService.cs:395"
   ],
   "安装尚未完成，请查看下载任务。": [
     "src/XGLauncher/CompactDownloadForm.cs:94"
@@ -882,9 +894,6 @@
   ],
   "安装文件清单为空。": [
     "src/XG.Core/InstallationReceipt.cs:26"
-  ],
-  "安装更新并重启": [
-    "src/XGLauncher/LauncherUpdates.cs:102"
   ],
   "安装校验缺少必要文件。": [
     "src/XG.Core/InstallationReceipt.cs:22"
@@ -926,10 +935,10 @@
     "src/XG.Core/Instances.cs:20"
   ],
   "实例含符号链接或目录联接，无法安全复制。": [
-    "src/XG.Core/Instances.cs:244"
+    "src/XG.Core/Instances.cs:249"
   ],
   "实例含符号链接或目录联接，请先手动移除这些链接。": [
-    "src/XG.Core/Instances.cs:233"
+    "src/XG.Core/Instances.cs:238"
   ],
   "实例安装": [
     "src/XGLauncher/DownloadRecovery.cs:87"
@@ -941,7 +950,7 @@
     "src/XG.Core/InstanceDirectoryLayout.cs:26"
   ],
   "实例根目录过长，请选择更短的便携目录。": [
-    "src/XG.Core/Instances.cs:115"
+    "src/XG.Core/Instances.cs:120"
   ],
   "实例正在运行，请在退出游戏后重试。": [
     "src/XG.Core/Downloads.cs:215"
@@ -956,7 +965,7 @@
     "src/XGLauncher/InstanceEditor.cs:97"
   ],
   "实例目录是符号链接或目录联接。": [
-    "src/XG.Core/Instances.cs:223"
+    "src/XG.Core/Instances.cs:228"
   ],
   "实例目录迁移备份路径无效。": [
     "src/XG.Core/InstanceDirectoryLayout.cs:126"
@@ -968,11 +977,11 @@
     "src/XG.Core/InstanceDirectoryLayout.cs:123"
   ],
   "实例索引为空。": [
-    "src/XG.Core/Instances.cs:79",
-    "src/XG.Core/Instances.cs:87"
+    "src/XG.Core/Instances.cs:84",
+    "src/XG.Core/Instances.cs:92"
   ],
   "实例资源缺失或损坏，请先修复安装。": [
-    "src/XG.Core/GameService.cs:391"
+    "src/XG.Core/GameService.cs:411"
   ],
   "实例配置或已安装文件有变化，请重新生成安装计划。": [
     "src/XGLauncher/OnlineCatalog.cs:450"
@@ -990,7 +999,8 @@
     "src/XGLauncher/CatalogPages.cs:106"
   ],
   "导入完成；启动前将重新验证资源。": [
-    "src/XGLauncher/GameImportWizard.cs:60"
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
   ],
   "导入本地 JAR": [
     "src/XGLauncher/CatalogPages.cs:42"
@@ -1001,6 +1011,16 @@
   ],
   "导入类型": [
     "src/XGLauncher/GameImportWizard.cs:17"
+  ],
+  "导出完整许可与对应源码": [
+    "src/XGLauncher/ComplianceExport.cs:15",
+    "src/XGLauncher/AboutPage.cs:80"
+  ],
+  "已下载：{0} MB / {1} MB": [
+    "src/XGLauncher/LauncherUpdates.cs:121"
+  ],
+  "已下载：0 MB / {0} MB": [
+    "src/XGLauncher/LauncherUpdates.cs:105"
   ],
   "已保留兼容的加载器版本。": [
     "src/XGLauncher/InstanceEditor.cs:186"
@@ -1069,11 +1089,11 @@
     "src/XGLauncher/InstanceActions.cs:41",
     "src/XGLauncher/InstanceActions.cs:54",
     "src/XGLauncher/InstanceActions.cs:170",
-    "src/XG.Core/WorkspaceMigration.cs:80",
-    "src/XG.Core/WorkspaceMigration.cs:80",
+    "src/XG.Core/WorkspaceMigration.cs:81",
+    "src/XG.Core/WorkspaceMigration.cs:81",
     "src/XG.Core/InstallationReceipt.cs:63",
-    "src/XG.Core/GameService.cs:374",
-    "src/XG.Core/GameService.cs:390"
+    "src/XG.Core/GameService.cs:394",
+    "src/XG.Core/GameService.cs:410"
   ],
   "已安装模组": [
     "src/XGLauncher/OnlineCatalog.cs:97",
@@ -1221,14 +1241,17 @@
   "当前文件": [
     "src/XGLauncher/CatalogPages.cs:323"
   ],
-  "当前文件\u3000{0} · 文件 {1}/1": [
+  "当前文件　{0} · 文件 {1}/1": [
     "src/XGLauncher/CatalogPages.cs:262"
   ],
+  "当前文件：{0}": [
+    "src/XGLauncher/LauncherUpdates.cs:107"
+  ],
   "当前版本：v{0}": [
-    "src/XGLauncher/LauncherUpdates.cs:119"
+    "src/XGLauncher/LauncherUpdates.cs:111"
   ],
   "当前版本：v{0}\n新版本：{1}\n是否更新？": [
-    "src/XGLauncher/LauncherUpdates.cs:91"
+    "src/XGLauncher/LauncherUpdates.cs:93"
   ],
   "当前目录：": [
     "src/XGLauncher/MigrationPage.cs:13"
@@ -1443,10 +1466,10 @@
     "src/XGLauncher/LegalCatalog.cs:53"
   ],
   "文件名无效。": [
-    "src/XG.Core/Instances.cs:283"
+    "src/XG.Core/Instances.cs:288"
   ],
   "文件哈希校验失败。": [
-    "src/XG.Core/VerifiedTransfer.cs:241"
+    "src/XG.Core/VerifiedTransfer.cs:245"
   ],
   "文件在校验时发生变化，请重试。": [
     "src/XG.Core/FileVerificationCache.cs:57"
@@ -1473,7 +1496,7 @@
     "src/XG.Core/InstallationReceipt.cs:65"
   ],
   "文件未完整接收。": [
-    "src/XG.Core/VerifiedTransfer.cs:232"
+    "src/XG.Core/VerifiedTransfer.cs:236"
   ],
   "文件清单或项目说明，不是第三方授权正文。": [
     "src/XGLauncher/LegalCatalog.cs:45"
@@ -1485,7 +1508,7 @@
     "src/XGLauncher/GameImportWizard.cs:18"
   ],
   "新版本：{0}": [
-    "src/XGLauncher/LauncherUpdates.cs:120"
+    "src/XGLauncher/LauncherUpdates.cs:112"
   ],
   "新的空目标目录": [
     "src/XGLauncher/MigrationPage.cs:13"
@@ -1552,8 +1575,7 @@
     "src/XG.Core/FlatVersionLayout.cs:51"
   ],
   "暂不更新": [
-    "src/XGLauncher/LauncherUpdates.cs:92",
-    "src/XGLauncher/LauncherUpdates.cs:118"
+    "src/XGLauncher/LauncherUpdates.cs:94"
   ],
   "暂停": [
     "src/XGLauncher/CatalogPages.cs:227",
@@ -1593,10 +1615,10 @@
     "src/XGLauncher/ThemePalette.cs:17"
   ],
   "更新": [
-    "src/XGLauncher/LauncherUpdates.cs:92"
+    "src/XGLauncher/LauncherUpdates.cs:94"
   ],
   "更新下载或校验失败，原程序与用户数据未修改。请重新检查更新后重试。": [
-    "src/XGLauncher/LauncherUpdates.cs:135"
+    "src/XGLauncher/LauncherUpdates.cs:137"
   ],
   "更新下载重定向到非官方地址。": [
     "src/XG.Core/GitHubUpdates.cs:70"
@@ -1608,7 +1630,7 @@
     "src/XG.Core/GitHubUpdates.cs:95"
   ],
   "更新仅替换程序与许可文件，保留游戏、存档、账号和设置。": [
-    "src/XGLauncher/LauncherUpdates.cs:120"
+    "src/XGLauncher/LauncherUpdates.cs:112"
   ],
   "更新包信息无效。": [
     "src/XG.Core/GitHubUpdates.cs:55"
@@ -1620,21 +1642,21 @@
     "src/XG.Core/GitHubUpdates.cs:75",
     "src/XG.Core/GitHubUpdates.cs:84"
   ],
-  "更新包已校验。点击安装更新并重启，下载任务将保存后退出。": [
-    "src/XGLauncher/LauncherUpdates.cs:129"
+  "更新包已校验，正在保存任务并自动重启…": [
+    "src/XGLauncher/LauncherUpdates.cs:131"
   ],
   "更新包校验失败。": [
     "src/XG.Core/GitHubUpdates.cs:89",
-    "src/XG.Core/UpdateFiles.cs:34"
+    "src/XG.Core/UpdateFiles.cs:39"
   ],
   "更新包结构无效。": [
-    "src/XG.Core/UpdateFiles.cs:49"
-  ],
-  "更新包缺少程序或许可证。": [
     "src/XG.Core/UpdateFiles.cs:56"
   ],
+  "更新包缺少程序或许可证。": [
+    "src/XG.Core/UpdateFiles.cs:63"
+  ],
   "更新文件过多。": [
-    "src/XG.Core/UpdateFiles.cs:43"
+    "src/XG.Core/UpdateFiles.cs:49"
   ],
   "更新时间": [
     "src/XGLauncher/OnlineCatalog.cs:51"
@@ -1646,19 +1668,19 @@
     "src/XG.Core/GitHubUpdates.cs:25"
   ],
   "更新校验值无效。": [
-    "src/XG.Core/UpdateFiles.cs:32"
+    "src/XG.Core/UpdateFiles.cs:37"
   ],
   "更新程序不是 Windows EXE。": [
-    "src/XG.Core/UpdateFiles.cs:60"
+    "src/XG.Core/UpdateFiles.cs:67"
   ],
   "更新程序不是 Windows x64。": [
-    "src/XG.Core/UpdateFiles.cs:64"
+    "src/XG.Core/UpdateFiles.cs:71"
   ],
   "更新程序结构无效。": [
-    "src/XG.Core/UpdateFiles.cs:62"
+    "src/XG.Core/UpdateFiles.cs:69"
   ],
   "更新路径不能包含目录链接。": [
-    "src/XG.Core/UpdateFiles.cs:24"
+    "src/XG.Core/UpdateFiles.cs:26"
   ],
   "更新路径越界。": [
     "src/XG.Core/UpdateFiles.cs:20"
@@ -1670,10 +1692,10 @@
     "src/XG.Core/AuthDiagnosticTrace.cs:123"
   ],
   "服务器提供的文件大小与元数据不符。": [
-    "src/XG.Core/VerifiedTransfer.cs:197"
+    "src/XG.Core/VerifiedTransfer.cs:201"
   ],
   "服务器返回了无效的续传范围或文件标识。": [
-    "src/XG.Core/VerifiedTransfer.cs:207"
+    "src/XG.Core/VerifiedTransfer.cs:211"
   ],
   "服务拒绝访问；具体原因未确认": [
     "src/XG.Core/AuthDiagnosticTrace.cs:116"
@@ -1700,7 +1722,7 @@
     "src/XGLauncher/InstanceJavaSettings.cs:33"
   ],
   "未发现可用的新版本。": [
-    "src/XGLauncher/LauncherUpdates.cs:70"
+    "src/XGLauncher/LauncherUpdates.cs:72"
   ],
   "未安装": [
     "src/XGLauncher/OnlineCatalog.cs:275",
@@ -1755,7 +1777,7 @@
     "src/XGLauncher/OnlineCatalog.cs:47"
   ],
   "来源与目标是同一个实例目录。": [
-    "src/XG.Core/Instances.cs:144"
+    "src/XG.Core/Instances.cs:149"
   ],
   "来源已改变，请重新分析。": [
     "src/XGLauncher/MigrationPage.cs:23",
@@ -1817,11 +1839,11 @@
     "src/XGLauncher/InstanceActions.cs:199",
     "src/XGLauncher/CatalogPages.cs:226",
     "src/XG.Core/Downloads.cs:51",
-    "src/XG.Core/GameService.cs:195",
-    "src/XG.Core/GameService.cs:360",
+    "src/XG.Core/GameService.cs:198",
+    "src/XG.Core/GameService.cs:380",
     "src/XG.Core/InstallationProgress.cs:42",
     "src/XG.Core/InstallationProgress.cs:43",
-    "src/XG.Core/VerifiedTransfer.cs:235"
+    "src/XG.Core/VerifiedTransfer.cs:239"
   ],
   "校验完成，可以切换目录。": [
     "src/XGLauncher/MigrationPage.cs:18"
@@ -1839,7 +1861,7 @@
     "src/XGLauncher/InstanceActions.cs:30"
   ],
   "检查更新失败，请检查网络后重试。": [
-    "src/XGLauncher/LauncherUpdates.cs:83"
+    "src/XGLauncher/LauncherUpdates.cs:85"
   ],
   "检查目标兼容性和冲突": [
     "src/XG.Core/InstanceSynchronization.cs:51"
@@ -1876,10 +1898,10 @@
     "src/XG.Core/ResourceOperations.cs:33",
     "src/XG.Core/ResourceOperations.cs:124",
     "src/XG.Core/ResourceOperations.cs:186",
-    "src/XG.Core/GameService.cs:182",
-    "src/XG.Core/GameService.cs:182",
-    "src/XG.Core/GameService.cs:262",
-    "src/XG.Core/GameService.cs:310",
+    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:185",
+    "src/XG.Core/GameService.cs:282",
+    "src/XG.Core/GameService.cs:330",
     "src/XG.Core/InstallationProgress.cs:38"
   ],
   "模组和已安装依赖": [
@@ -1910,7 +1932,7 @@
     "src/XGLauncher/CatalogPages.cs:30"
   ],
   "正在下载更新…": [
-    "src/XGLauncher/LauncherUpdates.cs:100"
+    "src/XGLauncher/LauncherUpdates.cs:102"
   ],
   "正在保存下载任务，等待当前安装步骤安全结束…": [
     "src/XGLauncher/WindowShutdown.cs:40"
@@ -1920,7 +1942,7 @@
     "src/XG.Core/ResourceOperations.cs:134",
     "src/XG.Core/ResourceOperations.cs:266",
     "src/XG.Core/Downloads.cs:99",
-    "src/XG.Core/VerifiedTransfer.cs:87"
+    "src/XG.Core/VerifiedTransfer.cs:91"
   ],
   "正在准备…": [
     "src/XGLauncher/CompactDownloadForm.cs:34"
@@ -1938,7 +1960,7 @@
     "src/XGLauncher/CompactDownloadForm.cs:64"
   ],
   "正在执行加载器安装程序…": [
-    "src/XG.Core/GameService.cs:267"
+    "src/XG.Core/GameService.cs:287"
   ],
   "正在扫描已安装游戏…": [
     "src/XGLauncher/UnifiedExpandableSelect.cs:202"
@@ -1950,7 +1972,7 @@
     "src/XGLauncher/OnlineCatalog.cs:185"
   ],
   "正在校验加载器安装结果…": [
-    "src/XG.Core/GameService.cs:333"
+    "src/XG.Core/GameService.cs:353"
   ],
   "正在检查和准备游戏": [
     "src/XGLauncher/CompactMode.cs:127",
@@ -2009,7 +2031,7 @@
     "src/XGLauncher/OnlineCatalog.cs:53"
   ],
   "没有与游戏版本兼容的 Forge 安装版本。": [
-    "src/XG.Core/GameService.cs:327"
+    "src/XG.Core/GameService.cs:347"
   ],
   "没有找到兼容的安装文件。": [
     "src/XGLauncher/OnlineCatalog.cs:420"
@@ -2060,10 +2082,10 @@
     "src/XGLauncher/InstanceActions.cs:87"
   ],
   "游戏下载提前结束，正在重试（{0}/2）": [
-    "src/XG.Core/GameService.cs:484"
+    "src/XG.Core/GameService.cs:504"
   ],
   "游戏下载连接中断，正在重试（{0}/2）": [
-    "src/XG.Core/GameService.cs:479"
+    "src/XG.Core/GameService.cs:499"
   ],
   "游戏元数据与资源服务": [
     "src/XGLauncher/LegalCatalog.cs:60"
@@ -2078,23 +2100,23 @@
     "src/XGLauncher/MainWindow.cs:231"
   ],
   "游戏已退出（{0}）": [
-    "src/XGLauncher/LauncherModel.cs:106"
+    "src/XGLauncher/LauncherModel.cs:107"
   ],
   "游戏已退出（{0}），日志写入失败，请检查磁盘空间和权限。": [
-    "src/XGLauncher/LauncherModel.cs:106"
+    "src/XGLauncher/LauncherModel.cs:107"
   ],
   "游戏本体": [
     "src/XGLauncher/DownloadRecovery.cs:89",
     "src/XGLauncher/StageRail.cs:195",
-    "src/XG.Core/GameService.cs:178",
-    "src/XG.Core/GameService.cs:183",
-    "src/XG.Core/GameService.cs:183"
+    "src/XG.Core/GameService.cs:181",
+    "src/XG.Core/GameService.cs:186",
+    "src/XG.Core/GameService.cs:186"
   ],
   "游戏版本": [
     "src/XGLauncher/CompactDownloadForm.cs:23"
   ],
   "游戏目录无法写入。请在可写位置运行启动器，并检查可用磁盘空间。": [
-    "src/XG.Core/GameService.cs:428"
+    "src/XG.Core/GameService.cs:448"
   ],
   "游戏资源和商标归各自权利人所有；第三方鸣谢不代表赞助、认可或合作。": [
     "src/XGLauncher/LegalBrowser.cs:100"
@@ -2107,7 +2129,7 @@
     "src/XGLauncher/InstanceActions.cs:17",
     "src/XGLauncher/InstanceActions.cs:17",
     "src/XGLauncher/InstanceActions.cs:41",
-    "src/XGLauncher/LauncherModel.cs:103"
+    "src/XGLauncher/LauncherModel.cs:104"
   ],
   "源实例没有选中类型的文件。": [
     "src/XG.Core/InstanceSynchronization.cs:48"
@@ -2116,7 +2138,7 @@
     "src/XGLauncher/AppearanceSettings.cs:43"
   ],
   "点击版本号检查更新": [
-    "src/XGLauncher/LauncherUpdates.cs:31"
+    "src/XGLauncher/LauncherUpdates.cs:33"
   ],
   "点击项目即可阅读对应文件。": [
     "src/XGLauncher/LegalBrowser.cs:178"
@@ -2132,7 +2154,7 @@
     "src/XG.Core/GitHubUpdates.cs:125"
   ],
   "版本更新": [
-    "src/XGLauncher/LauncherUpdates.cs:69"
+    "src/XGLauncher/LauncherUpdates.cs:71"
   ],
   "版本目录含链接，不能自动合并。": [
     "src/XG.Core/FlatVersionLayout.cs:32"
@@ -2229,7 +2251,7 @@
     "src/XGLauncher/MainWindow.cs:156"
   ],
   "知道了": [
-    "src/XGLauncher/LauncherUpdates.cs:70"
+    "src/XGLauncher/LauncherUpdates.cs:72"
   ],
   "确认": [
     "src/XGLauncher/CatalogPages.cs:389"
@@ -2241,8 +2263,8 @@
     "src/XGLauncher/CatalogPages.cs:386"
   ],
   "磁盘可用空间不足。": [
-    "src/XG.Core/VerifiedTransfer.cs:290",
-    "src/XG.Core/VerifiedTransfer.cs:299"
+    "src/XG.Core/VerifiedTransfer.cs:294",
+    "src/XG.Core/VerifiedTransfer.cs:303"
   ],
   "禁用": [
     "src/XGLauncher/CatalogPages.cs:58"
@@ -2288,8 +2310,8 @@
     "src/XG.Core/Downloads.cs:200",
     "src/XG.Core/RelayProgressTracker.cs:24",
     "src/XG.Core/InstallationProgress.cs:43",
-    "src/XG.Core/VerifiedTransfer.cs:184",
-    "src/XG.Core/VerifiedTransfer.cs:247"
+    "src/XG.Core/VerifiedTransfer.cs:188",
+    "src/XG.Core/VerifiedTransfer.cs:251"
   ],
   "等待同步": [
     "src/XGLauncher/PackSynchronization.cs:14"
@@ -2346,22 +2368,19 @@
     "src/XGLauncher/LegalCatalog.cs:23"
   ],
   "缺少受支持的文件哈希。": [
-    "src/XG.Core/VerifiedTransfer.cs:267"
+    "src/XG.Core/VerifiedTransfer.cs:271"
   ],
   "缺少受支持的文件地址或 SHA-512 校验值。": [
     "src/XG.Core/Downloads.cs:60"
   ],
   "缺少启动元数据，请重新检查安装。": [
-    "src/XG.Core/GameService.cs:394"
+    "src/XG.Core/GameService.cs:414"
   ],
   "缺少实例配置。": [
     "src/XG.Core/Backups.cs:67"
   ],
   "缺少无法在 Modrinth 解析的本地依赖：": [
     "src/XG.Core/ModInstallPlanner.cs:111"
-  ],
-  "缺少更新程序，请完整解压发布包。": [
-    "src/XGLauncher/LauncherUpdates.cs:106"
   ],
   "缺少正式 XG Logo。": [
     "src/XGLauncher/OfficialLogo.cs:16"
@@ -2562,9 +2581,9 @@
   "资源与依赖": [
     "src/XGLauncher/DownloadRecovery.cs:90",
     "src/XGLauncher/StageRail.cs:196",
-    "src/XG.Core/GameService.cs:180",
-    "src/XG.Core/GameService.cs:188",
-    "src/XG.Core/GameService.cs:188"
+    "src/XG.Core/GameService.cs:183",
+    "src/XG.Core/GameService.cs:191",
+    "src/XG.Core/GameService.cs:191"
   ],
   "资源包": [
     "src/XGLauncher/PackSynchronization.cs:36"
@@ -2573,7 +2592,7 @@
     "src/XGLauncher/AppearanceSettings.cs:79"
   ],
   "迁移后安装验证失败，未切换目录。": [
-    "src/XG.Core/WorkspaceMigration.cs:80"
+    "src/XG.Core/WorkspaceMigration.cs:81"
   ],
   "迁移恢复发现同名目录，已保留两份数据。": [
     "src/XG.Core/InstanceDirectoryLayout.cs:134"
@@ -2608,10 +2627,10 @@
     "src/XGLauncher/InstanceActions.cs:199",
     "src/XGLauncher/CatalogPages.cs:226",
     "src/XG.Core/Downloads.cs:51",
-    "src/XG.Core/VerifiedTransfer.cs:164"
+    "src/XG.Core/VerifiedTransfer.cs:168"
   ],
   "连接连续 30 秒未收到数据。": [
-    "src/XG.Core/VerifiedTransfer.cs:224"
+    "src/XG.Core/VerifiedTransfer.cs:228"
   ],
   "退出": [
     "src/XGLauncher/MainWindow.cs:160"
@@ -2737,5 +2756,65 @@
   "鸣谢项目与社区": [
     "src/XGLauncher/LegalBrowser.cs:129",
     "src/XGLauncher/LegalBrowser.cs:178"
+  ],
+  "游戏根目录": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "选择目录": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "检查并迁移旧游戏目录": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "正在更新 XG Launcher": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "文件详情": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "大小：{0} bytes": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "下载 100%，正在校验文件结构…": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "下载及校验完成，等待主程序退出后替换并验证重启。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "旧数据检查": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "未发现待迁移的旧实例，或目标目录已存在。原始文件未修改。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "游戏目录已保存，下次启动生效。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "请先结束游戏及下载、安装任务，再迁移旧目录。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "旧目录已校验复制，备份保留。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "选择游戏根目录（其下使用 versions、libraries、assets）": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
+  ],
+  "目录已隔离；文件完整性和 Java 由启动前检查验证。": [
+    "src/XGLauncher/GameDirectorySettings.cs",
+    "src/XGLauncher/LauncherUpdates.cs"
   ]
 }

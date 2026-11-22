@@ -50,11 +50,20 @@ internal static class WindowShutdownTests
             Invoke(confirmation, "取消"); Pump();
             Check(window.IsVisible && !model.IsDisposed && model.Resources.CanControl(id) && model.Resources.IsPaused(id) == paused,
                 "cancel exit changed task/window state");
-            window.Close(); Pump();
-            confirmation = window.OwnedWindows.Single();
-            window.Close(); Pump();
-            Check(window.OwnedWindows.Count() == 1, "repeated close created duplicate confirmation");
-            Invoke(confirmation, "确认");
+            if (compact && paused)
+            {
+                typeof(MainWindow).GetField("updateExitAuthorized", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(window, true);
+                window.Close(); Pump();
+                Check(!window.OwnedWindows.Any(), "confirmed update asked a second exit confirmation");
+            }
+            else
+            {
+                window.Close(); Pump();
+                confirmation = window.OwnedWindows.Single();
+                window.Close(); Pump();
+                Check(window.OwnedWindows.Count() == 1, "repeated close created duplicate confirmation");
+                Invoke(confirmation, "确认");
+            }
             WaitFor(() => model.IsDisposed && run.IsCompleted);
             Check(!window.IsVisible && File.Exists(file) && model.Resources.MainJobs.Single().State == "等待恢复" && model.Busy.Count == 0,
                 "confirmed exit failed to drain or preserve recovery");

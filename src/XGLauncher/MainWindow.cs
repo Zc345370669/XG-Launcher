@@ -19,6 +19,7 @@ public sealed partial class MainWindow : Window
     private static readonly string[] Nav = ["首页", "个人游玩", "整合包", "模组管理", "下载管理", "设置"];
 
     private readonly LauncherModel model;
+    internal bool HasLoadedWorkspace => model != null;
     private readonly ContentControl page = new();
     private readonly StackPanel navigation = Column();
     private readonly TextBlock status = Label("");
@@ -82,6 +83,7 @@ public sealed partial class MainWindow : Window
                 })) };
             return;
         }
+        model.Game.ConfirmJavaInstallation = major => ConfirmAsync($"缺少 Java {major} x64。是否下载 Eclipse Temurin 官方安装器并安装到发行商默认目录？\nWindows 将请求管理员授权；不会修改 PATH 或 JAVA_HOME。");
         Localizer.Load(model.Store.Root);
         LoadAppearance();
         account = Action("账号", () => AccountsAsync());
@@ -107,6 +109,8 @@ public sealed partial class MainWindow : Window
         var notifyPath = Path.Combine(model.Store.Root, "download-notifications.json");
         if (File.Exists(notifyPath)) notificationsEnabled = System.Text.Json.JsonSerializer.Deserialize<bool>(File.ReadAllText(notifyPath));
         InitializeModes(body, layout);
+        Grid.SetRowSpan(modalShade, 2);
+        layout.Children.Add(modalShade);
         Content = windowShell;
         ApplyAppearance(false);
         PropertyChanged += (_, e) => { if (e.Property.Name == "ActualTransparencyLevel") ApplyAppearance(false); };
@@ -132,7 +136,7 @@ public sealed partial class MainWindow : Window
         Opened += async (_, _) =>
         {
             // 导入已存在的MSAL账号元数据不等于登录成功，也不声明已取得有效游戏会话。
-            try { await model.Accounts.ListAsync(catalogLifetime.Token); }
+            try { await ScanLocalInstancesAsync(); await model.Accounts.ListAsync(catalogLifetime.Token); }
             catch (OperationCanceledException) when (windowClosed) { }
             catch (Exception ex)
             {
@@ -220,7 +224,8 @@ public sealed partial class MainWindow : Window
 
     private static ScrollViewer PageViewport(Control content) => new()
     {
-        Content = content, Padding = new(18, 14),
+        Content = new Border { Child = content, Padding = new(18, 14) },
+        VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
         HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled
     };
 
@@ -254,7 +259,7 @@ public sealed partial class MainWindow : Window
         var lastPlayed = instance.LastPlayed is { } last ? last.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "未游玩";
         var details = Column(Label(instance.Name, 16, true, false), Label($"{instance.Version} · {loader}"),
             Label(InstanceState(instance) + $" · 上次游玩 {lastPlayed}"),
-            Label(model.Store.DirectoryFor(instance), 11));
+            Label(instance.ReferencedGameDirectory ?? model.Store.DirectoryFor(instance), 11));
         details.Spacing = 3;
         var actions = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right, ItemSpacing = 12,
             Children = { Action("编辑", () => EditAsync(instance)) } };
@@ -393,6 +398,9 @@ public sealed partial class MainWindow : Window
         };
         return button;
     }
+    internal Border GetModalShade() => modalShade;
+    private readonly Border modalShade = LauncherDialog.CreateShade();
+
     internal async Task ErrorAsync(Control origin, string message)
     {
         message = new GameLogSanitizer(null).Redact(message);

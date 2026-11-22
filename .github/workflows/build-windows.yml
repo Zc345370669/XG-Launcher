@@ -35,13 +35,11 @@ jobs:
         run: dotnet test XG-Launcher.sln -c Release --no-build --no-restore
       - name: 校验XML文档
         run: dotnet build XG-Launcher.sln -c Release --no-restore -p:GenerateDocumentationFile=true -p:NoWarn=1591 -warnaserror
-      - run: choco install nsis --version=3.11.0 --yes --no-progress
       - shell: pwsh
-        run: ./build-windows.ps1 -MakeNsis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
+        run: ./build-windows.ps1
       - uses: actions/upload-artifact@v4
         with:
-          name: XGLauncher-v0.1.0-alpha-win-x64
+          name: XGLauncher-win-x64
           path: |
-            dist/XGLauncher-Setup-win-x64.exe
-            dist/XGLauncher-portable-win-x64.zip
+            dist/win-x64/XG-Launcher/XGLauncher.exe
           if-no-files-found: error

@@ -39,7 +39,7 @@ public sealed partial class MainWindow
     private Control Installed()
     {
         if (model.Selected is not { } instance) return Label("请先选中游戏实例");
-        var root = Column(Action("导入本地 JAR", async () =>
+        var root = Column(Action("导入模组", async () =>
         {
             EnsureIdle(instance);
             var files = await StorageProvider.OpenFilePickerAsync(new()
@@ -47,26 +47,68 @@ public sealed partial class MainWindow
                 Title = Localizer.Text("选择模组"), AllowMultiple = true, FileTypeFilter = [new("JAR") { Patterns = ["*.jar"] }]
             });
             EnsureIdle(instance);
-            foreach (var file in files)
-                if (file.TryGetLocalPath() is { } path) LocalMods.Import(path, model.ModsFolder(instance));
+            var paths = files.Select(file => file.TryGetLocalPath()).OfType<string>().ToArray();
+            if (paths.Length == 0) return;
+            var directory = model.ModsFolder(instance);
+            var failures = new List<string>();
+            var added = 0;
+            var skipped = 0;
+            foreach (var path in paths)
+            {
+                try
+                {
+                    if (LocalMods.Import(path, directory)) added++;
+                    else skipped++;
+                }
+                catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException)
+                {
+                    failures.Add($"{Path.GetFileName(path)}：{error.Message}");
+                }
+            }
             Refresh();
+            var summary = Dialog("模组导入结果");
+            summary.SetBody(Label($"已导入 {added} 个，已存在 {skipped} 个，失败 {failures.Count} 个。"
+                + (failures.Count == 0 ? "" : "\n" + string.Join("\n", failures))), CloseDialog(summary, "关闭"));
+            await summary.ShowDialog(this);
         }, true));
-        foreach (var file in model.LocalFiles(instance))
+        var installed = model.Store.Entries
+            .Select(item => (Instance: item, Files: model.LocalFiles(item)))
+            .Where(item => item.Files.Length > 0)
+            .ToArray();
+        root.Name = "InstalledModsList";
+        root.Children.Add(Label($"导入目标：{instance.Name}", 12));
+        if (installed.Length == 0)
         {
-            var disabled = file.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase);
-            root.Children.Add(Frame(Header(Path.GetFileName(file), Row(
-                Action(disabled ? "启用" : "禁用", () =>
-                {
-                    EnsureIdle(instance);
-                    File.Move(file, disabled ? file[..^9] : file + ".disabled");
-                    Refresh(); return Task.CompletedTask;
-                }), Action("卸载", async () =>
-                {
-                    if (!await ConfirmAsync("卸载 " + Path.GetFileName(file) + "？")) return;
-                    EnsureIdle(instance); File.Delete(file); Refresh();
-                }))), new(10)));
+            root.Children.Add(Label("暂无已安装模组"));
+            return root;
         }
-        if (root.Children.Count == 1) root.Children.Add(Label("暂无已安装模组"));
+
+        foreach (var version in installed.GroupBy(item => item.Instance.Version)
+            .OrderByDescending(group => group.Any(item => item.Instance.Id == instance.Id))
+            .ThenByDescending(group => group.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            root.Children.Add(Label($"Minecraft {version.Key}", 17, true));
+            foreach (var (owner, files) in version)
+            {
+                root.Children.Add(Label($"{owner.Name} · {owner.Loader} · {files.Length} 个模组", 12, localize: false));
+                foreach (var file in files.OrderBy(file => file, StringComparer.OrdinalIgnoreCase))
+                {
+                    var disabled = file.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase);
+                    var card = Frame(Header(Path.GetFileName(file), Row(
+                        Action(disabled ? "启用" : "禁用", () =>
+                        {
+                            EnsureIdle(owner);
+                            File.Move(file, disabled ? file[..^9] : file + ".disabled");
+                            Refresh(); return Task.CompletedTask;
+                        }), Action("卸载", async () =>
+                        {
+                            if (!await ConfirmAsync("卸载 " + Path.GetFileName(file) + "？")) return;
+                            EnsureIdle(owner); File.Delete(file); Refresh();
+                        }))), new(10));
+                    root.Children.Add(card);
+                }
+            }
+        }
         return root;
     }
 
@@ -103,24 +145,11 @@ public sealed partial class MainWindow
         if (packTab == 0) return OnlineCatalog(true);
         var root = Column(Label("整合包", 22, true),
             Tabs(["整合包市场", "本地整合包"], packTab, i => packTab = i));
-        root.Children.Add(Action("导入 .mrpack", async () =>
-        {
-            var files = await StorageProvider.OpenFilePickerAsync(new()
-            {
-                Title = Localizer.Text("选择整合包"), FileTypeFilter = [new("Modrinth") { Patterns = ["*.mrpack"] }]
-            });
-            if (files.FirstOrDefault()?.TryGetLocalPath() is not { } local) return;
-            maintenance++;
-            try
-            {
-                model.Selected = await model.QueuePackAsync(Path.GetFileName(local), null, local, progress => status.Text = progress);
-            }
-            finally { maintenance--; }
-            status.Text = "整合包导入完成";
-            Refresh();
-        }, true));
+        root.Children.Add(Action("导入整合包", ImportLocalPackAsync, true));
         foreach (var instance in model.Store.Entries.Where(x => x.Pack)) root.Children.Add(InstanceRow(instance));
         if (root.Children.Count == 3) root.Children.Add(Label("暂无本地整合包"));
+        if (status.Parent is Panel previous) previous.Children.Remove(status);
+        root.Children.Insert(3, status);
         return root;
     }
 
@@ -216,10 +245,7 @@ public sealed partial class MainWindow
             Tabs(["下载中", "已完成", "失败"], downloadTab, i => downloadTab = i));
         root.Children.Add(DownloadSettings());
         var cards = new List<Func<Control>>();
-        var jobs = model.Downloads.Items.Where(x => downloadTab switch
-        {
-            1 => x.State is "已完成" or "已取消", 2 => x.State == "失败", _ => x.State is not ("已完成" or "已取消" or "失败")
-        });
+        var jobs = model.Downloads.Items.Where(x => InDownloadTab(x.State, downloadTab));
         foreach (var job in jobs)
         {
             cards.Add(() => {
@@ -262,10 +288,7 @@ public sealed partial class MainWindow
                 Label($"当前文件　{job.File.Name} · 文件 {(job.State == "已完成" ? 1 : 0)}/1"), Label(job.State), text, ProgressRow(progress, percentage)), new(10));
             });
         }
-        foreach (var item in model.Resources.MainJobs.Where(x => downloadTab switch
-        {
-            1 => x.State is "已完成" or "已取消", 2 => x.State == "失败", _ => x.State is not ("已完成" or "已取消" or "失败")
-        }).Reverse())
+        foreach (var item in model.Resources.MainJobs.Where(x => InDownloadTab(x.State, downloadTab)).Reverse())
         {
             cards.Add(() => {
             var total = TransferBar();
@@ -331,7 +354,17 @@ public sealed partial class MainWindow
             return card;
             });
         }
-        if (cards.Count == 0) cards.Add(() => Label("暂无任务"));
+        if (cards.Count == 0)
+        {
+            var failed = downloadTab == 0 ? CountDownloads(2) : 0;
+            cards.Add(() => failed == 0 ? Label("暂无任务") :
+                Action($"有 {failed} 个失败任务，点击查看", () =>
+                {
+                    downloadTab = 2;
+                    Refresh();
+                    return Task.CompletedTask;
+                }));
+        }
         var sync = Column(); AddSyncTasks(sync);
         if (sync.Children.Count > 0) cards.Add(() => sync);
         downloadSurface ??= new DownloadSurface();

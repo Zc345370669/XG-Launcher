@@ -36,4 +36,11 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.23" />
     <ProjectReference Include="../XG.Core/XG.Core.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(XGBundleAssetsDirectory)' != ''">
+    <EmbeddedResource Include="$(XGBundleAssetsDirectory)/Compliance.zip" LogicalName="XG.Compliance.zip" />
+    <EmbeddedResource Include="$(XGBundleAssetsDirectory)/updater/XGUpdater.exe" LogicalName="XG.EmbeddedUpdater.exe" />
+  </ItemGroup>
+  <Target Name="RequireCompleteSingleExePublish" BeforeTargets="PrepareForPublish" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <Error Condition="'$(XGBundleAssetsDirectory)' == ''" Text="Use build-windows.ps1 or scripts/publish-portable-windows.sh to embed the updater and complete license/source materials." />
+  </Target>
 </Project>

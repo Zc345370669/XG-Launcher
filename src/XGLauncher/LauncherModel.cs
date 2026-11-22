@@ -14,6 +14,7 @@ internal sealed partial class LauncherModel : IDisposable
 {
     private readonly HttpClient http = new(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.All })
     { Timeout = TimeSpan.FromMinutes(3) };
+    public bool PortableSession { get; }
     public InstanceStore Store { get; }
     public string DownloadsDirectory { get; }
     public string BackupsDirectory { get; }
@@ -37,10 +38,12 @@ internal sealed partial class LauncherModel : IDisposable
     public HashSet<Guid> Busy { get; } = [];
     public LauncherModel(string? root = null, Modrinth? catalog = null, HttpClient? gameMetadata = null)
     {
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.0-alpha");
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.1");
         var portable = root is null ? PortableStorage.Resolve() : null;
+        PortableSession = portable != null;
         root ??= Path.Combine(portable!, "data");
-        Store = new(root, portable is null ? null : Path.Combine(portable, "minecraft"));
+        Store = new(root, portable is null ? null : GameRootPreference.Resolve(portable, root),
+            Path.Combine(AppContext.BaseDirectory, "data", "downloads", "java-installers"), upgradeLegacy: portable == null);
         DownloadsDirectory = portable == null ? Path.Combine(root, "downloads") : PortableStorage.Auxiliary(portable, root, "downloads");
         BackupsDirectory = portable == null ? Path.Combine(root, "backups") : PortableStorage.Auxiliary(portable, root, "backups");
         LogsDirectory = portable == null ? Path.Combine(root, "logs") : PortableStorage.Auxiliary(portable, root, "logs");
@@ -59,8 +62,9 @@ internal sealed partial class LauncherModel : IDisposable
         selected = Store.Entries.FirstOrDefault(x => x.Id == selection.Instance) ?? Store.Entries.FirstOrDefault();
     }
 
-    public string ModsFolder(Instance instance) => Path.Combine(Store.DirectoryFor(instance), "mods");
-    public string[] LocalFiles(Instance instance) => Directory.Exists(ModsFolder(instance))
+    public string ModsFolder(Instance instance) => Path.Combine(Store.GameDirectoryFor(instance), "mods");
+    public string[] LocalFiles(Instance instance) =>
+        (instance.ReferencedGameDirectory == null || Directory.Exists(instance.ReferencedGameDirectory)) && Directory.Exists(ModsFolder(instance))
         ? Directory.GetFiles(ModsFolder(instance)).Where(p => p.EndsWith(".jar", StringComparison.OrdinalIgnoreCase)
             || p.EndsWith(".jar.disabled", StringComparison.OrdinalIgnoreCase)).ToArray() : [];
 
@@ -79,7 +83,7 @@ internal sealed partial class LauncherModel : IDisposable
                 async () => session = await provider());
             var sanitizer = new GameLogSanitizer(session);
             var directory = Store.DirectoryFor(instance);
-            using var log = TextWriter.Synchronized(File.CreateText(Path.Combine(directory, "xg-launch.log")));
+            using var log = TextWriter.Synchronized(File.CreateText(InstanceLogs.Resolve(directory, "xg-launch.log", write: true)));
             Exception? logFailure = null;
             void Receive(object? sender, DataReceivedEventArgs e) {
                 if(e.Data == null)return;

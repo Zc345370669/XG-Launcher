@@ -82,7 +82,7 @@ internal sealed class LucideIcon : Control
     }
     internal static string Project(string name) => name switch
     {
-        "PCL" => "panels-top-left", "Mojang Studios" => "building", "Microsoft" => "building", "Modrinth" => "package", "NeoForge" => "anvil", "Forge" => "wrench", "Lucide" => "shapes",
+        "PCL2" => "panels-top-left", "Mojang Studios" => "building", "Microsoft" => "building", "Modrinth" => "package", "NeoForge" => "anvil", "Forge" => "wrench", "Lucide" => "shapes",
         "Fabric" or "Quilt" => "layers", ".NET" => "code-xml", "Avalonia UI" => "panels-top-left", "OpenJDK" => "coffee", _ => "library"
     };
     internal static string Operation(string title) => title switch

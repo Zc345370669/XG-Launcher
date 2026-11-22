@@ -15,6 +15,8 @@ namespace XG.Core;
 /// </summary>
 public sealed partial class GameService(HttpClient http, InstanceStore store)
 {
+    public Func<int, Task<bool>>? ConfirmJavaInstallation { get; set; }
+
     private readonly SemaphoreSlim versionsLock = new(1);
     private readonly SemaphoreSlim installationLock = new(1);
     public sealed record OfficialVersion(string Id, string Type, string? Url = null, DateTimeOffset? Released = null);
@@ -143,7 +145,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
         Directory.CreateDirectory(directory);
         CheckGameDirectory(directory);
         var paths = new InstanceMinecraftPath(store, instance);
-        foreach (var folder in new[] { paths.Library, paths.Assets, paths.Runtime, paths.Versions }) Directory.CreateDirectory(folder);
+        foreach (var folder in new[] { paths.Library, paths.Assets, paths.Versions }) Directory.CreateDirectory(folder);
         var launcherParameters = paths.CreateParameters(http);
         var launcher = new MinecraftLauncher(launcherParameters);
         launcher.FileProgressChanged += (_, args) => progress($"{args.EventType}  {args.ProgressedTasks}/{args.TotalTasks}");
@@ -154,25 +156,41 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
         {
             stage?.Invoke("准备中");
             var metadata = await launcher.GetVersionAsync(instance.Version, preparationToken);
-            var major = int.TryParse(metadata.JavaVersion?.MajorVersion, out var parsedMajor) ? parsedMajor : 0;
-            var javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id), paths.Runtime, major, store.CachedJavaPaths());
-            verifyManagedJava |= javaPath != null && IsIn(paths.Runtime,javaPath);
-            if (javaPath != null && !verifyManagedJava) {
+            var major = int.TryParse(metadata.JavaVersion?.MajorVersion, out var parsedMajor) ? parsedMajor : JavaVersionPolicy.Recommend(instance.Version) ?? 0;
+            var javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id), store.ManagedJavaRoot, major, store.JavaSearchRoots());
+            verifyManagedJava = !OperatingSystem.IsWindows() && (verifyManagedJava || javaPath != null && IsIn(paths.Runtime,javaPath));
+            if (OperatingSystem.IsWindows() || javaPath != null && !verifyManagedJava) {
                 var extractors = CmlLib.Core.FileExtractors.DefaultFileExtractors.CreateDefault(http,launcherParameters.RulesEvaluator!,launcherParameters.JavaPathResolver!);
                 extractors.Java = null;
                 launcherParameters.FileExtractors = extractors.ToExtractorCollection();
             }
+                bool JavaFile(CmlLib.Core.Files.GameFile file) => IsIn(paths.Runtime, file.Path) ||
+                    file.UpdateTask.OfType<CmlLib.Core.Tasks.LegacyJavaExtractionTask>().Any(task =>
+                        IsIn(paths.Runtime, task.ExtractTo) || Path.GetFullPath(task.ExtractTo) == Path.GetFullPath(paths.Runtime));
+            async Task InstallOfficialJavaAsync(Action<string> mark)
+            {
+                using var lease = await JavaInstallGate.EnterAsync("official-java-" + major, preparationToken);
+                javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id), store.ManagedJavaRoot, major, store.JavaSearchRoots());
+                if (javaPath != null) return;
+                var installed = await new OfficialJavaInstaller(http).InstallAsync(major, AppContext.BaseDirectory,
+                    () => ConfirmJavaInstallation?.Invoke(major) ?? Task.FromResult(false),
+                    mark, (done, total) => resources?.Report("Java 环境", instance.Name, done, total, "Temurin 官方安装器", 0, 1, done, total, true), preparationToken, () => resources?.Current?.WaitIfPausedAsync() ?? Task.CompletedTask);
+                javaPath = installed.Path; store.BindJava(instance.Id, javaPath);
+            }
             if (resources is null)
+            {
                 await InstallWithRetryAsync(launcher, instance.Version, progress, preparationToken);
+                if (OperatingSystem.IsWindows() && javaPath == null) await InstallOfficialJavaAsync(progress);
+            }
             else
             {
                 var files = (await launcher.ExtractFiles(metadata)).ToArray();
-                files = JavaInstallerCleanup.OwnLegacyPackages(files, paths.Runtime);
+                files = JavaInstallerCleanup.OwnLegacyPackages(files, paths.Runtime, store.JavaInstallerCacheRoot);
                 var game = files.Where(file => paths.IsVersionResource(file.Path)).ToArray();
                 var assets = files.Where(file => IsIn(paths.Assets, file.Path)).ToArray();
-                var dependencies = files.Where(file => !IsIn(paths.Runtime, file.Path) && !paths.IsVersionResource(file.Path) &&
+                var dependencies = files.Where(file => !JavaFile(file) && !paths.IsVersionResource(file.Path) &&
                     !IsIn(paths.Assets, file.Path)).ToArray();
-                var java = files.Where(file => IsIn(paths.Runtime, file.Path)).ToArray();
+                var java = files.Where(JavaFile).ToArray();
                 long Size(CmlLib.Core.Files.GameFile[] group) => group.All(x => x.Size > 0) ? group.Sum(x => x.Size) : 0;
                 resources.PlanStages(new[] {
                     ("游戏本体", Size(game), game.Length, false),
@@ -190,12 +208,13 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                     await resources.RunAsync(major > 0 ? $"Java {major}" : "Java", "Java 环境", "Minecraft 官方", instance.Name, async mark => {
                         using var lease = await JavaInstallGate.EnterAsync(paths.Runtime, resources.Current?.Token ?? default);
                         try {
-                            javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id),paths.Runtime,major,store.CachedJavaPaths());
-                            if ((javaPath == null || verifyManagedJava) && java.Length > 0) await InstallFilesAsync(java, "Java 环境", mark);
+                            javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id),store.ManagedJavaRoot,major,store.JavaSearchRoots());
+                            if (OperatingSystem.IsWindows() && javaPath == null) await InstallOfficialJavaAsync(mark);
+                            else if (!OperatingSystem.IsWindows() && (javaPath == null || verifyManagedJava) && java.Length > 0) await InstallFilesAsync(java, "Java 环境", mark);
                             mark("校验中");
-                            javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id), paths.Runtime, major, store.CachedJavaPaths());
+                            javaPath = await JavaDiscovery.FindAsync(manualJava ?? store.JavaBinding(instance.Id), store.ManagedJavaRoot, major, store.JavaSearchRoots());
                             if (javaPath == null) throw new InvalidOperationException($"Java {major} 未就绪，请在创建或编辑实例中选择兼容运行时。");
-                            await JavaInstallerCleanup.AfterVerifiedAsync(paths.Runtime, javaPath, java, message => LogLoader(directory, message));
+                            await JavaInstallerCleanup.AfterVerifiedAsync(paths.Runtime, javaPath, java, message => LogLoader(directory, message), store.JavaInstallerCacheRoot);
                             store.BindJava(instance.Id,javaPath);
                             return true;
                         }
@@ -228,15 +247,32 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                             uri.Host is "piston-data.mojang.com" or "launcher.mojang.com" or "libraries.minecraft.net" or
                                 "resources.download.minecraft.net" or "piston-meta.mojang.com" or "launchermeta.mojang.com")
                         {
-                            await SharedResourceCoordinator.RunAsync("commit|" + Path.GetFullPath(target) + "|" + checksum,async () => {
+                            await SharedResourceCoordinator.RunAsync("commit|" + Path.GetFullPath(target) + "|" + checksum, () => VerifiedTransfer.CommitOwnedAsync(http, async () => {
                                 using var commit = await JavaInstallGate.EnterAsync(target + ".resource-commit");
                                 if (!await VerifiedTransfer.MatchesAsync(target, file.Size, checksum, CancellationToken.None)) {
-                                    var part = target + ".xg-part";
+                                    // Java 下载缓存跟随 EXE，最终运行时可位于系统用户目录的另一块盘。
+                                    var part = JavaFile(file) ? JavaInstallerCleanup.TransferPart(file, paths.Runtime, store.JavaInstallerCacheRoot) : target + ".xg-part";
                                     await VerifiedTransfer.StageAsync(http, uri, part, file.Size, checksum,(bytes,size)=> { if(!token.IsCancellationRequested) Report(bytes,size,true); },_=>{},CancellationToken.None);
-                                    File.Move(part,target,overwrite:true);VerifiedTransfer.ClearMetadata(part);
+                                    if (JavaFile(file) && Path.GetDirectoryName(part) != Path.GetDirectoryName(target))
+                                    {
+                                        var staged = target + "." + Guid.NewGuid().ToString("N") + ".install";
+                                        try
+                                        {
+                                            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                                            await using (var input = File.OpenRead(part))
+                                            await using (var output = new FileStream(staged, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65536, true))
+                                                await input.CopyToAsync(output);
+                                            if (!await VerifiedTransfer.MatchesAsync(staged, file.Size, checksum, CancellationToken.None))
+                                                throw new InvalidDataException("Java staged file verification failed.");
+                                            File.Move(staged, target, true);
+                                            VerifiedTransfer.Reset(part);
+                                        }
+                                        finally { if (File.Exists(staged)) File.Delete(staged); }
+                                    }
+                                    else { File.Move(part,target,overwrite:true);VerifiedTransfer.ClearMetadata(part); }
                                 }
                                 await file.ExecuteUpdateTask(CancellationToken.None);
-                            },token);
+                            }),token);
                         }
                         else
                         {
@@ -261,6 +297,16 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                 resources is null ? await InstallLoaderAsync(null) : await resources.RunAsync(
                     instance.LoaderVersion ?? instance.Loader, "模组加载器", instance.Loader, instance.Name, InstallLoaderAsync);
             async Task<string> InstallLoaderAsync(Action<string>? loaderStage)
+            {
+                try { return await PrepareLoaderAsync(loaderStage); }
+                catch (Exception error) when (error is not OperationCanceledException)
+                {
+                    LogLoader(directory, $"{instance.Loader} {instance.LoaderVersion} · {error.GetType().Name} · {error.Message}");
+                    throw;
+                }
+            }
+
+            async Task<string> PrepareLoaderAsync(Action<string>? loaderStage)
             {
                 if (resources?.Current is { } loaderControl) await loaderControl.WaitIfPausedAsync();
                 var token = resources?.Current?.Token ?? preparationToken;
@@ -351,7 +397,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
             };
             if (javaPath != null) { options.JavaPath = javaPath; store.BindJava(instance.Id,javaPath); }
             var process = await launcher.BuildProcessAsync(profile, options);
-            process.StartInfo.WorkingDirectory = directory;
+            process.StartInfo.WorkingDirectory = store.GameDirectoryFor(instance);
             process.StartInfo.UseShellExecute = false;
             // 使用 java.exe 继续采集游戏日志，但不为 Windows 游戏进程创建额外的控制台窗口。
             process.StartInfo.CreateNoWindow = true;
@@ -392,7 +438,7 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
         var receipt = await InstallationReceipt.ReadAsync(store, instance);
         if (string.IsNullOrWhiteSpace(receipt.Profile) || string.IsNullOrWhiteSpace(receipt.Java))
             throw new InvalidOperationException("缺少启动元数据，请重新检查安装。");
-        var directory = store.EnsureLocalDirectory(instance);
+        var directory = store.GameDirectoryFor(instance);
         CheckGameDirectory(directory);
         var paths = new InstanceMinecraftPath(store, instance);
         _ = InstanceStore.SafeFile(paths.Versions, receipt.Profile);
@@ -457,9 +503,9 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
 
     private static void LogLoader(string directory, string message)
     {
-        var path = Path.Combine(directory, "xg-loader.log");
         try
         {
+            var path = InstanceLogs.Resolve(directory, "xg-loader.log", write: true);
             if (new FileInfo(path) is { Exists: true, Length: > 2_000_000 }) return;
             var clean = new GameLogSanitizer(null).Redact(message);
             clean = clean[..Math.Min(clean.Length, 4096)];

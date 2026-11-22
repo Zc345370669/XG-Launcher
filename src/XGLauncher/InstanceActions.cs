@@ -107,7 +107,7 @@ public sealed partial class MainWindow
         Add("打开光影包文件夹", () => FolderAsync("shaderpacks"));
         Add("查看游戏日志", () =>
         {
-            var path = Path.Combine(model.Store.EnsureLocalDirectory(instance), "xg-launch.log");
+            var path = InstanceLogs.Resolve(model.Store.EnsureLocalDirectory(instance), "xg-launch.log");
             if (!File.Exists(path)) throw new FileNotFoundException("该实例尚未产生启动日志。");
             return OpenFolder(path);
         });
@@ -119,7 +119,7 @@ public sealed partial class MainWindow
         });
         Add("查看加载器日志", () =>
         {
-            var path = Path.Combine(model.Store.EnsureLocalDirectory(instance), "xg-loader.log");
+            var path = InstanceLogs.Resolve(model.Store.EnsureLocalDirectory(instance), "xg-loader.log");
             if (!File.Exists(path)) throw new FileNotFoundException("此实例还没有加载器日志。");
             return OpenFolder(path);
         });
@@ -168,8 +168,8 @@ public sealed partial class MainWindow
         {
             var enabled = title switch {
                 "启动游戏" => InstanceState(instance) == "已安装",
-                "查看游戏日志" => File.Exists(Path.Combine(model.Store.DirectoryFor(instance), "xg-launch.log")),
-                "查看加载器日志" => File.Exists(Path.Combine(model.Store.DirectoryFor(instance), "xg-loader.log")),
+                "查看游戏日志" => File.Exists(InstanceLogs.Resolve(model.Store.DirectoryFor(instance), "xg-launch.log")),
+                "查看加载器日志" => File.Exists(InstanceLogs.Resolve(model.Store.DirectoryFor(instance), "xg-loader.log")),
                 _ => true
             };
             var item = new MenuItem { Header = title, IsEnabled = enabled, Icon = new LucideIcon(LucideIcon.Operation(title),16) };
@@ -189,11 +189,19 @@ public sealed partial class MainWindow
         int? choice = null;
         Button Choose(string title, int value) => Action(title, () =>
         { choice = value; dialog.Close(); return Task.CompletedTask; });
-        dialog.SetBody(Label($"删除「{instance.Name}」？可保留现有文件，也可同时删除实例目录。"),
-            CloseDialog(dialog), Choose("仅移除记录", 0), Choose("同时删除实例文件", 1));
+        var explanation = instance.ReferencedGameDirectory == null
+            ? $"删除「{instance.Name}」？可保留现有文件，也可同时删除实例目录。"
+            : $"移除「{instance.Name}」？原游戏目录及其中的存档和配置将保留。";
+        dialog.SetBody(Label(explanation),
+            CloseDialog(dialog), Choose("仅移除记录", 0), Choose(instance.ReferencedGameDirectory == null ? "同时删除实例文件" : "清除启动器安装文件", 1));
         await dialog.ShowDialog(this);
-        if (choice is not (0 or 1) || !await ConfirmAsync(choice == 1
-            ? "再次确认永久删除此实例的存档、配置和其他文件？" : "再次确认从启动器移除此实例记录？")) return;
+        var confirmation = (choice, instance.ReferencedGameDirectory) switch
+        {
+            (1, null) => "再次确认永久删除此实例的存档、配置和其他文件？",
+            (1, _) => "再次确认删除此实例的启动器安装文件？",
+            _ => "再次确认从启动器移除此实例记录？"
+        };
+        if (choice is not (0 or 1) || !await ConfirmAsync(confirmation)) return;
         EnsureIdle(instance);
         var path = model.Store.DirectoryFor(instance);
         if (model.Downloads.Items.Any(job => (job.State is "等待中" or "连接中" or "下载中" or "校验中" or "安装中") &&

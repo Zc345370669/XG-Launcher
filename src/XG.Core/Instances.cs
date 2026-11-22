@@ -9,7 +9,8 @@ namespace XG.Core;
 /// </summary>
 public sealed record Instance(Guid Id, string Name, string Version, string Loader = "原版",
     string? Java = null, int Memory = 4096, int Width = 1280, int Height = 720,
-    DateTimeOffset? LastPlayed = null, bool Pack = false, string? LoaderVersion = null, bool? AutomaticMemory = null, bool? AutomaticResolution = null)
+    DateTimeOffset? LastPlayed = null, bool Pack = false, string? LoaderVersion = null, bool? AutomaticMemory = null, bool? AutomaticResolution = null,
+    string? ReferencedGameDirectory = null, string? ImportSource = null)
 {
     public static bool IsValidVersion(string? version) => version != null &&
         Regex.IsMatch(version, @"\A[A-Za-z0-9](?:[A-Za-z0-9._+ -]{0,68}[A-Za-z0-9_+-])?\z");
@@ -38,6 +39,10 @@ public sealed class InstanceStore
         try { return JsonSerializer.Deserialize<string[]>(File.ReadAllText(Path.Combine(Root,"java-catalog.json"))) ?? []; }
         catch(Exception e) when(e is IOException or JsonException) { return []; }
     }
+    /// <summary>保留旧便携运行时作为只读候选；新安装仍由官方 MSI 管理。</summary>
+    public string[] JavaSearchRoots() => CachedJavaPaths().Select(ResolveJavaPath).OfType<string>().Concat(new[] {
+        LegacyManagedJavaRoot, Path.Combine(Workspace, "runtimes"), Path.Combine(Workspace, "minecraft", "runtimes"),
+        Path.Combine(Workspace, "data", "minecraft", "runtimes"), Path.Combine(Root, "runtimes") }).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     public string? JavaBinding(Guid id) {
         try { var bindings=JsonSerializer.Deserialize<Dictionary<Guid,string>>(File.ReadAllText(Path.Combine(Root,"java-bindings.json"))); return bindings?.GetValueOrDefault(id); }
         catch(Exception e) when(e is IOException or JsonException) { return null; }
@@ -51,7 +56,10 @@ public sealed class InstanceStore
     }
     public string InstanceRoot { get; }
     public string? SharedMinecraft { get; }
-    public string ManagedJavaRoot {
+    /// <summary>Windows 官方发行商候选目录，仅用于探测；安装位置由官方 MSI 决定。</summary>
+    public string ManagedJavaRoot => ManagedJavaLocation.Resolve(OperatingSystem.IsWindows(),
+        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), LegacyManagedJavaRoot);
+    internal string LegacyManagedJavaRoot {
         get {
             if(File.Exists(Path.Combine(Root,"runtime-layout-v2")))return Path.Combine(Workspace,"runtimes");
             var legacy=Path.Combine(SharedMinecraft??Root,"runtimes");
@@ -60,18 +68,21 @@ public sealed class InstanceStore
             return Directory.Exists(legacy) || !Directory.Exists(previous) ? legacy : previous;
         }
     }
+    public string JavaInstallerCacheRoot { get; }
     private readonly string index;
-    private readonly List<Instance> entries;
+    private List<Instance> entries;
+    private readonly object catalogGate = new();
     private readonly Dictionary<Guid, string> directories;
     private readonly string directoryIndex;
     public IReadOnlyList<Instance> Entries => entries.AsReadOnly();
 
-    public InstanceStore(string root, string? minecraft = null)
+    public InstanceStore(string root, string? minecraft = null, string? javaInstallerCacheRoot = null, bool upgradeLegacy = true)
     {
         Root = Path.GetFullPath(root);
+        JavaInstallerCacheRoot = Path.GetFullPath(javaInstallerCacheRoot ?? Path.Combine(Root, "downloads", "java-installers"));
         Directory.CreateDirectory(Root);
         SharedMinecraft = minecraft is null ? null : Path.GetFullPath(minecraft);
-        InstanceDirectoryLayout.Upgrade(Root, SharedMinecraft);
+        if (upgradeLegacy) InstanceDirectoryLayout.Upgrade(Root, SharedMinecraft);
         InstanceRoot = Path.Combine(SharedMinecraft ?? Root, "versions");
         Directory.CreateDirectory(InstanceRoot);
         index = Path.Combine(Root, "instances.json");
@@ -83,7 +94,7 @@ public sealed class InstanceStore
         // 旧索引保留原目录约定，即使目录尚未创建也不能因重命名改变隔离路径。
         foreach (var instance in entries) directories.TryAdd(instance.Id, instance.Id.ToString("N"));
         foreach (var value in directories.Values) SafeFile(InstanceRoot, value);
-        foreach (var instance in entries) FlatVersionLayout.Upgrade(Root, SafeFile(InstanceRoot, directories[instance.Id]), SharedMinecraft);
+        if (upgradeLegacy) foreach (var instance in entries) FlatVersionLayout.Upgrade(Root, SafeFile(InstanceRoot, directories[instance.Id]), SharedMinecraft);
         if (File.Exists(index)) entries = JsonSerializer.Deserialize<List<Instance>>(File.ReadAllText(index)) ?? throw new InvalidDataException("实例索引为空。");
     }
 
@@ -110,7 +121,7 @@ public sealed class InstanceStore
         {
             if (directories.TryGetValue(instance.Id, out var existing)) return SafeFile(InstanceRoot, existing);
             var loader = instance.Loader is "原版" or "Vanilla" ? "Vanilla" : instance.Loader;
-            var stem = Regex.Replace(instance.Version + "-" + loader, @"[^A-Za-z0-9._+-]", "_").TrimEnd('.', ' ');
+            var stem = Regex.Replace(instance.Version + (loader == "Vanilla" ? "" : "-" + loader), @"[^A-Za-z0-9._+-]", "_").TrimEnd('.', ' ');
             var budget = Math.Min(100, 235 - InstanceRoot.Length - 12);
             if (budget < 12) throw new PathTooLongException("实例根目录过长，请选择更短的便携目录。");
             stem = stem[..Math.Min(stem.Length, budget)];
@@ -125,17 +136,35 @@ public sealed class InstanceStore
             return path;
         }
     }
+    /// <summary>仅登记经过校验、已复制到版本根目录的实例，不迁移或删除来源。</summary>
+    public void AdoptDirectory(Instance instance, string name)
+    {
+        instance.Validate();
+        var target = SafeFile(InstanceRoot, name);
+        if (!Directory.Exists(target) || directories.Any(x => x.Key != instance.Id && x.Value.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            throw new IOException("实例目录不存在或已由其他实例使用。");
+        directories[instance.Id] = name; WriteJson(directoryIndex, directories); Save(instance);
+    }
+
+    internal Dictionary<Guid, string> DirectorySnapshot() => new(directories);
+    internal void RestoreCatalog(Instance[] original, Dictionary<Guid, string> mapping)
+    {
+        WriteJson(directoryIndex, mapping); WriteJson(index, original);
+        entries.Clear(); entries.AddRange(original); directories.Clear(); foreach (var pair in mapping) directories.Add(pair.Key, pair.Value);
+    }
     public void Save(Instance instance)
     {
         instance.Validate();
         _ = DirectoryFor(instance);
-        var next = entries.ToList();
-        var position = next.FindIndex(item => item.Id == instance.Id);
-        if (position < 0) next.Add(instance);
-        else next[position] = instance;
-        WriteJson(index, next);
-        entries.Clear();
-        entries.AddRange(next);
+        lock (catalogGate)
+        {
+            var next = entries.ToList();
+            var position = next.FindIndex(item => item.Id == instance.Id);
+            if (position < 0) next.Add(instance);
+            else next[position] = instance;
+            WriteJson(index, next);
+            entries = next;
+        }
     }
 
     public async Task<Instance> ImportLegacyAsync(InstanceStore legacy, Instance source, string backup)
@@ -170,12 +199,28 @@ public sealed class InstanceStore
     public async Task<Instance> CopyAsync(Instance source)
     {
         var clone = source with { Id = Guid.NewGuid(), Name = source.Name[..Math.Min(76, source.Name.Length)] + " 副本",
-            LastPlayed = null };
+            LastPlayed = null, ReferencedGameDirectory = null, ImportSource = null };
         var destination = DirectoryFor(clone);
         var origin = EnsureLocalDirectory(source);
         try
         {
-            await Task.Run(() => CopyTree(origin, destination));
+            await Task.Run(() =>
+            {
+                if (source.ReferencedGameDirectory == null || Directory.Exists(origin)) CopyTree(origin, destination);
+                if (source.ReferencedGameDirectory == null) return;
+                var game = GameDirectoryFor(source);
+                Directory.CreateDirectory(destination);
+                foreach (var name in new[] { "mods", "config", "saves", "resourcepacks", "shaderpacks", "screenshots" })
+                {
+                    var folder = Path.Combine(game, name);
+                    if (Directory.Exists(folder)) CopyTree(folder, Path.Combine(destination, name));
+                }
+                foreach (var name in new[] { "options.txt", "optionsof.txt", "servers.dat" })
+                {
+                    var file = Path.Combine(game, name);
+                    if (File.Exists(file) && !IsLink(file)) File.Copy(file, Path.Combine(destination, name));
+                }
+            });
             Save(clone);
             return clone;
         }
@@ -204,9 +249,12 @@ public sealed class InstanceStore
         }
         try
         {
-            var next = entries.Where(item => item.Id != instance.Id).ToList();
-            WriteJson(index, next);
-            entries.RemoveAll(item => item.Id == instance.Id);
+            lock (catalogGate)
+            {
+                var next = entries.Where(item => item.Id != instance.Id).ToList();
+                WriteJson(index, next);
+                entries = next;
+            }
         }
         catch
         {
@@ -214,6 +262,29 @@ public sealed class InstanceStore
             throw;
         }
         if (move) Directory.Delete(staged, recursive: true);
+    }
+
+    public string GameDirectoryFor(Instance instance)
+    {
+        if (instance.ReferencedGameDirectory is not { } reference) return EnsureLocalDirectory(instance);
+        if (!Path.IsPathFullyQualified(reference) || !Directory.Exists(reference))
+            throw new IOException("引用的游戏目录已失效，请重新导入。");
+        for (string? directory = Path.GetFullPath(reference); directory != null; directory = Path.GetDirectoryName(directory))
+            if (IsLink(directory)) throw new IOException("引用的游戏目录不能包含符号链接或目录联接。");
+        return reference;
+    }
+
+    public string AvailableName(string suggested, Guid? existing = null)
+    {
+        var names = entries.Where(x => x.Id != existing).Select(x => x.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var stem = suggested[..Math.Min(suggested.Length, 80)];
+        var name = stem;
+        for (var number = 2; names.Contains(name); number++)
+        {
+            var suffix = $" ({number})";
+            name = stem[..Math.Min(stem.Length, 80 - suffix.Length)] + suffix;
+        }
+        return name;
     }
 
     public string EnsureLocalDirectory(Instance instance)

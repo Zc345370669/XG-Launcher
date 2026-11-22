@@ -41,6 +41,15 @@ internal static class GitHubUpdateTests
         Check(File.ReadAllBytes(Path.Combine(installed, "XGLauncher.exe")).SequenceEqual(Exe()), "new program not installed");
         Check(Directory.GetFiles(Path.Combine(installed, "minecraft"), "*", SearchOption.AllDirectories).All(p => File.ReadAllText(p) == "user fixture") &&
             Directory.GetFiles(Path.Combine(installed, "data"), "*", SearchOption.AllDirectories).All(p => File.ReadAllText(p) == "user fixture"), "update changed user data");
+        using (var single = new MemoryStream())
+        {
+            using (var zip = new ZipArchive(single, ZipArchiveMode.Create, true))
+            { using var output = zip.CreateEntry("XG-Launcher/XGLauncher.exe").Open(); output.Write(Exe()); }
+            var bytes = single.ToArray(); File.WriteAllBytes(archive, bytes);
+            using var transaction = UpdateFiles.Prepare(plan with { Sha256 = Convert.ToHexString(SHA256.HashData(bytes)) });
+            transaction.Apply(); transaction.Commit();
+        }
+        Console.WriteLine("PASS single-EXE XG-Launcher wrapper is normalized for in-place updates without touching account/game directories; legacy package compatibility retained");
         foreach (var bad in new[] { "../outside.txt", "minecraft/versions/Test/saves/keep.txt", "data/accounts.json" })
         {
             var malicious = MakePackage(bad); File.WriteAllBytes(archive, malicious);

@@ -18,7 +18,7 @@ RULES = {
     'personal-path': rb'(?i)(?:[A-Z]:[\\/](?:Users|Documents and Settings)[\\/][A-Za-z0-9_. -]+|/(?:home|Users)/[A-Za-z0-9_.-]+|/workspace/scratch/[A-Za-z0-9]+)',
     'credential-literal': rb'''(?i)(?:client_secret|access_token|refresh_token|xsts_token|api_key|password|code_verifier)\s*["']?\s*[:=]\s*["'][^"'\r\n]{5,}["']''',
 }
-IGNORED = {'bin', 'obj', '.git', '.vs', '.idea', 'dist', 'data', 'minecraft', 'runtimes', 'backups', 'cache', 'logs', '__pycache__', '.pytest_cache'}
+IGNORED = {'bin', 'obj', '.git', '.vs', '.idea', 'dist', 'data', 'minecraft', '.minecraft', '.xg-java-downloads', 'runtimes', 'backups', 'cache', 'logs', '__pycache__', '.pytest_cache'}
 BANNED_EXTENSIONS = {'.exe', '.dll', '.pdb', '.pfx', '.p12', '.pem', '.key', '.zip', '.7z', '.bak', '.tmp', '.log', '.pyc'}
 
 def scan(root, policy, strict=False, report_path=None):

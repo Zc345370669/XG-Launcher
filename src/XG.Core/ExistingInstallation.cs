@@ -60,7 +60,7 @@ public sealed partial class GameService
             var launcher = new MinecraftLauncher(parameters);
             var metadata = await launcher.GetVersionAsync(profile, token);
             var major = int.TryParse(metadata.JavaVersion?.MajorVersion, out var parsed) ? parsed : 0;
-            var java = await JavaDiscovery.FindAsync(store.ResolveJavaPath(instance.Java), paths.Runtime, major);
+            var java = await JavaDiscovery.FindAsync(store.ResolveJavaPath(instance.Java) ?? store.JavaBinding(instance.Id), paths.Runtime, major, store.JavaSearchRoots());
             if (java == null || string.IsNullOrWhiteSpace(metadata.MainClass)) return false;
             var files = (await launcher.ExtractFiles(metadata, token)).Where(x => x.Path != null && !IsIn(paths.Runtime, x.Path)).ToArray();
             foreach (var file in files) {

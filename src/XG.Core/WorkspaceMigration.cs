@@ -2,7 +2,7 @@
 using System.Text.Json;
 namespace XG.Core;
 public static class WorkspaceMigration {
- static readonly string[] ManagedFolders=["data","minecraft","runtimes","downloads","backups","logs","licenses"];
+ static readonly string[] ManagedFolders=["data",".minecraft","minecraft","runtimes","downloads","backups","logs","licenses"];
  public static IReadOnlyList<MigrationFile> Preview(string source,string destination) {
   source=Path.GetFullPath(source);destination=Path.GetFullPath(destination);
   if(Directory.Exists(destination)||File.Exists(destination)||destination.StartsWith(source+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||source.StartsWith(destination+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new IOException("Migration destination exists or overlaps source.");
@@ -39,15 +39,17 @@ public static class WorkspaceMigration {
   reportStaging(staging);
   var parent=Path.GetDirectoryName(destination)!;Directory.CreateDirectory(parent);
   if(new DriveInfo(Path.GetPathRoot(parent)!).AvailableFreeSpace<plan.Sum(x=>x.Bytes))throw new IOException("Insufficient migration space.");
-  var oldStore=new InstanceStore(Path.Combine(source,"data"),Path.Combine(source,"minecraft"));
-  var states=new Dictionary<Guid,string>();
-  foreach(var instance in oldStore.Entries) states[instance.Id]=await InstallationReceipt.InspectAsync(oldStore,instance,token,true);
   Directory.CreateDirectory(staging);
   foreach(var folder in ManagedFolders)if(Directory.Exists(Path.Combine(source,folder)))await VerifiedDirectoryMigration.CopyVerifiedAsync(Path.Combine(source,folder),Path.Combine(staging,folder),progress,token);
+  var gameFolder = Directory.Exists(Path.Combine(staging,".minecraft")) ? ".minecraft" : "minecraft";
+  var oldStore=new InstanceStore(Path.Combine(staging,"data"),Path.Combine(staging,gameFolder));
+  var states=new Dictionary<Guid,string>();
+  foreach(var instance in oldStore.Entries) states[instance.Id]=await InstallationReceipt.InspectAsync(oldStore,instance,token,true);
   destination=staging;
   try {
-   var newData=Path.Combine(destination,"data");var migrated=new InstanceStore(newData,Path.Combine(destination,"minecraft"));
-   var oldManaged=oldStore.ManagedJavaRoot;var oldManagedRelative=Path.GetRelativePath(source,oldManaged);
+   var newData=Path.Combine(destination,"data");var migrated=new InstanceStore(newData,Path.Combine(destination,gameFolder));
+   // 只迁移工作区内的旧运行时；系统用户目录中的共享 Java 不复制、不重写。
+   var oldManagedRelative=Path.GetRelativePath(staging,oldStore.LegacyManagedJavaRoot);var oldManaged=Path.Combine(source,oldManagedRelative);
    var copiedManaged=Path.Combine(destination,oldManagedRelative);var targetManaged=Path.Combine(destination,"runtimes");
    if(!Path.GetFullPath(copiedManaged).Equals(Path.GetFullPath(targetManaged),StringComparison.OrdinalIgnoreCase)&&Directory.Exists(copiedManaged)) {
     await VerifiedDirectoryMigration.CopyVerifiedAsync(copiedManaged,targetManaged,progress,token);

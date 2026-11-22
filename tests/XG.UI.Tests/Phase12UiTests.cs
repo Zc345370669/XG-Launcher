@@ -59,7 +59,7 @@ internal static class Phase12UiTests
             {
                 var show = window.ErrorAsync(window, "主题与统一弹窗真实渲染检查"); Pump();
                 var dialog = window.OwnedWindows.OfType<LauncherDialog>().Single(x => x.Title == "操作失败");
-                Check(ReferenceEquals(dialog.Background, ThemePalette.Background), "dialog not globally themed"); Capture("phase12-dark-dialog", dialog);
+                Check(ReferenceEquals(dialog.Background, ThemePalette.DialogSurface) && ThemePalette.Panel.Color.A == 255, "dialog not globally themed"); Capture("phase12-dark-dialog", dialog);
                 Invoke(dialog.GetVisualDescendants().OfType<Button>().First(x => Equals(x.Content, "关闭"))); Pump();
             }
         }
@@ -81,9 +81,15 @@ internal static class Phase12UiTests
             .Select(n => new ResourceOperation(Guid.NewGuid(), "fixture", "实例安装", "fixture", "fixture", "失败")));
         var badgeWindow = new MainWindow(badgeRoot); badgeWindow.Show(); Pump();
         var badge = (TextBlock)typeof(MainWindow).GetField("downloadBadge", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(badgeWindow)!;
+        Check(!badge.IsVisible, "failed history inflated the active download badge");
+        badgeWindow.Close(); Pump();
+        InstanceStore.WriteJson(Path.Combine(badgeRoot, "resource-operations.json"), Enumerable.Range(0, 101)
+            .Select(n => new ResourceOperation(Guid.NewGuid(), "fixture", "实例安装", "fixture", "fixture", "等待恢复", Recovery: new ResourceRecovery("game", Guid.NewGuid()))));
+        badgeWindow = new MainWindow(badgeRoot); badgeWindow.Show(); Pump();
+        badge = (TextBlock)typeof(MainWindow).GetField("downloadBadge", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(badgeWindow)!;
         Check(badge.IsVisible && badge.Text == "99+", "99+ badge or restored count wrong");
         badgeWindow.Close(); Pump();
-        Console.WriteLine("PASS restored 101 unfinished main jobs display 99+, without counting child files");
+        Console.WriteLine("PASS restored active jobs display 99+ and failed-only history hides the active badge");
 
         // Real manager with controlled fixture work: no network or installer success is implied.
         var entered = new TaskCompletionSource(); var done = new TaskCompletionSource();

@@ -28,19 +28,19 @@ public sealed class GitHubUpdates(HttpClient http)
         {
             if (!item.TryGetProperty("draft", out var draft) || draft.ValueKind != JsonValueKind.False ||
                 !item.TryGetProperty("tag_name", out var tag) || tag.GetString() is not { } version ||
-                !IsVersion(version) || CompareVersions(version, currentVersion) <= 0 ||
+                !IsVersion(version) || !AllowedChannel(currentVersion, version) || CompareVersions(version, currentVersion) <= 0 ||
                 !item.TryGetProperty("assets", out var assets) || assets.ValueKind != JsonValueKind.Array) continue;
             foreach (var asset in assets.EnumerateArray())
             {
                 var name = asset.GetProperty("name").GetString();
-                if (name != "XGLauncher-portable-win-x64.zip" && name != $"XGLauncher_{version}_Windows_x64.zip") continue;
+                if (name != "XGLauncher.exe" && name != "XGLauncher-portable-win-x64.zip" && name != $"XGLauncher_{version}_Windows_x64.zip") continue;
                 if (asset.GetProperty("state").GetString() != "uploaded" ||
                     !asset.GetProperty("size").TryGetInt64(out var size) || size < 1 || size > MaxPackage ||
                     !asset.TryGetProperty("digest", out var digestField) || digestField.GetString() is not { } digest ||
                     !Regex.IsMatch(digest, "\\Asha256:[0-9a-fA-F]{64}\\z") ||
                     !Uri.TryCreate(asset.GetProperty("browser_download_url").GetString(), UriKind.Absolute, out var uri) ||
                     !SafeAsset(uri, version, name)) continue;
-                if (best == null || CompareVersions(version, best.Version) > 0)
+                if (best == null || CompareVersions(version, best.Version) > 0 || CompareVersions(version, best.Version) == 0 && name == "XGLauncher.exe")
                     best = new(version, name, uri, size, digest[7..].ToLowerInvariant());
             }
         }
@@ -100,7 +100,7 @@ public sealed class GitHubUpdates(HttpClient http)
     private async Task<HttpResponseMessage> SendAsync(Uri uri, CancellationToken token)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, uri);
-        request.Headers.UserAgent.ParseAdd("XGLauncher/0.1.0-alpha");
+        request.Headers.UserAgent.ParseAdd("XGLauncher/0.1.1");
         if (uri.Host == "api.github.com")
         {
             request.Headers.Accept.ParseAdd("application/vnd.github+json");
@@ -116,9 +116,19 @@ public sealed class GitHubUpdates(HttpClient http)
         { if (output.Length + count > limit) throw new InvalidDataException("更新服务数据过大。"); output.Write(buffer, 0, count); }
         return output.ToArray();
     }
-    private static bool SafeAsset(Uri uri, string version, string name) => (name == "XGLauncher-portable-win-x64.zip" || name == $"XGLauncher_{version}_Windows_x64.zip") && uri.Scheme == "https" && uri.Host == "github.com" &&
+    private static bool SafeAsset(Uri uri, string version, string name) => (name == "XGLauncher.exe" || name == "XGLauncher-portable-win-x64.zip" || name == $"XGLauncher_{version}_Windows_x64.zip") && uri.Scheme == "https" && uri.Host == "github.com" &&
         uri.UserInfo.Length == 0 && uri.IsDefaultPort && uri.Query.Length == 0 && uri.Fragment.Length == 0 &&
         uri.AbsolutePath == $"/Zc345370669/XG-Launcher/releases/download/{version}/{name}";
+    internal static bool AllowedChannel(string current, string candidate)
+    {
+        if (!IsVersion(current) || !IsVersion(candidate)) return false;
+        var source = current.Split('-', 2); var target = candidate.Split('-', 2);
+        if (target.Length == 1) return true;
+        if (source.Length == 1) return false;
+        var rank = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { ["alpha"] = 0, ["beta"] = 1, ["rc"] = 2 };
+        var sourceChannel = source[1].Split('.')[0]; var targetChannel = target[1].Split('.')[0];
+        return rank.TryGetValue(sourceChannel, out var a) && rank.TryGetValue(targetChannel, out var b) ? b >= a : sourceChannel == targetChannel;
+    }
     private static bool IsVersion(string value) => Regex.IsMatch(value, "\\Av?(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?\\z");
     internal static int CompareVersions(string left, string right)
     {

@@ -223,11 +223,13 @@ internal static class ResponsiveUiTests
         var gameSelect = create.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Title == "Minecraft 版本");
         Check(!create.GetVisualDescendants().OfType<TextBox>().Any(x => x.Watermark == "筛选版本号"), "standalone version filter remains");
         Check(create.SystemDecorations == SystemDecorations.None, "editor has native caption");
-        ClickIn(create, "保存");
         Check(create.IsVisible && !create.OwnedWindows.Any() &&
-            create.GetVisualDescendants().OfType<TextBlock>().Any(x => x.IsEffectivelyVisible && x.Text == "请输入实例名称。"),
-            "blank name was not reported inline");
-        Capture("17-inline-name-validation", create);
+            create.GetVisualDescendants().OfType<TextBox>().Any(x => x.Watermark == "实例名称（可选，留空自动命名）") &&
+            !create.GetVisualDescendants().OfType<TextBlock>().Any(x => x.IsEffectivelyVisible && x.Text == "请输入实例名称。"),
+            "blank name is still required");
+        Check(!create.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Title == "加载器版本").IsEffectivelyVisible,
+            "Vanilla still shows a loader version selector");
+        Capture("17-optional-instance-name", create);
         var memoryMode = create.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Title == "内存分配");
         var resolutionMode = create.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Title == "分辨率");
         memoryMode.SelectedIndex = 1;
@@ -281,10 +283,9 @@ internal static class ResponsiveUiTests
         Pump();
         Capture("20-loader-version-recommended", create);
         loaderVersion.Close();
-        create.GetVisualDescendants().OfType<TextBox>().Single(x => x.Watermark == "实例名称").Text = "Created by UI regression";
         ClickIn(create, "保存");
         WaitFor(() => !create.IsVisible);
-        Check(window.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "Created by UI regression"), "valid instance was not saved");
+        Check(window.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "Minecraft 25w04a Fabric"), "valid instance was not saved");
         Click("编辑");
         WaitFor(() => window.OwnedWindows.OfType<Window>().Any(x => x.Title == "编辑实例"));
         var edit = window.OwnedWindows.OfType<Window>().Single(x => x.Title == "编辑实例");

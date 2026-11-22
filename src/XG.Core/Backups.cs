@@ -14,14 +14,14 @@ public static class Backups
 
     public static void Create(InstanceStore store, Instance instance, string destination)
     {
-        var game = store.DirectoryFor(instance);
+        var game = store.GameDirectoryFor(instance);
         var temporary = destination + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
             using (var archive = ZipFile.Open(temporary, ZipArchiveMode.Create))
             {
                 using (var entry = archive.CreateEntry("instance.json").Open())
-                    JsonSerializer.Serialize(entry, instance);
+                    JsonSerializer.Serialize(entry, instance with { ReferencedGameDirectory = null, ImportSource = null });
                 foreach (var name in Files)
                 {
                     var source = Path.Combine(game, name);
@@ -68,7 +68,7 @@ public static class Backups
         if (index.Length > 16384) throw new InvalidDataException("实例配置文件过大。");
         using var input = index.Open();
         var settings = JsonSerializer.Deserialize<Instance>(input) ?? throw new InvalidDataException("实例配置无效。");
-        var restored = settings with { Id = Guid.NewGuid(), Java = null, LastPlayed = null };
+        var restored = settings with { Id = Guid.NewGuid(), Java = null, LastPlayed = null, ReferencedGameDirectory = null, ImportSource = null };
         restored.Validate();
         var destination = store.DirectoryFor(restored);
         Directory.CreateDirectory(destination);

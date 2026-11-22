@@ -65,7 +65,7 @@ internal static class WindowChromeUiTests
         Invoke((Button)typeof(MainWindow).GetField("account", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(owner)!);
         var dialog = owner.OwnedWindows.OfType<LauncherDialog>().Single();
         var body = dialog.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "DialogSurface");
-        Check(WindowChrome.Strategy(dialog) != "unconfigured" && body.Clip == null && body.CornerRadius == new CornerRadius(0) && ReferenceEquals(dialog.Background, ThemePalette.Background), "account dialog uses conflicting surface policy");
+        Check(WindowChrome.Strategy(dialog) != "unconfigured" && body.Clip == null && body.CornerRadius == new CornerRadius(0) && body.BorderBrush == ThemePalette.DialogBorder && body.BorderThickness.Left > 0 && ReferenceEquals(dialog.Background, ThemePalette.DialogSurface), "account dialog uses conflicting surface policy");
         Check(dialog.Height <= Math.Min(dialog.MaxHeight, 620) && dialog.Height < 600, "account management keeps oversized editor height");
         Check(dialog.GetVisualDescendants().OfType<ItemsControl>().Single(x => x.Name == "FullAccountsList").ItemsSource!.Cast<LauncherAccount>().Count() == 8, "inline account management list missing");
         Check(dialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "安全操作") && dialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "离线玩家名称"), "account and cache sections not labeled");
@@ -88,7 +88,7 @@ internal static class WindowChromeUiTests
         foreach (var palette in ThemePalette.All)
         {
             ThemePalette.Select(palette); Pump();
-            Check(((ISolidColorBrush)dialog.Background!).Color.A == 255 && ReferenceEquals(dialog.Background, ThemePalette.Background), "dialog theme diverged or became transparent");
+            Check(((ISolidColorBrush)dialog.Background!).Color.A == 255 && ReferenceEquals(dialog.Background, ThemePalette.DialogSurface), "dialog theme diverged or became transparent");
             Capture("rounding-dialog-theme-" + Array.IndexOf(ThemePalette.All, palette), dialog);
         }
         dialog.Close(); Pump();

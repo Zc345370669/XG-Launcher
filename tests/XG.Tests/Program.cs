@@ -29,6 +29,7 @@ try
     await JavaNativeTests.RunAsync(root);
     await InstallerJavaTests.RunAsync(root);
     await JavaCleanupTests.RunAsync(root);
+    await JavaLocationTests.RunAsync(root);
     await Phase9TransferTests.RunAsync(root);
     await Phase10Tests.RunAsync(root);
     await Phase11Tests.RunAsync(root);
@@ -43,6 +44,7 @@ try
     await Phase19Tests.RunAsync(root);
     await ShutdownTests.RunAsync(root);
     await GitHubUpdateTests.RunAsync(root);
+    await LocalFinalTests.RunAsync(root);
     var portable = Path.Combine(root, "portable");
     var portableData = Path.Combine(portable, "data");
     var portableStore = new InstanceStore(portableData, Path.Combine(portable, "minecraft"));
@@ -94,9 +96,13 @@ try
     var mods = Path.Combine(store.DirectoryFor(instance), "mods");
     var local = Path.Combine(root, "sample.jar");
     using (var zip = ZipFile.Open(local, ZipArchiveMode.Create)) zip.CreateEntry("fabric.mod.json");
-    LocalMods.Import(local, mods);
+    Equal(true, LocalMods.Import(local, mods));
     Equal(true, File.Exists(Path.Combine(mods, "sample.jar")));
+    Equal(false, LocalMods.Import(local, mods));
+    var installedBytes = File.ReadAllBytes(Path.Combine(mods, "sample.jar"));
+    using (var zip = ZipFile.Open(local, ZipArchiveMode.Update)) zip.CreateEntry("fixture.txt");
     Reject<IOException>(() => LocalMods.Import(local, mods));
+    Equal(true, installedBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(mods, "sample.jar"))));
     Console.WriteLine("PASS local JAR import and duplicate protection");
 
     var world = Path.Combine(store.DirectoryFor(instance), "saves", "world");
