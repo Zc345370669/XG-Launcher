@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [RELEASE_NOTES.md]
+    paths: [RELEASE_NOTES.md, .github/workflows/release-v0.1.1.yml]
 permissions:
   contents: read
 env:
@@ -30,11 +30,15 @@ jobs:
           python -m unittest discover -s tests -p '*tests.py'
           dotnet test -c Release -m:1
       - name: Build Windows x64 executable
-        run: bash scripts/publish-portable-windows.sh "$RUNNER_TEMP/release"
+        run: |
+          bash scripts/publish-portable-windows.sh "$RUNNER_TEMP/release"
+          mkdir -p "$RUNNER_TEMP/release/assets"
+          cp "$RUNNER_TEMP/release/XG-Launcher/XGLauncher.exe" "$RUNNER_TEMP/release/assets/"
+          cp src/XGLauncher/obj/single-exe-assets/updater/XGUpdater.exe "$RUNNER_TEMP/release/assets/"
       - uses: actions/upload-artifact@v4
         with:
           name: release-win-x64
-          path: ${{ runner.temp }}/release/XG-Launcher/XGLauncher.exe
+          path: ${{ runner.temp }}/release/assets
           if-no-files-found: error
 
   publish:
@@ -59,16 +63,29 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq '<Version>0.1.1</Version>' Directory.Build.props || exit 0
-          if gh release view v0.1.1 >/dev/null 2>&1; then
-            gh release view v0.1.1 --json isDraft,assets --jq 'select(.isDraft == false) | .assets[] | select(.name == "XGLauncher.exe") | .name' | grep -Fxq XGLauncher.exe
-            exit 0
-          fi
           if ! gh release view v0.1.0-alpha >/dev/null 2>&1; then
             gh release create v0.1.0-alpha --target 9f51dea95d4fcc9bf10ce3045e2ade02cf14fe30 \
               --title 'XG Launcher v0.1.0-alpha（历史版本）' \
               --notes-file docs/history/v0.1.0-alpha.md --prerelease --latest=false
           fi
-          test -s release/XGLauncher.exe
-          (cd release && sha256sum XGLauncher.exe > SHA256SUMS.txt)
-          gh release create v0.1.1 release/XGLauncher.exe release/SHA256SUMS.txt \
-            --target "$GITHUB_SHA" --title 'XG Launcher v0.1.1' --notes-file RELEASE_NOTES.md --latest
+          zip_name=XGLauncher-portable-win-x64.zip
+          existing=false
+          if gh release view v0.1.1 >/dev/null 2>&1; then
+            gh release view v0.1.1 --json isDraft --jq '.isDraft' | grep -Fxq false
+            if gh release view v0.1.1 --json assets --jq '.assets[].name' | grep -Fxq "$zip_name"; then
+              exit 0
+            fi
+            existing=true
+            gh release download v0.1.1 --pattern XGLauncher.exe --dir release --clobber
+          fi
+          mkdir -p release/legacy/tools
+          cp release/XGLauncher.exe LICENSE release/legacy/
+          cp release/XGUpdater.exe release/legacy/tools/
+          (cd release/legacy && zip -q -0 "../$zip_name" XGLauncher.exe LICENSE tools/XGUpdater.exe)
+          if "$existing"; then
+            gh release upload v0.1.1 "release/$zip_name"
+          else
+            (cd release && sha256sum XGLauncher.exe "$zip_name" > SHA256SUMS.txt)
+            gh release create v0.1.1 release/XGLauncher.exe "release/$zip_name" release/SHA256SUMS.txt \
+              --target "$GITHUB_SHA" --title 'XG Launcher v0.1.1' --notes-file RELEASE_NOTES.md --latest
+          fi
