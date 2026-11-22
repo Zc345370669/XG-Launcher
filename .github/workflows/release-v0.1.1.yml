@@ -63,11 +63,6 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq '<Version>0.1.1</Version>' Directory.Build.props || exit 0
-          if ! gh release view v0.1.0-alpha >/dev/null 2>&1; then
-            gh release create v0.1.0-alpha --target 9f51dea95d4fcc9bf10ce3045e2ade02cf14fe30 \
-              --title 'XG Launcher v0.1.0-alpha（历史版本）' \
-              --notes-file docs/history/v0.1.0-alpha.md --prerelease --latest=false
-          fi
           zip_name=XGLauncher-portable-win-x64.zip
           existing=false
           if gh release view v0.1.1 >/dev/null 2>&1; then
