@@ -45,9 +45,14 @@ public sealed class UnifiedExpandableSelect : UserControl
     public double MaximumOpenHeight { get => GetValue(MaximumOpenHeightProperty); set => SetValue(MaximumOpenHeightProperty, value); }
     public Func<object, string>? DisplayMember { get; init; }
     public Func<object, object?>? ValueMember { get; init; }
+    public Func<object, string>? ItemIcon { get; init; }
+    public Func<object, string>? ItemIconLabel { get; init; }
+    public bool HideEmptyMessage { get; init; }
+    public bool LiteralItems { get; init; }
     public Func<object, Task>? RemoveItemAsync { get; set; }
     public bool PreferAbove { get; init; }
     public bool TwoLineTitle { get; init; }
+    public bool AllowRemoveSelected { get; init; }
     public string RemoveIcon { get; init; } = "minus";
     public string RemoveLabel { get; init; } = "删除账号";
     public string? FooterText { get; set; }
@@ -70,6 +75,11 @@ public sealed class UnifiedExpandableSelect : UserControl
     public Control? AvoidOverlapWith { get; set; }
     internal string ExpansionStrategy { get; private set; } = "closed";
     internal Rect? ExpansionBounds { get; private set; }
+    private bool iconOnly;
+    public bool IconOnly { get => iconOnly; set { iconOnly = value; if (anchor != null) { Width = double.NaN; UpdateTitle(); } } }
+    public string HeaderIcon { get; init; } = "user-round";
+    public double PopupMinimumWidth { get; set; }
+    public bool AutoContentWidth { get; set; }
     public bool Searchable { get; init; }
     public bool InlineExpansion { get; init; }
     public string[] FilterLabels { get; init; } = [];
@@ -89,6 +99,7 @@ public sealed class UnifiedExpandableSelect : UserControl
     private Button? openTitle;
     private Canvas? shield;
     private Border? openFrame;
+    private Border? iconSeam;
     private OverlayLayer? layer;
     private TopLevel? keyOwner;
     private Window? positionOwner;
@@ -121,10 +132,12 @@ public sealed class UnifiedExpandableSelect : UserControl
             Open();
         };
         AddHandler(KeyDownEvent, (_, e) => { if (InlineExpansion && IsOpen) HandleKeys(this, e); }, RoutingStrategies.Tunnel);
-        AttachedToVisualTree += (_, _) => { Subscribe(ItemsSource as INotifyCollectionChanged); UpdateTitle(); };
-        DetachedFromVisualTree += (_, _) => { Close(false); Subscribe(null); };
+        AttachedToVisualTree += (_, _) => { Subscribe(ItemsSource as INotifyCollectionChanged); Localizer.Changed += RefreshLanguage; UpdateTitle(); };
+        DetachedFromVisualTree += (_, _) => { Close(false); Subscribe(null); Localizer.Changed -= RefreshLanguage; };
         UpdateTitle();
     }
+
+    private void RefreshLanguage() { UpdateTitle(); UpdateList(); }
 
     private Button Header() => new()
     {
@@ -139,7 +152,13 @@ public sealed class UnifiedExpandableSelect : UserControl
         CornerRadius = new CornerRadius(8), ClipToBounds = true, UseLayoutRounding = true, Child = child
     };
 
-    private string Display(object? item) => item == null ? PlaceholderText : Localizer.Text(DisplayMember?.Invoke(item) ?? item.ToString() ?? "");
+    private string Display(object? item)
+    {
+        if (item == null) return Localizer.Text(PlaceholderText);
+        var text = DisplayMember?.Invoke(item) ?? item.ToString() ?? "";
+        return LiteralItems ? text : Localizer.Text(text);
+    }
+
     private object? Value(object? item) => item == null || ValueMember == null ? item : ValueMember(item);
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -201,13 +220,41 @@ public sealed class UnifiedExpandableSelect : UserControl
     {
         var value = IsLoading && SelectedItem == null ? Localizer.Text("正在扫描已安装游戏…") : Display(SelectedItem);
         var title = string.IsNullOrWhiteSpace(Title) ? value : $"{Title}: {value}";
-        anchor.Content = Caption(TwoLineTitle ? value : title);
+        if (IconOnly)
+        {
+            var icons = new StackPanel
+            {
+                Orientation = Orientation.Horizontal, Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center,
+                Children = { new LucideIcon(HeaderIcon, 17), new LucideIcon(IsOpen ? "chevron-up" : "chevron-down", 11) }
+            };
+            anchor.Content = icons;
+            anchor.Padding = new(0);
+            anchor.Classes.Add("xg-caption");
+            MinWidth = Width = 38;
+            ToolTip.SetTip(anchor, value);
+        }
+        else
+        {
+            anchor.Content = Caption(TwoLineTitle ? value : title);
+            if (AutoContentWidth) Width = Math.Clamp(MeasureText(title) + 54, 100, 290);
+        }
         AutomationProperties.SetName(anchor, title);
-        if (!IsOpen) HeaderCorners(null);
+        if (!IsOpen)
+        {
+            HeaderCorners(null);
+            if (IconOnly)
+            {
+                closedFrame.Background = Brushes.Transparent;
+                closedFrame.BorderThickness = new(0);
+                closedFrame.CornerRadius = new(8);
+            }
+        }
         auxiliary.IsVisible = AuxiliaryIcon != null;
         auxiliary.Content = AuxiliaryIcon == null ? null : new LucideIcon(AuxiliaryIcon, 18);
         AutomationProperties.SetName(auxiliary, "添加账号"); ToolTip.SetTip(auxiliary, "添加账号");
     }
+
+    private double MeasureText(string text) => new FormattedText(text, System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(FontFamily), FontSize, Brushes.Black).WidthIncludingTrailingWhitespace;
 
     private Control Caption(string title)
     {
@@ -217,8 +264,11 @@ public sealed class UnifiedExpandableSelect : UserControl
         ToolTip.SetTip(value, title);
         if (TwoLineTitle)
         {
-            var lines = new StackPanel { Spacing = 3, Children = {
-                new TextBlock { Text = Localizer.Text(Title), FontSize = 11, Foreground = ThemePalette.Muted }, value } };
+            value.FontSize = 12;
+            value.Foreground = ThemePalette.Muted;
+            var lines = new StackPanel { Spacing = 3, VerticalAlignment = VerticalAlignment.Center, Children = {
+                new TextBlock { Text = Localizer.Text(Title), FontSize = 14, FontWeight = FontWeight.SemiBold,
+                    Foreground = ThemePalette.Text, TextTrimming = TextTrimming.CharacterEllipsis }, value } };
             grid.Children.Add(lines);
         }
         else grid.Children.Add(value);
@@ -245,6 +295,7 @@ public sealed class UnifiedExpandableSelect : UserControl
         positionOwner = keyOwner as Window;
         if (positionOwner != null) { positionOwner.PositionChanged += WindowMoved; positionOwner.ScalingChanged += WindowScaled; }
         shield = new Canvas { Background = Brushes.Transparent };
+        if (IconOnly) KeyboardNavigation.SetTabNavigation(shield, KeyboardNavigationMode.Cycle);
         shield.PointerPressed += (_, e) =>
         {
             if (e.Source == shield) { e.Handled = true; Close(); }
@@ -292,10 +343,26 @@ public sealed class UnifiedExpandableSelect : UserControl
             {
                 if (item == null) return null;
                 var row = new Grid { ColumnDefinitions = new("*,32"), ColumnSpacing = 6 };
+                var details = new Grid { ColumnDefinitions = new("Auto,*,Auto"), ColumnSpacing = 6 };
+                row.Children.Add(details);
                 var caption = new TextBlock { Text = Display(item), Foreground = ThemePalette.Text,
                     VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
-                ToolTip.SetTip(caption, Display(item)); row.Children.Add(caption);
-                if (Equals(item, SelectedItem))
+                ToolTip.SetTip(caption, Display(item));
+                Grid.SetColumn(caption, 1); details.Children.Add(caption);
+                if (ItemIcon?.Invoke(item) is { } icon)
+                {
+                    var type = new LucideIcon(icon, 16) { Foreground = ThemePalette.Muted, VerticalAlignment = VerticalAlignment.Center };
+                    AutomationProperties.SetName(type, Localizer.Text(ItemIconLabel?.Invoke(item) ?? ""));
+                    details.Children.Add(type);
+                    ToolTip.SetTip(caption, $"{Display(item)} · {Localizer.Text(ItemIconLabel?.Invoke(item) ?? "")}");
+                }
+                if (AllowRemoveSelected)
+                {
+                    var mark = new LucideIcon("check", 16) { Name = "SelectedCheck", Foreground = ThemePalette.Accent,
+                        Opacity = Equals(item, SelectedItem) ? 1 : 0, VerticalAlignment = VerticalAlignment.Center };
+                    Grid.SetColumn(mark, 2); details.Children.Add(mark);
+                }
+                if (Equals(item, SelectedItem) && !AllowRemoveSelected)
                 {
                     var mark = new LucideIcon("check", 18) { Name = "SelectedCheck", Foreground = new SolidColorBrush(Color.Parse("#22A65A")),
                         HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
@@ -308,13 +375,15 @@ public sealed class UnifiedExpandableSelect : UserControl
                         HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center };
                     remove.Classes.Add("xg-caption");
                     AutomationProperties.SetName(remove, RemoveLabel + " " + Display(item)); ToolTip.SetTip(remove, RemoveLabel);
-                    remove.Click += async (_, e) => { e.Handled = true; Close(false); await RemoveItemAsync(item); };
+                    remove.Click += async (_, e) => { e.Handled = true; Close(IconOnly); await RemoveItemAsync(item); };
                     Grid.SetColumn(remove, 1); row.Children.Add(remove);
                 }
                 return row;
             })
         };
         list.Resources["ListBoxItemPadding"] = new Thickness(10, 6);
+        ScrollViewer.SetHorizontalScrollBarVisibility(list, ScrollBarVisibility.Disabled);
+        ScrollViewer.SetVerticalScrollBarVisibility(list, ScrollBarVisibility.Auto);
         foreach (var variant in new[] { "", "Alt" })
             foreach (var shade in new[] { "Low", "Medium", "High" })
                 list.Resources[$"SystemControlHighlight{variant}ListAccent{shade}Brush"] = ThemePalette.Hover;
@@ -331,19 +400,22 @@ public sealed class UnifiedExpandableSelect : UserControl
         Grid.SetRow(message, 3);
         body.Children.Add(message);
         Control expandedBody = body;
+        Button? footer = null;
         if (auxiliaryOpen && ExpansionFactory != null)
         {
             var form = ExpansionFactory();
-            expandedBody = new ScrollViewer { Content = form, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+            expandedBody = new ScrollViewer { Content = form, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         }
         else if (FooterText != null && FooterAction != null)
         {
-            var add = new Button { Name = "ComboFooter", Background = Brushes.Transparent, BorderThickness = new(0),
-                Padding = new(10, 9), HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left,
+            var add = footer = new Button { Name = "ComboFooter", Background = Brushes.Transparent, BorderThickness = new(0),
+                MinHeight = HideEmptyMessage ? 38 : 0, Padding = new(10, 9), HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Left,
                 Content = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 7, Children = {
                     new LucideIcon("plus", 17), new TextBlock { Text = Localizer.Text(FooterText), Foreground = ThemePalette.Text } } } };
             add.Click += async (_, e) => { e.Handled = true; Close(false); await FooterAction(); };
-            var separator = new Border { BorderBrush = ThemePalette.Line, BorderThickness = new(0, 1, 0, 0), Child = add };
+            var separator = new Border { BorderBrush = ThemePalette.Line,
+                BorderThickness = HideEmptyMessage && choices.Length == 0 ? new(0) : new(0, 1, 0, 0), Child = add };
             Grid.SetRow(separator, 4); body.Children.Add(separator);
         }
         expansion = new Border { Child = expandedBody, BorderBrush = ThemePalette.Line };
@@ -351,16 +423,30 @@ public sealed class UnifiedExpandableSelect : UserControl
         closedFrame.Height = Math.Max(Bounds.Height, header.DesiredSize.Height);
         closedFrame.Child = null;
         joined = new DockPanel { LastChildFill = true };
-        joined.Children.Add(header); joined.Children.Add(expansion);
+        if (IconOnly) closedFrame.Child = header; else joined.Children.Add(header);
+        joined.Children.Add(expansion);
         openFrame = Frame(joined);
         TextElement.SetFontFamily(openFrame, FontFamily); TextElement.SetForeground(openFrame, ThemePalette.Text);
-        shield.Children.Add(openFrame); overlay.Children.Add(shield);
-        closedFrame.Opacity = 0;
+        shield.Children.Add(openFrame);
+        if (IconOnly)
+        {
+            iconSeam = new Border { Background = ThemePalette.Panel, IsHitTestVisible = false };
+            shield.Children.Add(iconSeam);
+        }
+        overlay.Children.Add(shield);
+        closedFrame.Opacity = IconOnly ? 1 : 0;
         overlay.LayoutUpdated += Position;
         UpdateTitle(); UpdateList(); Position(null, EventArgs.Empty);
         ExpansionChanged?.Invoke(this, EventArgs.Empty);
-        if (auxiliaryOpen) expandedBody.GetVisualDescendants().OfType<TextBox>().FirstOrDefault()?.Focus();
-        else if (search != null) search.Focus(); else list?.Focus();
+        if (auxiliaryOpen)
+        {
+            var controls = expandedBody.GetVisualDescendants().OfType<Control>();
+            (controls.OfType<TextBox>().FirstOrDefault(x => x.IsEffectivelyVisible) ??
+                controls.OfType<Button>().FirstOrDefault(x => x.IsEffectivelyVisible) as Control)?.Focus();
+        }
+        else if (search != null) search.Focus();
+        else if (list.IsVisible) list.Focus();
+        else footer?.Focus();
     }
 
     private void Position(object? sender, EventArgs args)
@@ -371,10 +457,11 @@ public sealed class UnifiedExpandableSelect : UserControl
         if (available.Width <= 0 || available.Height <= 0) return;
         if (point.Y + Bounds.Height < 0 || point.Y >= available.Height) { Close(false); return; }
         shield.Width = available.Width; shield.Height = available.Height;
-        double desired = Math.Max(46, choices.Length * 44 + (search == null ? 0 : 38) + (FilterLabels.Length > 0 ? 36 : 0) + (FooterText == null ? 0 : 42));
+        double desired = HideEmptyMessage && choices.Length == 0 ? 40 :
+            Math.Max(46, choices.Length * 44 + (search == null ? 0 : 38) + (FilterLabels.Length > 0 ? 36 : 0) + (FooterText == null ? 0 : 42));
         if (auxiliaryOpen && expansion.Child is ScrollViewer { Content: Control form })
         {
-            form.Measure(new Size(Math.Max(1, Bounds.Width - 2), double.PositiveInfinity));
+            form.Measure(new Size(Math.Max(1, Math.Min(available.Width, Math.Max(Bounds.Width, PopupMinimumWidth)) - 2), double.PositiveInfinity));
             desired = Math.Max(46, form.DesiredSize.Height + 2);
         }
         var viewport = new Rect(available);
@@ -390,14 +477,42 @@ public sealed class UnifiedExpandableSelect : UserControl
             }
         }
         if (viewport.Width <= 0 || viewport.Height <= 0) { Close(false); return; }
-        var plan = ComboPlacement.Calculate(new Rect(point, Bounds.Size), viewport, Math.Min(MaximumOpenHeight, desired), PreferAbove);
+        if (IconOnly && viewport.Width > 12)
+            viewport = new Rect(viewport.X + 6, viewport.Y, viewport.Width - 12, viewport.Height);
+        var desiredWidth = Math.Max(Bounds.Width, PopupMinimumWidth);
+        if (AutoContentWidth)
+        {
+            var rowChrome = IconOnly ? 104 : 68;
+            desiredWidth = Math.Max(desiredWidth, choices.Select(x => MeasureText(Display(x)) + rowChrome).DefaultIfEmpty(100).Max());
+        }
+        var anchorSize = new Size(Math.Min(viewport.Width, desiredWidth), Bounds.Height);
+        var position = IconOnly ? new Point(point.X + Bounds.Width - anchorSize.Width, point.Y) : point;
+        var plan = ComboPlacement.Calculate(new Rect(position, anchorSize), viewport, Math.Min(MaximumOpenHeight, desired), PreferAbove);
         ExpansionStrategy = plan.Up ? "joined-above" : "joined-below";
-        ExpansionBounds = plan.Bounds;
+        var seamY = plan.Up ? plan.Bounds.Bottom - Bounds.Height : plan.Bounds.Top + Bounds.Height;
+        var popup = IconOnly ? new Rect(plan.Bounds.X, plan.Up ? plan.Bounds.Y : seamY,
+            plan.Bounds.Width, Math.Max(0, plan.Bounds.Height - Bounds.Height)) : plan.Bounds;
+        ExpansionBounds = popup;
         DockPanel.SetDock(header, plan.Up ? Dock.Bottom : Dock.Top);
         HeaderCorners(plan.Up);
-        expansion.BorderThickness = plan.Up ? new(0, 0, 0, 1) : new(0, 1, 0, 0);
-        openFrame.Width = plan.Bounds.Width; openFrame.Height = plan.Bounds.Height;
-        Canvas.SetLeft(openFrame, plan.Bounds.Left); Canvas.SetTop(openFrame, plan.Bounds.Top);
+        if (IconOnly && iconSeam != null)
+        {
+            var alignedRight = Math.Abs(popup.Right - point.X - Bounds.Width) < 1;
+            var corner = plan.Up ? new CornerRadius(0, 0, 8, 8) : new CornerRadius(8, 8, 0, 0);
+            closedFrame.Background = ThemePalette.Panel;
+            closedFrame.CornerRadius = corner;
+            closedFrame.BorderThickness = plan.Up ? new(1, 0, 1, 1) : new(1, 1, 1, 0);
+            openFrame.CornerRadius = plan.Up ? new(8, 8, alignedRight ? 0 : 8, 8) : new(8, alignedRight ? 0 : 8, 8, 8);
+            var left = Math.Max(point.X, popup.Left) + 1;
+            iconSeam.Width = Math.Max(0, Math.Min(point.X + Bounds.Width, popup.Right) - 1 - left);
+            iconSeam.Height = 1;
+            Canvas.SetLeft(iconSeam, left);
+            Canvas.SetTop(iconSeam, plan.Up ? seamY - 1 : seamY);
+        }
+        expansion.BorderThickness = IconOnly ? new(0) : plan.Up ? new(0, 0, 0, 1) : new(0, 1, 0, 0);
+        // 纯图标入口保留在标题栏原位，宽面板不能把模式/关闭按钮覆盖成一条空白标题。
+        openFrame.Width = popup.Width; openFrame.Height = popup.Height;
+        Canvas.SetLeft(openFrame, popup.Left); Canvas.SetTop(openFrame, popup.Top);
     }
 
     private void HeaderCorners(bool? up)
@@ -417,9 +532,9 @@ public sealed class UnifiedExpandableSelect : UserControl
         var text = search?.Text?.Trim() ?? "";
         var results = choices.Where(item => (GroupFilter?.Invoke(group, item) ?? true) && Display(item).Contains(text, StringComparison.OrdinalIgnoreCase)).ToArray();
         list.ItemsSource = results;
-        list.SelectedIndex = Math.Max(0, Array.IndexOf(results, SelectedItem));
+        list.SelectedIndex = HideEmptyMessage ? Array.IndexOf(results, SelectedItem) : Math.Max(0, Array.IndexOf(results, SelectedItem));
         message.Text = IsLoading ? "正在加载…" : "无可选项";
-        message.IsVisible = results.Length == 0;
+        message.IsVisible = results.Length == 0 && (!HideEmptyMessage || choices.Length > 0 || IsLoading);
         list.IsVisible = results.Length > 0;
     }
 
@@ -462,6 +577,7 @@ public sealed class UnifiedExpandableSelect : UserControl
         list = null;
         search = null;
         openFrame = null;
+        iconSeam = null;
         openTitle = null;
         message = null;
         closedFrame.Opacity = 1;

@@ -25,7 +25,7 @@ public sealed partial class MainWindow
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto, MaxHeight = 114 };
         var panel = Column(); panel.Spacing = 8;
-        Button offline = null!, browser = null!, cancel = null!, clear = null!;
+        Button offline = null!, browser = null!, cancel = null!;
         WrapPanel diagnosticActions = null!;
         offline = Action("添加离线账号", async () =>
         {
@@ -39,7 +39,7 @@ public sealed partial class MainWindow
             catch (Exception ex) { feedback.Text = new GameLogSanitizer(null).Redact(ex.Message); }
             Sync();
         });
-        offline.Name = "AddOfflineAccount";
+        offline.Name = "AddOfflineAccount"; offline.IsDefault = true;
         browser = Action("微软正版登录", () => AuthenticateAsync(null));
         browser.IsEnabled = MicrosoftAccounts.ClientId != null;
         cancel = Action("取消登录", () => { pending?.Cancel(); return Task.CompletedTask; }); cancel.IsVisible = false;
@@ -57,13 +57,6 @@ public sealed partial class MainWindow
             await viewer.ShowDialog(dialog);
         });
         diagnosticActions = new WrapPanel { ItemSpacing = 8, Children = { copy, details } };
-        clear = Action("退出并清除账号缓存", async () =>
-        {
-            if (!await ConfirmAsync("退出并清除所有微软账号的本地凭据？离线账号会保留。", dialog)) return;
-            try { await model.Accounts.ClearAsync(); feedback.Text = "已清除微软账号缓存。"; }
-            catch (Exception ex) { feedback.Text = MicrosoftAccounts.Describe(ex); }
-            Sync();
-        });
         entries.ItemTemplate = new FuncDataTemplate<LauncherAccount>((profile, _) =>
         {
             if (profile == null) return null;
@@ -85,12 +78,12 @@ public sealed partial class MainWindow
             Avalonia.Automation.AutomationProperties.SetName(select, "选择账号 " + profile.Name);
             var remove = Action("", async () =>
             {
-                if (pending != null || !await ConfirmAsync("删除账号「" + profile.Name + "」？", dialog)) return;
+                if (pending != null || !await ConfirmAccountRemovalAsync(profile, dialog)) return;
                 try { await model.Accounts.RemoveProfileAsync(profile, lifetime.Token); }
                 catch (Exception ex) { feedback.Text = MicrosoftAccounts.Describe(ex); }
                 Sync();
             });
-            remove.Content = new LucideIcon("minus", 16); remove.Width = remove.Height = 32; remove.Padding = new(0);
+            remove.Content = new LucideIcon("trash-2", 16); remove.Width = remove.Height = 32; remove.Padding = new(0);
             remove.Background = Brushes.Transparent; remove.BorderThickness = new(0);
             Avalonia.Automation.AutomationProperties.SetName(remove, "删除账号 " + profile.Name);
             ToolTip.SetTip(remove, "删除账号");
@@ -104,10 +97,8 @@ public sealed partial class MainWindow
         panel.Children.Add(feedback); panel.Children.Add(cancel);
         panel.Children.Add(Column(Label("已有账号", 13, true), empty, listScroll));
         panel.Children.Add(diagnosticActions);
-        panel.Children.Add(new Border { BorderBrush = ThemePalette.Line, BorderThickness = new(0, 1, 0, 0), Padding = new(0, 10, 0, 0),
-            Child = Column(Label("安全操作", 12, true), clear) });
         foreach (var section in panel.Children.OfType<StackPanel>()) section.Spacing = 6;
-        offline.Height = browser.Height = clear.Height = 36;
+        offline.Height = browser.Height = 36;
         dialog.SetBody(panel);
         dialog.Closed += (_, _) =>
         {
@@ -129,7 +120,7 @@ public sealed partial class MainWindow
             listScroll.IsVisible = !empty.IsVisible;
             listScroll.Height = Math.Min(114, model.Accounts.Profiles.Count * 38 + 2);
             diagnosticActions.IsVisible = model.Accounts.LastDiagnostic != null;
-            offline.IsEnabled = clear.IsEnabled = entries.IsEnabled = pending == null;
+            offline.IsEnabled = entries.IsEnabled = pending == null;
             browser.IsEnabled = pending == null && MicrosoftAccounts.ClientId != null;
             dialog.FitContent(panel);
         }
@@ -147,7 +138,6 @@ public sealed partial class MainWindow
                 if (!closed)
                 {
                     feedback.Text = "微软账号已验证并选择。";
-                    if (model.Accounts.Identity is { } identity) account.Content = ProfileView(identity);
                 }
             }
             catch (OperationCanceledException) when (attempt.IsCancellationRequested) { if (!closed) feedback.Text = "已取消登录。"; }

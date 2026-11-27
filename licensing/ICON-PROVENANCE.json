@@ -18,11 +18,11 @@
     },
     {
       "path": "src/XGLauncher/TitleBar.cs",
-      "sha256": "bb882a6e0b0a27ac358b85d75be166e739b562296bcb24cbccfc28edb5252f5b"
+      "sha256": "f8000491d107823ec2de29efb634b2c79ec34e60e345f75437cbd7c12c1759de"
     },
     {
       "path": "src/XGLauncher/GameImportWizard.cs",
-      "sha256": "f5f9d575d4f95fceb84150c775b9ed74dce6a392c9d63de66ca47a9c6cb835e4"
+      "sha256": "a99eb369573a6ecdfa1e545dbc5ec94f1d18dbdbada08febf79b535ba5489341"
     }
   ],
   "current_asset_manifest": "LUCIDE-ASSETS.json",
@@ -35,5 +35,7 @@
   "responsive_window_note": "Current hashes refreshed for authorized window and responsive UI repair. Original manifest archived; no new independent rights clearance or changes to license grants.",
   "update_exit_review_note": "MainWindow changes only exit/update wiring; original logo, icon resource content, copyright and upstream license scope unchanged.",
   "local_only_final_note": "Local-only revision: official Java MSI/default-directory discovery, .minecraft isolation and update UI integration. No new third-party source or icon geometry imported; historical qualifications remain.",
-  "smart_import_note": "Launcher UI source hashes updated for the import workflow and dialog surfaces. Lucide SVG assets and upstream attribution retained."
+  "smart_import_note": "Launcher UI source hashes updated for the import workflow and dialog surfaces. Lucide SVG assets and upstream attribution retained.",
+  "account_import_ui_review_note": "Local incremental review of GitHub 4e8a01ce: account-specific cache eviction, primary-owner dialogs, import filtering and diagnostics; no third-party implementation or SVG geometry copied. Existing provenance qualifications remain.",
+  "v012_local_note": "Current owned-file integrity refresh; user-round.svg added from the same pinned Lucide commit and declared separately in LUCIDE-ASSETS.json. Existing upstream license text and historical qualifications retained."
 }

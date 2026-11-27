@@ -10,6 +10,12 @@ internal static class VerifiedTransfer
 {
     private static readonly ConditionalWeakTable<HttpClient, TransferGate> gates = new();
 
+    internal static Task WaitHostAsync(HttpClient client,string host,CancellationToken token)=>gates.GetOrCreateValue(client).WaitHostAsync(host,token);
+    internal static DownloadActivity Activity(HttpClient client) => gates.GetOrCreateValue(client).Activity;
+    internal static void Configure(HttpClient client, int maximum, bool adaptive) => gates.GetOrCreateValue(client).Configure(maximum, adaptive);
+
+    internal static async Task LimitedAsync(HttpClient client, Func<Task> operation, CancellationToken token) { var gate=gates.GetOrCreateValue(client);await gate.EnterAsync(token);try {await operation();}finally {gate.Leave();} }
+
     internal static void SetConcurrency(HttpClient client, int limit) => gates.GetOrCreateValue(client).SetLimit(limit);
 
     internal static void SetSpeedLimit(HttpClient client, long bytesPerSecond) =>
@@ -62,7 +68,25 @@ internal static class VerifiedTransfer
         private readonly object sync = new();
         private TaskCompletionSource changed = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private int active;
-        private int limit = 1;
+        private int limit = 8;
+        private int maximum = 16;
+        private bool adaptive = true;
+        private int successes, retries;
+        private double previousRate;
+        private readonly Dictionary<string, DateTimeOffset> cooldown = [];
+        private readonly Queue<object> waiting = new();
+        internal DownloadActivity Activity { get { lock (sync) return new(active, limit, maximum, retries); } }
+        internal void Configure(int cap, bool dynamic) { lock (sync) { maximum = Math.Clamp(cap,1,32); adaptive = dynamic; limit = dynamic ? Math.Min(maximum,8) : maximum; successes=0; Wake(); } }
+        internal void Observe(bool success, long bytes, TimeSpan elapsed) { lock (sync) {
+            if (!success) { retries++; successes=0; if(adaptive) limit=Math.Max(1,limit/2); Wake(); return; }
+            var rate = bytes / Math.Max(.001,elapsed.TotalSeconds);
+            // 按完成样本调节而非定时器造进度；低于此前吞吐或长延迟时不扩张。
+            if (adaptive && ++successes >= 16) { successes=0; if(elapsed.TotalSeconds < 5 && (previousRate==0 || rate >= previousRate*.7)) limit=Math.Min(maximum,limit+1); previousRate=rate; Wake(); }
+        } }
+        internal void Defer(string host, TimeSpan delay) { lock(sync) { var until=DateTimeOffset.UtcNow+delay; if(!cooldown.TryGetValue(host,out var old)||until>old)cooldown[host]=until; } }
+        internal async Task WaitHostAsync(string host,CancellationToken token) {
+            while(true) { TimeSpan delay; lock(sync) delay=cooldown.TryGetValue(host,out var until)?until-DateTimeOffset.UtcNow:TimeSpan.Zero; if(delay<=TimeSpan.Zero)return; await Task.Delay(delay,token); }
+        }
         private long bytesPerSecond;
         private long nextTick;
         private readonly HashSet<Task> workers = [];
@@ -124,21 +148,14 @@ internal static class VerifiedTransfer
 
         public async Task EnterAsync(CancellationToken token)
         {
-            while (true)
-            {
-                token.ThrowIfCancellationRequested();
-                Task available;
-                lock (sync)
-                {
-                    if (active < limit) { active++; return; }
-                    available = changed.Task;
-                }
+            var ticket = new object(); lock(sync) waiting.Enqueue(ticket);
+            try { while (true) { token.ThrowIfCancellationRequested(); Task available;
+                lock(sync) { if(ReferenceEquals(waiting.Peek(),ticket) && active<limit) { waiting.Dequeue(); active++; Wake(); return; } available=changed.Task; }
                 await available.WaitAsync(token);
-            }
+            } } catch { lock(sync) { var kept=waiting.Where(x=>!ReferenceEquals(x,ticket)).ToArray();waiting.Clear();foreach(var item in kept)waiting.Enqueue(item);Wake(); }throw; }
         }
-
-        public void Leave() { lock (sync) { active--; Wake(); } }
-        public void SetLimit(int value) { lock (sync) { limit = value; Wake(); } }
+        public void Leave() { lock(sync) { active--; Wake(); } }
+        public void SetLimit(int value) => Configure(value, false);
 
         private void Wake()
         {
@@ -151,6 +168,7 @@ internal static class VerifiedTransfer
     private static async Task StageCoreAsync(HttpClient http, Uri uri, string partial, long size, string checksum,
         Action<long, long> progress, Action<string> state, TransferGate gate, CancellationToken token)
     {
+        var timer = System.Diagnostics.Stopwatch.StartNew();
         var parent = Path.GetDirectoryName(partial)!;
         Directory.CreateDirectory(parent);
         var tagPath = partial + ".etag";
@@ -178,6 +196,7 @@ internal static class VerifiedTransfer
                             request.Headers.IfRange = new RangeConditionHeaderValue(saved);
                         }
                     }
+                    await gate.WaitHostAsync(uri.Host, token);
                     using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
                     if (response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && offset > 0 && retry < 2)
                     { Reset(partial); continue; }
@@ -186,7 +205,10 @@ internal static class VerifiedTransfer
                     {
                         var delay = retryAfter.Delta ?? (retryAfter.Date - DateTimeOffset.UtcNow) ?? TimeSpan.Zero;
                         state("等待中");
-                        await Task.Delay(TimeSpan.FromSeconds(Math.Clamp(delay.TotalSeconds, 1, 30)), token);
+                        // Retry-After 是服务端下限，不能截短为30秒；同源新请求也需等待。
+                        delay = delay < TimeSpan.Zero ? TimeSpan.Zero : delay;
+                        gate.Observe(false,0,timer.Elapsed); gate.Defer(uri.Host,delay);
+                        await gate.WaitHostAsync(uri.Host, token);
                         continue;
                     }
                     response.EnsureSuccessStatusCode();
@@ -244,12 +266,14 @@ internal static class VerifiedTransfer
                     if (retry < 2) continue;
                     throw new InvalidDataException("文件哈希校验失败。");
                 }
+                gate.Observe(true,size,timer.Elapsed);
                 return;
             }
             catch (Exception error) when (retry < 2 && IsTransient(error, token))
             {
                 state("等待中");
-                await Task.Delay(TimeSpan.FromSeconds(1 << retry), token);
+                gate.Observe(false,0,timer.Elapsed);
+                await Task.Delay(TimeSpan.FromMilliseconds((1 << retry)*1000 + Random.Shared.Next(100,350)), token);
             }
         }
     }

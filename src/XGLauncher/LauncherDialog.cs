@@ -13,13 +13,15 @@ namespace XGLauncher;
 internal sealed class LauncherDialog : Window
 {
     private readonly ScrollViewer scroller;
+    private bool manuallyMoved;
+    private readonly Window anchor;
     private Border? messageHost;
     private readonly Border footerFrame;
     private readonly Border modalShade = CreateShade();
 
     internal static Border CreateShade() => new()
     {
-        Background = new SolidColorBrush(Color.FromArgb(33, 0, 0, 0)),
+        Background = Brushes.Transparent,
         IsHitTestVisible = false,
         IsVisible = false,
         ZIndex = 100
@@ -34,17 +36,18 @@ internal sealed class LauncherDialog : Window
             _ => null
         };
         var previous = shade?.IsVisible ?? false;
-        if (shade != null) shade.IsVisible = true;
+        if (shade != null) shade.IsVisible = false;
         try { await base.ShowDialog(owner); }
         finally { if (shade != null) shade.IsVisible = previous; }
     }
 
     internal LauncherDialog(string title, Window owner, bool editor)
     {
+        anchor = DialogPlacement.Anchor(owner);
         Title = title;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         CanResize = editor;
-        var screen = owner.Screens.ScreenFromWindow(owner) ?? owner.Screens.Primary;
+        var screen = anchor.Screens.ScreenFromWindow(anchor) ?? anchor.Screens.Primary;
         var scale = screen?.Scaling ?? owner.RenderScaling;
         var availableWidth = (screen?.WorkingArea.Width ?? 900) / scale;
         var availableHeight = (screen?.WorkingArea.Height ?? 700) / scale;
@@ -83,7 +86,7 @@ internal sealed class LauncherDialog : Window
         header.Children.Add(close);
         dragArea.PointerPressed += (_, e) =>
         {
-            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) BeginMoveDrag(e);
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) { manuallyMoved = true; BeginMoveDrag(e); }
         };
         scroller = new ScrollViewer
         {
@@ -106,12 +109,24 @@ internal sealed class LauncherDialog : Window
         var surface = new Border { Name = "DialogSurface", Child = layout };
         Content = surface;
         WindowChrome.Attach(this, surface);
+        Opened += (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(CenterOnMainWindow, Avalonia.Threading.DispatcherPriority.Loaded);
+        SizeChanged += (_, _) => { if (IsVisible && !manuallyMoved) CenterOnMainWindow(); };
+        ScalingChanged += (_, _) => { if (IsVisible && !manuallyMoved) CenterOnMainWindow(); };
         AddHandler(KeyDownEvent, (_, e) =>
         {
             if (e.Key != Key.Escape || this.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.IsOpen)) return;
             e.Handled = true;
             Close();
         }, RoutingStrategies.Tunnel);
+    }
+
+    private void CenterOnMainWindow()
+    {
+        var screen = anchor.Screens.ScreenFromWindow(anchor) ?? anchor.Screens.Primary;
+        if (screen == null || manuallyMoved) return;
+        var scale = screen.Scaling;
+        var bounds = new PixelRect(anchor.Position, new PixelSize((int)Math.Ceiling(anchor.ClientSize.Width * anchor.RenderScaling), (int)Math.Ceiling(anchor.ClientSize.Height * anchor.RenderScaling)));
+        Position = DialogPlacement.Center(bounds, ClientSize, scale, screen.WorkingArea);
     }
 
     internal WrapPanel Footer { get; }
@@ -169,6 +184,8 @@ internal sealed class LauncherDialog : Window
         }
         Footer.Children.Clear();
         foreach (var action in actions) Footer.Children.Add(action);
+        if (!actions.OfType<Button>().Any(x => x.IsDefault) && actions.OfType<Button>().LastOrDefault(x => x.Classes.Contains("xg-primary")) is { } primary) primary.IsDefault = true;
+        if (!actions.OfType<Button>().Any(x => x.IsDefault) && actions.OfType<Button>().Count() == 1) actions.OfType<Button>().Single().IsDefault = true;
         Footer.IsVisible = actions.Length > 0;
         footerFrame.IsVisible = Footer.IsVisible;
         if (!CanResize) {

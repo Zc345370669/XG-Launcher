@@ -45,14 +45,13 @@ public sealed partial class MainWindow
         var game = versionPicker.Select;
         var choice = Picker(["全部", "NeoForge", "Forge", "Fabric", "Quilt"], title: "加载器");
         var source = Picker(["全部", "Modrinth", "CurseForge 原站", "MC百科原站"], title: "来源");
-        game.MinWidth = 150;
-        choice.MinWidth = 115;
-        source.MinWidth = 130;
-        var order = Picker(["相关度", "下载量", "更新时间"], title: "排序");
+
+        var order = Picker(["相关性最高", "下载量最多", "更新时间最新"], title: "排序");
         string[] sortKeys = ["relevance", "downloads", "updated"];
         var category = Picker(["全部", "科技", "冒险", "武器战斗", "建筑装饰", "生物", "性能", "世界生成", "HUD", "前置 API"], title: "分类");
         string[] categoryKeys = ["", "technology", "adventure", "equipment", "decoration", "mobs", "optimization", "worldgen", "utility", "library"];
-        var filters = new WrapPanel();
+        var filters = new WrapPanel { ItemSpacing = 6, LineSpacing = 6 };
+        foreach (var filter in new[] { game, choice, source, order, category }) { filter.AutoContentWidth = true; filter.MinWidth = 100; filter.PopupMinimumWidth = 170; }
         var detail = Column();
         CatalogSurface surface = null!;
         Guid? detailTarget = model.Selected?.Id;

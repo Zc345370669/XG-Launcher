@@ -33,27 +33,43 @@ internal sealed partial class MicrosoftAccounts
         finally { gate.Release(); }
     }
 
+    /// <summary>在账号门控内按 HomeAccountId 清理单个 MSAL 账号，不删除共享缓存文件。</summary>
     internal async Task RemoveProfileAsync(LauncherAccount profile, CancellationToken token = default)
     {
-        var wasSelected = SelectedProfile?.Id == profile.Id;
-        if (profile.Kind == "Microsoft")
+        var wasSelected = false;
+        await gate.WaitAsync(token);
+        try
         {
-            var accounts = await ListAsync(token);
-            var cached = accounts.FirstOrDefault(x => x.HomeAccountId.Identifier == profile.MicrosoftId);
-            if (cached != null) await RemoveAsync(cached, token);
-            else { await gate.WaitAsync(token); try { registry.Remove(profile.Id); if (wasSelected) Deselect(); Changed?.Invoke(); } finally { gate.Release(); } }
+            if (!Profiles.Any(x => x.Id == profile.Id)) return;
+            wasSelected = SelectedProfile?.Id == profile.Id;
+            if (profile.Kind == "Microsoft")
+            {
+                var app = enumerateAccounts == null ? await GetApplicationAsync() : null;
+                var cached = (enumerateAccounts != null ? await enumerateAccounts() : (await app!.GetAccountsAsync()).ToArray())
+                    .FirstOrDefault(x => x.HomeAccountId.Identifier == profile.MicrosoftId);
+                if (cached != null)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (removeAccount != null) await removeAccount(cached);
+                    else await app!.RemoveAsync(cached);
+                }
+            }
+            registry.Remove(profile.Id);
+            if (wasSelected) { Deselect(); selectionRevision++; }
+            Changed?.Invoke();
         }
-        else
+        finally { gate.Release(); }
+        if (wasSelected && SelectedProfile == null)
         {
-            await gate.WaitAsync(token);
-            try { registry.Remove(profile.Id); selectionRevision++; Changed?.Invoke(); }
-            finally { gate.Release(); }
-        }
-        if (wasSelected)
-        {
-            // 优先接续可立即使用的离线账号；接续微软账号仍必须完成真实验证。
-            var remaining = Profiles.OrderBy(x => x.Kind == "Offline" ? 0 : 1).FirstOrDefault();
-            if (remaining != null) await SelectProfileAsync(remaining, token);
+            // 删除最后一个账号时保持空状态；其余微软账号仍需通过既有真实验证才能接续。
+            Exception? last = null;
+            foreach (var candidate in Profiles.OrderBy(x => x.Kind == "Offline" ? 0 : 1).ToArray())
+            {
+                if (SelectedProfile != null) break;
+                try { await SelectProfileAsync(candidate, token); return; }
+                catch (Exception error) when (error is not OperationCanceledException) { last = error; }
+            }
+            if (last != null) throw new InvalidOperationException("账号已移除；其余账号暂时无法验证，请重新选择或登录。", last);
         }
     }
 }

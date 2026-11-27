@@ -7,8 +7,9 @@ namespace XG.Core;
 public sealed class ResourceControl : IDisposable
 {
     private readonly CancellationTokenSource lifetime;
-    private CancellationTokenSource? transfer;
-    private TaskCompletionSource? resume;
+    private readonly object sync = new();
+    private readonly HashSet<CancellationTokenSource> transfers = [];
+    private volatile TaskCompletionSource? resume;
     internal bool Paused => resume != null;
     public CancellationToken Token => lifetime.Token;
     private readonly Action<string> update;
@@ -24,7 +25,7 @@ public sealed class ResourceControl : IDisposable
         if (resume != null || lifetime.IsCancellationRequested) return;
         resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
         // 暂停仅中断当前文件传输；lifetime保持有效，因此继续时可以利用保留的部分文件。
-        transfer?.Cancel();
+        lock (sync) foreach (var transfer in transfers) transfer.Cancel();
         update("已暂停");
     }
 
@@ -51,11 +52,11 @@ public sealed class ResourceControl : IDisposable
             if (resume is { } signal) await signal.Task.WaitAsync(Token);
             Token.ThrowIfCancellationRequested();
             using var file = CancellationTokenSource.CreateLinkedTokenSource(Token);
-            transfer = file;
+            lock (sync) { transfers.Add(file); if (resume != null) file.Cancel(); }
             try { await action(file.Token); return; }
             catch (OperationCanceledException) when (file.IsCancellationRequested && !Token.IsCancellationRequested)
             { /* 保留磁盘上的部分文件，供继续传输使用。 */ }
-            finally { transfer = null; }
+            finally { lock (sync) transfers.Remove(file); }
         }
     }
 

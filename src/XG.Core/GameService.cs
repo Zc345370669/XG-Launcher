@@ -229,14 +229,38 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
             {
                 var control = resources?.Current;
                 var total = files.All(file => file.Size > 0) ? files.Sum(file => file.Size) : 0;
-                long finished = 0;
-                for (var i = 0; i < files.Length; i++)
+                var received = new long[files.Length];
+                var networkReceived = new long[files.Length];
+                var done = new bool[files.Length];
+                var progressSync = new object();
+                var notificationContext = SynchronizationContext.Current;
+                var scopeContext = ExecutionContext.Capture();
+                var lastReport = System.Diagnostics.Stopwatch.StartNew();
+                var workers = kind == "Java 环境" ? 1 : Math.Min(DownloadTuning.Activity(http).Maximum, kind == "游戏本体" ? 4 : 32);
+                var nextFile = -1;
+                // A bounded set of async workers retains the caller context. ResourceOperations is not a concurrent collection.
+                async Task Worker()
                 {
+                  while (true) {
+                    var i = Interlocked.Increment(ref nextFile); if(i >= files.Length) return;
+                    if(control != null) await control.WaitIfPausedAsync();
                     var file = files[i];
                     var position = i;
                     var filename = Path.GetFileName(file.Path) ?? file.Name;
-                    void Report(long bytes, long size, bool network = false) => resources?.Report(kind, instance.Name, finished + bytes,
-                        total, filename, position, files.Length, bytes, size, network);
+                    void Report(long bytes, long size, bool network = false)
+                    {
+                        lock(progressSync) {
+                            received[position]=Math.Max(received[position],Math.Clamp(bytes,0,Math.Max(0,file.Size)));
+                            if(network) networkReceived[position]=Math.Max(networkReceived[position],Math.Max(0,bytes));
+                            if(lastReport.ElapsedMilliseconds<100 && !done.All(x=>x)) return;
+                            lastReport.Restart();
+                            var aggregate=received.Sum();var count=done.Count(x=>x);var traffic=networkReceived.Sum();
+                            void Publish()=>resources?.Report(kind,instance.Name,aggregate,total,filename,count,files.Length,bytes,size,true,traffic);
+                            if(notificationContext!=null && SynchronizationContext.Current!=notificationContext)
+                                notificationContext.Post(_=> { if(scopeContext!=null)ExecutionContext.Run(scopeContext.CreateCopy(),_=>Publish(),null);else Publish(); },null);
+                            else Publish();
+                        }
+                    }
                     async Task Install(CancellationToken token)
                     {
                         mark?.Invoke("下载中");
@@ -276,18 +300,19 @@ public sealed partial class GameService(HttpClient http, InstanceStore store)
                         }
                         else
                         {
-                            await launcher.GameInstaller.Install([file],
+                            await VerifiedTransfer.LimitedAsync(http, async () => await launcher.GameInstaller.Install([file],
                                 new Progress<CmlLib.Core.Installers.InstallerProgressChangedEventArgs>(_ => { }),
-                                new Progress<ByteProgress>(value => Report(value.ProgressedBytes, value.TotalBytes, true)), token);
+                                new Progress<ByteProgress>(value => Report(value.ProgressedBytes, value.TotalBytes, true)), token), token);
                         }
                         Report(Math.Max(0, file.Size), Math.Max(0, file.Size));
                     }
                     if (control != null) await control.RunFileAsync(Install);
                     else await Install(default);
-                    finished += Math.Max(0, file.Size);
-                    resources?.Report(kind, instance.Name, finished, total, filename, i + 1, files.Length,
-                        Math.Max(0, file.Size), Math.Max(0, file.Size), measureSpeed: false);
+                    lock(progressSync) done[position]=true;
+                    Report(Math.Max(0,file.Size),Math.Max(0,file.Size));
+                  }
                 }
+                await Task.WhenAll(Enumerable.Range(0,Math.Min(workers,files.Length)).Select(_=>Worker()));
                 return true;
             }
 

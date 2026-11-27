@@ -15,7 +15,7 @@ namespace XGLauncher;
 /// </summary>
 internal sealed partial class MicrosoftAccounts(string dataRoot,
     Func<IAccount?, CancellationToken, Task<(IAccount Account, MinecraftLogin Login)>>? authenticate = null,
-    TimeProvider? time = null, Func<IAccount, Task>? removeAccount = null)
+    TimeProvider? time = null, Func<IAccount, Task>? removeAccount = null, Func<Task<IAccount[]>>? enumerateAccounts = null)
 {
     internal const string RedirectUri = "http://localhost";
     private static readonly string[] Scopes = ["XboxLive.signin"];
@@ -44,8 +44,7 @@ internal sealed partial class MicrosoftAccounts(string dataRoot,
         await gate.WaitAsync(cancellationToken);
         try
         {
-            var app = await GetApplicationAsync();
-            var accounts = (await app.GetAccountsAsync()).ToArray();
+            var accounts = enumerateAccounts != null ? await enumerateAccounts() : (await (await GetApplicationAsync()).GetAccountsAsync()).ToArray();
             var added = false;
             foreach (var account in accounts)
                 if (!Profiles.Any(x => x.MicrosoftId == account.HomeAccountId.Identifier))
@@ -204,6 +203,7 @@ internal sealed partial class MicrosoftAccounts(string dataRoot,
             await gate.WaitAsync(timeout.Token);
             try
             {
+                if (SelectedProfile == null) throw new LoginException(LoginStage.Microsoft, "请先添加并选择账号，再启动游戏。");
                 var revision = selectionRevision;
                 return () => GetGameSessionAsync(revision);
             }

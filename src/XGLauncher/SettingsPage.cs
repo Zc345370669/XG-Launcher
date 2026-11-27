@@ -27,6 +27,8 @@ public sealed partial class MainWindow
         general.Children.Add(Action("检查并迁移旧游戏目录", PreviewLegacyGameMigrationAsync));
         general.Children.Add(Action("迁移游戏数据",MigrateWorkspaceAsync));
         var legacyRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XGLauncher", "data");
+        general.Children.Add(Label("下载设置", 16, true));
+        general.Children.Add(DownloadSettings());
         var appearance = AppearanceSettings();
         var notify = new CheckBox { Content = "下载完成提示", IsChecked = notificationsEnabled };
         notify.IsCheckedChanged += (_, _) => {
@@ -60,7 +62,7 @@ public sealed partial class MainWindow
         var backup = Column(SettingRow("全局备份管理", "打开备份目录", () => OpenFolder(model.BackupsDirectory)), SettingRow("从 ZIP 恢复到新实例", "恢复备份", RestoreBackupAsync));
         if (File.Exists(Path.Combine(legacyRoot, "instances.json")) && !legacyRoot.Equals(model.Store.Root, StringComparison.OrdinalIgnoreCase))
             backup.Children.Add(SettingRow("旧版实例", "备份并复制", () => ImportLegacyAsync(legacyRoot)));
-        var security = Column(Label("账号凭据由系统支持的安全缓存管理。账号退出和缓存清除请进入顶部账号管理。"),
+        var security = Column(Label("账号凭据由系统支持的安全缓存管理。请使用账号列表右侧垃圾桶移除账号，仅清理对应本地记录和认证缓存。"),
             Label("游戏及模组资源使用官方渠道；下载文件会校验后再安装。用户数据保留于本地工作目录。"));
         var legal = Column(new LegalBrowser(this), Action("导出完整许可与对应源码", ExportComplianceAsync));
         var about = AboutPage();

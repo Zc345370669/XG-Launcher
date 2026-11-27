@@ -25,7 +25,7 @@ internal static class OAuthSecurityTests
                 var html = await complete.Content.ReadAsStringAsync();
                 Check(complete.IsSuccessStatusCode && complete.Headers.CacheControl?.NoStore == true &&
                     complete.Headers.Contains("Referrer-Policy") && complete.Headers.Contains("Content-Security-Policy"), "safe headers");
-                Check(html.Contains("认证已完成") && !html.Contains("<script") && !html.Contains("code=") && !html.Contains("state="), "clean offline page");
+                Check(html.Contains("认证已完成") && html.Contains("<script>" + OAuthCompletionPage.AutoCloseScript + "</script>") && complete.Headers.GetValues("Content-Security-Policy").Single().Contains(OAuthCompletionPage.AutoCloseHash) && !html.Contains("window.opener") && !html.Contains("code=") && !html.Contains("state="), "clean offline page");
             }
             foreach (var path in new[] { "/", "/auth/complete?code=fictional", "/auth/arrive?next=https://example.org", "/auth/complete/" })
             {

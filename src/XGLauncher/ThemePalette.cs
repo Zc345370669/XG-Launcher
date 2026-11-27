@@ -20,10 +20,10 @@ internal static class ThemePalette
     ];
     // 共享可变画刷同时注册到全局资源，使既有控件、浮层和弹窗原地更新。
     internal static readonly SolidColorBrush Background = new();
-    internal static readonly SolidColorBrush WindowBackground = new();
     internal static readonly SolidColorBrush Panel = new();
     internal static readonly SolidColorBrush DialogSurface = new();
     internal static readonly SolidColorBrush DialogBorder = new();
+    internal static readonly SolidColorBrush WindowBorder = new();
     internal static readonly SolidColorBrush Navigation = new();
     internal static readonly SolidColorBrush Text = new();
     internal static readonly SolidColorBrush Muted = new();
@@ -36,22 +36,21 @@ internal static class ThemePalette
     /// <summary>
     /// 原地更新共享画刷，使既有控件、弹层和两种模式同步响应主题。
     /// </summary>
-    internal static void Select(Palette palette, double opacity = .96)
+    internal static void Select(Palette palette)
     {
         Current = palette;
         Background.Color = Color.Parse(palette.Background); Panel.Color = Color.Parse(palette.Panel);
         var panel = Panel.Color;
         DialogSurface.Color = palette.Dark ? Color.FromRgb((byte)(panel.R + 5), (byte)(panel.G + 5), (byte)(panel.B + 5))
             : Color.FromRgb((byte)(panel.R - 4), (byte)(panel.G - 4), (byte)(panel.B - 4));
-        DialogBorder.Color = Color.Parse(palette.Dark ? "#68717F" : "#A8ADB5");
+        WindowBorder.Color = Color.Parse(palette.Dark ? "#A7B5C9" : "#333333");
+        DialogBorder.Color = WindowBorder.Color;
         Navigation.Color = Color.Parse(palette.Navigation); Text.Color = Color.Parse(palette.Text);
         Muted.Color = Color.Parse(palette.Muted); Line.Color = Color.Parse(palette.Line);
         Accent.Color = Color.Parse(palette.Accent); OnAccent.Color = Color.Parse(palette.OnAccent); Hover.Color = Color.Parse(palette.Hover);
-        var bg = Background.Color;
-        WindowBackground.Color = Color.FromArgb((byte)Math.Round(Math.Clamp(opacity, .85, 1) * 255), bg.R, bg.G, bg.B);
         if (Application.Current is not { } app) return;
         app.RequestedThemeVariant = palette.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
-        foreach (var (key, brush) in new[] { ("XgBackground", Background), ("XgPanel", Panel), ("XgDialogSurface", DialogSurface), ("XgDialogBorder", DialogBorder), ("XgText", Text),
+        foreach (var (key, brush) in new[] { ("XgBackground", Background), ("XgPanel", Panel), ("XgDialogSurface", DialogSurface), ("XgDialogBorder", DialogBorder), ("XgWindowBorder", WindowBorder), ("XgText", Text),
             ("XgAccent", Accent), ("XgOnAccent", OnAccent), ("XgLine", Line), ("XgHover", Hover), ("XgNavigation", Navigation) }) app.Resources[key] = brush;
         foreach (var key in new[] { "ButtonBackgroundPointerOver", "ButtonBackgroundPressed", "TextControlBackgroundPointerOver", "TextControlBackgroundFocused",
             "SystemControlHighlightListLowBrush", "SystemControlHighlightListMediumBrush", "SystemControlHighlightListAccentLowBrush", "SystemControlHighlightListAccentMediumBrush", "SystemControlHighlightListAccentHighBrush" }) app.Resources[key] = Hover;

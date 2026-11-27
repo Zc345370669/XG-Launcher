@@ -3,7 +3,7 @@ from pathlib import Path
 R=Path(__file__).resolve().parents[1]
 class LucideTests(unittest.TestCase):
  def test_pinned_official_resource_hashes(self):
-  d=json.loads((R/'licensing/LUCIDE-ASSETS.json').read_text());self.assertEqual(len(d['assets']),36)
+  d=json.loads((R/'licensing/LUCIDE-ASSETS.json').read_text());self.assertEqual(len(d['assets']),37)
   for x in d['assets']:self.assertIn(d['commit'],x['source']);self.assertEqual(hashlib.sha256((R/x['path']).read_bytes()).hexdigest(),x['sha256'])
  def test_official_transparent_outline(self):
   for p in(R/'src/XGLauncher/Assets/Lucide').glob('*.svg'):

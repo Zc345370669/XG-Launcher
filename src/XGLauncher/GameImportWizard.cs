@@ -19,6 +19,8 @@ public sealed partial class MainWindow
         return button;
     }
 
+    internal Func<Instance, Task>? ImportedRepairOverride { get; set; }
+
     private Task GameImportWizardAsync() => GameImportWizardAsync(async dialog =>
     {
         var folders = await dialog.StorageProvider.OpenFolderPickerAsync(new() { AllowMultiple = false });
@@ -64,14 +66,15 @@ public sealed partial class MainWindow
         {
             shared.IsVisible = reference.IsChecked == true;
             keep.IsVisible = !shared.IsVisible;
-            completeResources.IsVisible = rows.Count(x => x.Selected.IsChecked == true) == 1;
+            completeResources.IsVisible = rows.Any(x => x.Selected.IsChecked == true);
             execute.IsEnabled = CanImport();
         }
 
         void AddRow(GameImportCandidate candidate)
         {
             var inspection = candidate.Inspection;
-            var box = new CheckBox { Content = candidate.Name, IsChecked = rows.Count == 0 };
+            var registered = model.Store.Entries.Any(x => string.Equals(model.Store.GameDirectoryFor(x), candidate.Profile, StringComparison.OrdinalIgnoreCase));
+            var box = new CheckBox { Content = candidate.Name + (registered ? " · 已注册" : ""), IsChecked = !registered && !rows.Any(x => x.Selected.IsChecked == true), IsEnabled = !registered };
             var version = Input("Minecraft 版本", inspection.Version);
             var loader = Picker(["原版", "Forge", "NeoForge", "Fabric", "Quilt"], title: "加载器类型");
             loader.SelectedItem = inspection.Loader;
@@ -138,8 +141,9 @@ public sealed partial class MainWindow
                     var runtime = major.HasValue ? java.GetValueOrDefault(major.Value) ?? $"Java {major} 待校验" : "Java 版本待校验";
                     AddRow(item with { Status = item.Status + " · " + runtime });
                 }
-                info.Text = rows.Count == 0 ? "未找到有效的 Minecraft 实例，请选择游戏目录或具体版本目录。"
-                    : $"已识别 {rows.Count} 个实例。启动前将校验 Java、游戏文件和加载器依赖。";
+                var registeredCount = rows.Count(x => !x.Selected.IsEnabled);
+                info.Text = $"扫描路径：{path}\n发现 {rows.Count} 个实例，已注册 {registeredCount} 个，可导入或恢复 {rows.Count - registeredCount} 个。"
+                    + (rows.Count == 0 ? " 未发现有效的版本 JSON 或受支持的实例元数据，请查看扫描详情或选择具体目录。" : " 启动前将校验依赖。");
                 if (scan.Issues.Count > 0)
                 {
                     info.Text += $" {scan.Issues.Count} 项无法读取或解析，其他结果仍可导入。";
@@ -188,7 +192,7 @@ public sealed partial class MainWindow
             if (!CanImport()) return;
             var selected = rows.Where(x => x.Selected.IsChecked == true).ToArray();
             var useReference = reference.IsChecked == true;
-            var completeAfterImport = selected.Length == 1 && completeResources.IsChecked == true;
+            var completeAfterImport = completeResources.IsChecked == true;
             importing = true;
             maintenance++;
             choose.IsEnabled = rescan.IsEnabled = results.IsEnabled = modes.IsEnabled = false;
@@ -196,7 +200,7 @@ public sealed partial class MainWindow
             var errors = new List<string>();
             var sharedConflicts = new List<string>();
             var imported = 0;
-            Instance? importedInstance = null;
+            var importedInstances = new List<Instance>();
             try
             {
                 foreach (var row in selected)
@@ -220,7 +224,12 @@ public sealed partial class MainWindow
                     try
                     {
                         info.Text = "正在导入 " + candidate.Name + "…";
-                        if (useReference)
+                        if (Directory.GetParent(Path.GetFullPath(candidate.Profile))?.FullName.Equals(model.Store.InstanceRoot, StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            model.Store.AdoptDirectory(instance with { ReferencedGameDirectory = null }, Path.GetFileName(candidate.Profile));
+                            instance = model.Store.Entries.Single(x => x.Id == instance.Id);
+                        }
+                        else if (useReference)
                         {
                             _ = model.Store.GameDirectoryFor(instance);
                             model.Store.Save(instance);
@@ -232,7 +241,7 @@ public sealed partial class MainWindow
                             await Task.Run(() => GameImport.CopyCandidateAsync(model.Store, instance, candidate, preserve, progress, lifetime.Token, sharedConflicts.Add), lifetime.Token);
                         }
                         model.Selected = instance;
-                        importedInstance = instance;
+                        importedInstances.Add(instance);
                         imported++;
                     }
                     catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
@@ -258,9 +267,10 @@ public sealed partial class MainWindow
                 choose.IsEnabled = rescan.IsEnabled = results.IsEnabled = modes.IsEnabled = true;
                 Update();
             }
-            if (errors.Count != 0 || importedInstance == null) return;
+            if (importedInstances.Count == 0) return;
+            if (errors.Count > 0) await ErrorAsync(dialog, string.Join("\n", errors));
             dialog.Close();
-            if (completeAfterImport) await CompleteImportedGameAsync(importedInstance);
+            if (completeAfterImport) foreach (var importedInstance in importedInstances) await (ImportedRepairOverride?.Invoke(importedInstance) ?? CompleteImportedGameAsync(importedInstance));
         }, true);
         copy.IsCheckedChanged += (_, _) => Update();
         reference.IsCheckedChanged += (_, _) => Update();

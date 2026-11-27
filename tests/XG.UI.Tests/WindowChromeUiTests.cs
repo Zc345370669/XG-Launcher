@@ -46,11 +46,11 @@ internal static class WindowChromeUiTests
         var surface = owner.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "WindowShell");
         Check(surface.Clip == null && surface.CornerRadius == new CornerRadius(0) && owner.Opacity == 1 && owner.TransparencyLevelHint.Contains(WindowTransparencyLevel.None), "second client rounding mask or translucency remains");
         Check(WindowChrome.Strategy(owner) != "unconfigured", "main window is not configured by shared chrome");
-        var select = owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CompactAccounts");
+        var select = owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CaptionAccounts");
         var primary = owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "CompactPrimary");
         var anchor = select.TranslatePoint(default, owner)!.Value; var height = owner.Height;
         select.Open(); Pump();
-        Check(select.ExpansionStrategy == "joined-above" && select.ExpansionBounds is { } bounds && Math.Abs(bounds.Bottom - (anchor.Y + select.Bounds.Height)) < 1, "account header/list not one joined contour");
+        Check(select.ExpansionStrategy == "joined-below" && select.ExpansionBounds is { } bounds && Math.Abs(bounds.Top - anchor.Y - select.Bounds.Height) < 1, "account header/list not one joined contour");
         Check(select.TranslatePoint(default, owner) == anchor && owner.Height == height, "expansion moved fixed account bar or window");
         var list = owner.GetVisualDescendants().OfType<ListBox>().Single();
         var scroll = list.GetVisualDescendants().OfType<ScrollViewer>().First();
@@ -58,17 +58,22 @@ internal static class WindowChromeUiTests
         list.ScrollIntoView(model.Accounts.Profiles.First()); Pump();
         Capture("rounding-account-gap-scroll");
         list.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape }); Pump(); Check(!select.IsOpen, "Escape does not close account list");
-        select.Open(); Pump(); owner.MouseDown(new Point(10, 100), MouseButton.Left); owner.MouseUp(new Point(10, 100), MouseButton.Left); Pump(); Check(!select.IsOpen, "outside click does not dismiss");
-        owner.Height = 330; Pump(); select.Open(); Pump(); Check(select.ExpansionStrategy == "joined-above" && owner.Height == 330, "short window expanded or hid popup instead of using controlled side layer"); select.Close(); Pump();
+        select.Open(); Pump();
+        var outside = new Point(owner.ClientSize.Width - 16, 100);
+        Check(select.ExpansionBounds is { } panel && !panel.Contains(outside), "outside fixture landed on an account");
+        owner.MouseDown(outside, MouseButton.Left); owner.MouseUp(outside, MouseButton.Left); Pump();
+        Check(!select.IsOpen && model.Accounts.SelectedProfile?.Name == "Player7", "outside click did not dismiss without changing the account");
+        owner.Height = 330; Pump(); select.Open(); Pump(); Check(select.ExpansionStrategy == "joined-below" && owner.Height == 330, "short window expanded or hid popup instead of using controlled side layer"); select.Close(); Pump();
         owner.Height = 400; Pump();
         owner.ToggleMode(); Pump();
-        Invoke((Button)typeof(MainWindow).GetField("account", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(owner)!);
+        _ = (Task)typeof(MainWindow).GetMethod("AccountsAsync", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(owner, null)!;
+        Pump();
         var dialog = owner.OwnedWindows.OfType<LauncherDialog>().Single();
         var body = dialog.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "DialogSurface");
         Check(WindowChrome.Strategy(dialog) != "unconfigured" && body.Clip == null && body.CornerRadius == new CornerRadius(0) && body.BorderBrush == ThemePalette.DialogBorder && body.BorderThickness.Left > 0 && ReferenceEquals(dialog.Background, ThemePalette.DialogSurface), "account dialog uses conflicting surface policy");
         Check(dialog.Height <= Math.Min(dialog.MaxHeight, 620) && dialog.Height < 600, "account management keeps oversized editor height");
         Check(dialog.GetVisualDescendants().OfType<ItemsControl>().Single(x => x.Name == "FullAccountsList").ItemsSource!.Cast<LauncherAccount>().Count() == 8, "inline account management list missing");
-        Check(dialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "安全操作") && dialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "离线玩家名称"), "account and cache sections not labeled");
+        Check(dialog.GetVisualDescendants().OfType<TextBlock>().All(x => x.Text != "安全操作") && dialog.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "离线玩家名称"), "account and cache sections not labeled");
         var removeOther = dialog.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x) == "删除账号 Player0");
         removeOther.BringIntoView(); Pump();
         Capture("rounding-manager-before-delete", dialog);
@@ -80,11 +85,8 @@ internal static class WindowChromeUiTests
         Check(model.Accounts.Profiles.Count == 8 && model.Accounts.SelectedProfile?.Name == "Player7", "inline deletion cancellation mutated accounts");
         Capture("rounding-accounts-compact", dialog);
         var cache = Path.Combine(root, "microsoft-msal.bin"); File.WriteAllText(cache, "controlled cache fixture");
-        Invoke(dialog.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "退出并清除账号缓存")));
-        var confirm = dialog.OwnedWindows.OfType<LauncherDialog>().Single();
-        Check(WindowChrome.Strategy(confirm) != "unconfigured", "confirmation not styled by common chrome");
-        Invoke(confirm.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "取消")));
-        Check(File.Exists(cache) && model.Accounts.Profiles.Count == 8, "cache removed without confirmation");
+        Check(!dialog.GetVisualDescendants().OfType<Button>().Any(x => Equals(x.Content, "退出并清除账号缓存")), "global cache clear entry remains");
+        Check(File.Exists(cache) && model.Accounts.Profiles.Count == 8, "unrelated shared cache was removed");
         foreach (var palette in ThemePalette.All)
         {
             ThemePalette.Select(palette); Pump();
@@ -95,7 +97,7 @@ internal static class WindowChromeUiTests
         owner.ToggleMode(); Pump(); owner.WindowState = WindowState.Maximized; Pump();
         Check(surface.Clip == null && surface.CornerRadius == new CornerRadius(0) && surface.BorderThickness == new Thickness(0), "maximized window has corner holes/client mask");
         owner.WindowState = WindowState.Normal; Pump(); owner.Close(); Pump(); ThemePalette.Select(ThemePalette.All[0]);
-        Console.WriteLine("PASS window chrome Win10/11 capability gates, COLORREF, opaque shared main/dialog/confirmation surfaces, maximized no mask, 100-200% edge math; joined upward account outline, internal scrolling, Escape/outside dismissal, short-window joined overlay, compact labeled account management and cache cancellation (Linux headless, not Windows GUI)");
+        Console.WriteLine("PASS window chrome Win10/11 capability gates, COLORREF, opaque shared main/dialog/confirmation surfaces, maximized no mask, 100-200% edge math; joined caption account outline, internal scrolling, Escape/outside dismissal, short-window joined overlay, compact labeled account management and cache cancellation (Linux headless, not Windows GUI)");
 
         void Capture(string name, Window? window = null)
         {

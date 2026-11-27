@@ -12,8 +12,8 @@ namespace XGLauncher;
 /// </summary>
 internal sealed partial class LauncherModel : IDisposable
 {
-    private readonly HttpClient http = new(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.All })
-    { Timeout = TimeSpan.FromMinutes(3) };
+    private readonly HttpClient http = CreateDownloadClient();
+    private static HttpClient CreateDownloadClient() { var client=DownloadTuning.CreateHttpClient(new HttpClientHandler { AllowAutoRedirect=false, AutomaticDecompression=DecompressionMethods.All });client.Timeout=TimeSpan.FromMinutes(3);return client; }
     public bool PortableSession { get; }
     public InstanceStore Store { get; }
     public string DownloadsDirectory { get; }
@@ -38,7 +38,7 @@ internal sealed partial class LauncherModel : IDisposable
     public HashSet<Guid> Busy { get; } = [];
     public LauncherModel(string? root = null, Modrinth? catalog = null, HttpClient? gameMetadata = null)
     {
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.1");
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.2");
         var portable = root is null ? PortableStorage.Resolve() : null;
         PortableSession = portable != null;
         root ??= Path.Combine(portable!, "data");

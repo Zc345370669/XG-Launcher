@@ -14,7 +14,7 @@ internal static class LucideUiTests
   var assembly=typeof(MainWindow).Assembly;
   var names=assembly.GetManifestResourceNames().Where(x=>x.StartsWith("XG.Lucide.")).Select(x=>x[10..^4]).Order().ToArray();
   Check(LucideIcon.Shapes("trash-2").Count == LucideIcon.Shapes("trash").Count,"upstream trash-2 alias failed");
-  Check(names.Length==36,"pinned SVG count mismatch");
+  Check(names.Length==37,"pinned SVG count mismatch");
   foreach(var name in names) {
    var shapes=LucideIcon.Shapes(name);Check(shapes.Count>0,"empty parsed icon "+name);
    foreach(var shape in shapes) {var box=shape.GetRenderBounds(new Pen(Brushes.Black,2));Check(box.Left>=-.1&&box.Top>=-.1&&box.Right<=24.1&&box.Bottom<=24.1,"official geometry outside viewport "+name);}
@@ -24,7 +24,7 @@ internal static class LucideUiTests
    var ink=0;for(var y=0;y<24;y++)for(var x=0;x<24;x++){var alpha=bitmap.GetPixel(x,y).Alpha;if(alpha>0)ink++;if(x==0||y==0||x==23||y==23)Check(alpha==0,"raster edge clipped "+name);}
    Check(ink>0&&ink<24*24,"blank/opaque icon "+name);
   }
-  Console.WriteLine("PASS Lucide 36 embedded official SVGs parsed and rasterized; transparent perimeter and nonblank complete geometry");
+  Console.WriteLine("PASS Lucide 37 embedded official SVGs parsed and rasterized; transparent perimeter and nonblank complete geometry");
   var previous=ThemePalette.Current;
   foreach(var palette in ThemePalette.All) {
    ThemePalette.Select(palette);

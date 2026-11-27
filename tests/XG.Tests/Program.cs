@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using XG.Core;
 using CmlLib.Core.Auth;
 
+if(args.Contains("--download-bench")){var benchmarkRoot=Path.Combine(Path.GetTempPath(),"xg-benchmark-"+Guid.NewGuid().ToString("N"));try { await IntegratedDownloadTests.RunAsync(benchmarkRoot,true); }finally {Directory.Delete(benchmarkRoot,true);}return;}
 PublicSecurityTests.Run();
 DualModeProgressTests.Run();
 await MinecraftAuthenticationTests.RunAsync();
@@ -26,6 +27,9 @@ var root = Path.Combine(Path.GetTempPath(), "xg-test-" + Guid.NewGuid().ToString
 try
 {
     var store = new InstanceStore(root);
+    SelfImportTests.Run(root);
+    await IntegratedDownloadTests.RunAsync(root);
+    await PackJsonRemediationTests.RunAsync(root);
     await JavaNativeTests.RunAsync(root);
     await InstallerJavaTests.RunAsync(root);
     await JavaCleanupTests.RunAsync(root);
@@ -41,6 +45,7 @@ try
     await Phase16Tests.RunAsync(root);
     await Phase17Tests.RunAsync(root);
     await Phase18Tests.RunAsync(root);
+    await SmartImportRemediationTests.RunAsync(root);
     await Phase19Tests.RunAsync(root);
     await ShutdownTests.RunAsync(root);
     await GitHubUpdateTests.RunAsync(root);

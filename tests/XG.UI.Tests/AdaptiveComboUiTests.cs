@@ -36,7 +36,7 @@ internal static class AdaptiveComboUiTests
         var owner = new MainWindow(root) { FontFamily = new FontFamily("Noto Sans CJK SC") }; owner.Show(); Pump(); owner.ToggleMode(); Pump();
         var model = (LauncherModel)typeof(MainWindow).GetField("model", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(owner)!;
         var versions = Find<UnifiedExpandableSelect>(owner, "CompactInstances");
-        var accounts = Find<UnifiedExpandableSelect>(owner, "CompactAccounts");
+        var accounts = Find<UnifiedExpandableSelect>(owner, "CaptionAccounts");
         var primary = Find<Button>(owner, "CompactPrimary"); var progress = Find<Control>(owner, "CompactProgress");
         Wait(() => !versions.IsLoading);
         Check(Path.GetFullPath(model.Store.Root) == Path.GetFullPath(root) && versions.ItemsSource!.Cast<Instance>().Count() == 18, "async scan accepted pending, corrupt, or folder-only instance");
@@ -70,21 +70,22 @@ internal static class AdaptiveComboUiTests
         Check(owner.IsCompact && !owner.OwnedWindows.Any() && versions.IsAuxiliaryOpen, "footer did not open inline install flow"); versions.Close(); Pump();
 
         // Inline add/list use one reusable outline and are mutually exclusive.
-        Invoke(Find<Button>(owner, "AddAccount"));
+        accounts.OpenAuxiliary(); Pump();
         Check(accounts.IsAuxiliaryOpen && !owner.OwnedWindows.Any(), "add account opened separate manager");
         Capture("adaptive-inline-account-add");
+        Invoke(Find<Button>(owner, "CompactOfflineOption")); Pump();
         var name = Find<TextBox>(owner, "CompactOfflineName"); name.Text = "bad name";
         name.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter }); Pump();
         Check(accounts.IsAuxiliaryOpen && model.Accounts.Profiles.Count == 0 && Find<TextBlock>(owner, "CompactAccountError").IsVisible, "invalid account accepted or no error");
         name.Text = "AdaptivePlayer"; name.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
         Wait(() => !accounts.IsOpen && model.Accounts.SelectedProfile?.Name == "AdaptivePlayer");
-        Invoke(Find<Button>(owner, "AddAccount")); Find<TextBox>(owner, "CompactOfflineName").Text = "adaptiveplayer";
+        accounts.OpenAuxiliary(); Pump(); Invoke(Find<Button>(owner, "CompactOfflineOption")); Pump(); Find<TextBox>(owner, "CompactOfflineName").Text = "adaptiveplayer";
         Invoke(Find<Button>(owner, "CompactAddOffline")); Wait(() => !accounts.IsOpen);
         Check(model.Accounts.Profiles.Count == 1, "duplicate offline account added");
-        accounts.Open(); Pump(); Invoke(Find<Button>(owner, "AddAccount"));
+        accounts.Open(); Pump(); accounts.OpenAuxiliary(); Pump();
         Check(accounts.IsAuxiliaryOpen && !owner.GetVisualDescendants().OfType<ListBox>().Any(), "list not replaced by inline add");
         // The real header is moved into the overlay; find its selector button by caption automation.
-        var anchorButton = owner.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x) == model.Accounts.SelectedProfile!.Caption);
+        var anchorButton = owner.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x) == model.Accounts.SelectedProfile!.Name);
         Invoke(anchorButton); Check(accounts.IsOpen && !accounts.IsAuxiliaryOpen && !owner.GetVisualDescendants().OfType<TextBox>().Any(x => x.Name == "CompactOfflineName"), "dropdown did not close add panel");
         foreach (var palette in ThemePalette.All) { ThemePalette.Select(palette); Pump(); Check(accounts.IsOpen && ((ISolidColorBrush)owner.Background!).Color.A is 0 or 255, "open combo theme/state diverged"); }
         Capture("adaptive-accounts-open");

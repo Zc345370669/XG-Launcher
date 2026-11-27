@@ -29,7 +29,7 @@ internal static class NativeWindowRounding
             // 仅Windows11能力路径请求圆角；最大化取消圆角偏好，兼容回退不使用整数HRGN裁切。
             var corner = window.WindowState == WindowState.Normal ? 2 : 1;
             var dark = ThemePalette.Current.Dark ? 1 : 0;
-            var border = ColorRef(window is LauncherDialog ? ThemePalette.DialogBorder.Color : ThemePalette.Line.Color);
+            var border = ColorRef(window is LauncherDialog ? ThemePalette.DialogBorder.Color : ThemePalette.WindowBorder.Color);
             var caption = ColorRef(window is LauncherDialog ? ThemePalette.DialogSurface.Color : ThemePalette.Background.Color);
             // 调用成功仅表示偏好已提交，不证明DWM已对顶层窗口应用圆角。
             return DwmSetWindowAttribute(handle, 33, ref corner, sizeof(int)) >= 0 &&

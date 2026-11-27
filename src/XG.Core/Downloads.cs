@@ -17,7 +17,9 @@ public sealed class Downloads
     private readonly string? portableRoot;
     private readonly List<(Download Job, TaskCompletionSource Ready)> waiting = [];
     private int running;
-    private int concurrency = 1;
+    private int concurrency = 16;
+    public string Mode { get; private set; } = "均衡";
+    public DownloadActivity Activity => DownloadTuning.Activity(http);
     public int Concurrency => concurrency;
     public int SpeedLimitMiB { get; private set; }
     private readonly HashSet<Guid> cancelled = [];
@@ -33,8 +35,10 @@ public sealed class Downloads
         this.http = http;
         this.portableRoot = portableRoot;
         var options = Path.Combine(root, "download-concurrency.json");
-        if (File.Exists(options)) concurrency = Math.Clamp(JsonSerializer.Deserialize<int>(File.ReadAllText(options)), 1, 6);
-        VerifiedTransfer.SetConcurrency(http, concurrency);
+        if (File.Exists(options)) concurrency = Math.Clamp(JsonSerializer.Deserialize<int>(File.ReadAllText(options)), 1, 32);
+        var modeFile=Path.Combine(root,"download-mode.json");
+        if(File.Exists(modeFile)) Mode=JsonSerializer.Deserialize<string>(File.ReadAllText(modeFile)) ?? "均衡";
+        DownloadTuning.Configure(http,concurrency,Mode!="手动");
         index = Path.Combine(root, "downloads.json");
         var speed = Path.Combine(root, "download-speed.json");
         if (File.Exists(speed)) SpeedLimitMiB = Math.Clamp(JsonSerializer.Deserialize<int>(File.ReadAllText(speed)), 0, 100);
@@ -130,11 +134,18 @@ public sealed class Downloads
 
     public void SetConcurrency(int value)
     {
-        value = Math.Clamp(value, 1, 6);
+        value = Math.Clamp(value, 1, 32);
         InstanceStore.WriteJson(Path.Combine(Path.GetDirectoryName(index)!, "download-concurrency.json"), value);
         concurrency = value;
-        VerifiedTransfer.SetConcurrency(http, value);
+        DownloadTuning.Configure(http, value, Mode != "手动");
         Dispatch();
+    }
+
+    public void SetMode(string mode)
+    {
+        if(mode is not ("稳定" or "均衡" or "高速" or "手动")) throw new ArgumentException("下载模式无效。");
+        Mode=mode; InstanceStore.WriteJson(Path.Combine(Path.GetDirectoryName(index)!,"download-mode.json"),mode);
+        SetConcurrency(mode switch { "稳定"=>8,"均衡"=>16,"高速"=>32,_=>concurrency });
     }
 
     public void SetSpeedLimit(int value)
@@ -157,7 +168,7 @@ public sealed class Downloads
 
     private void Dispatch()
     {
-        while (running < concurrency && waiting.Count > 0)
+        while (running < Math.Min(8, concurrency) && waiting.Count > 0)
         {
             var next = waiting.MaxBy(entry => items.First(job => job.Id == entry.Job.Id).Priority);
             waiting.Remove(next);

@@ -34,6 +34,33 @@ public static partial class GameImport
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var pending = new Queue<(string Path, int Depth)>();
         pending.Enqueue((source, 0));
+        foreach (var folder in new[] { ".minecraft", "minecraft", "minecraft/instances", "minecraft/versions", "data/minecraft", "versions", "instances" })
+        { var path = Path.Combine(source, folder.Replace('/', Path.DirectorySeparatorChar)); if (Directory.Exists(path)) pending.Enqueue((path, 0)); }
+        foreach (var registryRoot in new[] { source, Path.Combine(source, "data") })
+        {
+            var registry = Path.Combine(registryRoot, "instances.json");
+            if (!File.Exists(registry)) continue;
+            try {
+                using var index = OpenMetadata(registry);
+                if (index.RootElement.ValueKind != JsonValueKind.Array) throw new InvalidDataException("XG Launcher 实例索引应为数组。");
+                var mappingPath = Path.Combine(registryRoot, "instance-directories.json");
+                var mapping = File.Exists(mappingPath) ? JsonSerializer.Deserialize<Dictionary<Guid,string>>(File.ReadAllText(mappingPath)) ?? [] : new Dictionary<Guid,string>();
+                var gameRoot = GameRootPreference.Resolve(source, registryRoot);
+                foreach (var element in index.RootElement.EnumerateArray()) {
+                    token.ThrowIfCancellationRequested();
+                    if (element.ValueKind != JsonValueKind.Object) { issues.Add("XG Launcher 实例索引含非对象记录。"); continue; }
+                    var instance = element.Deserialize<Instance>(); if (instance == null) continue; instance.Validate();
+                    var name = mapping.GetValueOrDefault(instance.Id) ?? instance.Id.ToString("N");
+                    foreach (var container in new[] { Path.Combine(gameRoot,"versions"), Path.Combine(source,"minecraft","instances"), Path.Combine(source,"minecraft","versions"), Path.Combine(registryRoot,"instances"), Path.Combine(registryRoot,"versions") }) {
+                        var dir = InstanceStore.SafeFile(container,name); if (!Directory.Exists(dir)) continue;
+                        var linked=false; for(string? ancestor=dir;ancestor!=null;ancestor=Path.GetDirectoryName(ancestor))if(Directory.Exists(ancestor)&&Link(ancestor)){linked=true;break;}
+                        if(linked){issues.Add("XG 实例路径包含链接，已跳过："+dir);continue;}
+                        candidates.Add(new(instance.Name,dir,new(gameRoot,instance.Version,instance.Loader,instance.LoaderVersion,"XG Launcher"),"XG Launcher 实例注册信息；完整性将在导入后检查。",true));
+                        break;
+                    }
+                }
+            } catch (Exception error) when (IsReadError(error)) { issues.Add("XG Launcher 注册信息：" + error.Message); }
+        }
         var catalogRoots = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if (Path.GetFileName(source) is "profiles" or "instances")
             ReadCatalog(Path.GetDirectoryName(source)!, source);
@@ -48,6 +75,7 @@ public static partial class GameImport
             {
                 if (Link(directory)) continue;
                 ReadCatalog(directory, source);
+                if (candidates.Any(x => x.Profile.Equals(directory, StringComparison.OrdinalIgnoreCase) && x.Inspection.Format == "XG Launcher")) continue;
                 if (candidates.Any(x => x.Profile.Equals(directory, StringComparison.OrdinalIgnoreCase) && x.Inspection.Format == "Modrinth App"))
                     continue;
                 var launcherDirectory = Path.GetFileName(directory) is ".minecraft" or "minecraft"
@@ -96,7 +124,7 @@ public static partial class GameImport
             }
         }
         if (pending.Count > 0 || seen.Count >= 512 || candidates.Count >= 512) issues.Add("已达到扫描数量上限，请选择更具体的目录。");
-        return new(candidates.DistinctBy(x => (x.Profile, x.Inspection.Version, x.Inspection.Loader, x.Inspection.LoaderVersion)).ToArray(), issues);
+        return new(candidates.DistinctBy(x => (Path.GetFullPath(x.Profile).ToUpperInvariant(), x.Inspection.Version, x.Inspection.Loader, x.Inspection.LoaderVersion)).ToArray(), issues);
 
         void ReadCatalog(string directory, string selected)
         {
@@ -138,7 +166,7 @@ public static partial class GameImport
         }
 
         void Report(string path, Exception error) =>
-            issues.Add($"无法读取或解析 {path}。{error.Message}");
+            issues.Add($"无法读取或解析 {path}。{error.Message}\n{error}");
     }
 
     private static (string Format, bool Isolated) IdentifyVersionLayout(string directory, string root, bool versionDirectory)
@@ -314,6 +342,7 @@ public static partial class GameImport
             if (!File.Exists(path)) continue;
             using var document = OpenMetadata(path);
             var metadata = document.RootElement;
+            if (metadata.ValueKind != JsonValueKind.Object) throw new InvalidDataException(format + " 实例元数据根节点必须是对象。");
             var launch = Property(metadata, "launcher");
             var forge = Property(metadata, "baseModLoader");
             var version = format switch

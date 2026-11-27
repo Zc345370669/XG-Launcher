@@ -37,5 +37,7 @@
   "current_module_old_python_reference_required": false,
   "maintainer_confirms_current_module_not_old_python": true,
   "alpha_release_note": "Chinese comments/documentation and release preparation only. Current hashes refreshed; original manifest archived. Historical rights statements unchanged; no new independent clearance.",
-  "local_only_final_note": "Local-only revision: official Java MSI/default-directory discovery, .minecraft isolation and update UI integration. No new third-party source or icon geometry imported; historical qualifications remain."
+  "local_only_final_note": "Local-only revision: official Java MSI/default-directory discovery, .minecraft isolation and update UI integration. No new third-party source or icon geometry imported; historical qualifications remain.",
+  "account_import_ui_review_note": "Local incremental review of GitHub 4e8a01ce: account-specific cache eviction, primary-owner dialogs, import filtering and diagnostics; no third-party implementation or SVG geometry copied. Existing provenance qualifications remain.",
+  "v012_local_note": "Current owned-file integrity refresh; user-round.svg added from the same pinned Lucide commit and declared separately in LUCIDE-ASSETS.json. Existing upstream license text and historical qualifications retained."
 }

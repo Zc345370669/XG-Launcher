@@ -72,7 +72,7 @@ internal static class WindowChrome
         internal Controller(Window window, Border surface)
         {
             this.window = window; this.surface = surface;
-            window.TransparencyLevelHint = [WindowTransparencyLevel.None];
+            window.Opacity = 1;
             window.Background = window is LauncherDialog ? ThemePalette.DialogSurface : ThemePalette.Background;
             window.TransparencyBackgroundFallback = window is LauncherDialog ? ThemePalette.DialogSurface : ThemePalette.Background;
             window.Foreground = ThemePalette.Text;
@@ -92,6 +92,7 @@ internal static class WindowChrome
         private void ConfigureFrame()
         {
             var useNativeFrame = nativeFrame && (window is not LauncherDialog || native);
+            // 主窗口始终使用不透明的客户区，只有旧 Windows 的独立圆角弹窗需要透明边角。
             window.SystemDecorations = useNativeFrame ? SystemDecorations.Full : SystemDecorations.None;
             window.ExtendClientAreaToDecorationsHint = useNativeFrame;
             window.TransparencyLevelHint = window is LauncherDialog && nativeFrame && !native
@@ -130,8 +131,8 @@ internal static class WindowChrome
                 {
                     surface.CornerRadius = new(0);
                 }
-                surface.BorderBrush = window is LauncherDialog ? ThemePalette.DialogBorder : ThemePalette.Line;
-                surface.BorderThickness = ClientBorder(window.RenderScaling, nativeFrame && (window is not LauncherDialog || native), window.WindowState == WindowState.Maximized);
+                surface.BorderBrush = window is LauncherDialog ? ThemePalette.DialogBorder : ThemePalette.WindowBorder;
+                surface.BorderThickness = ClientBorder(window.RenderScaling, native, window.WindowState == WindowState.Maximized);
             }
             finally { updating = false; }
         }

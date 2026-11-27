@@ -882,5 +882,19 @@
   "发现旧游戏数据": "Legacy game data found",
   "检查迁移": "Inspect migration",
   "建议 Java {0} · 检测到：{1} · 建议内存 {2} MB": "Recommended Java {0} · Detected: {1} · Recommended memory {2} MB",
-  "未找到兼容版本": "No compatible version found"
+  "未找到兼容版本": "No compatible version found",
+  "未登录": "Not signed in",
+  "未登录 / 添加账号": "Not signed in / Add account",
+  "请先添加并选择账号，再启动游戏。": "Add and select an account before launching the game.",
+  "账号凭据由系统支持的安全缓存管理。请使用账号列表右侧垃圾桶移除账号，仅清理对应本地记录和认证缓存。": "Credentials use the system-supported secure cache. Remove accounts with the row trash button; only that account's local record and authentication cache are cleared.",
+  "移除本地账号「{0}」？\n将清除此账号的本地记录及对应认证缓存。其他账号、游戏和存档不受影响，不会删除 Microsoft 账户本身。": "Remove local account “{0}”?\nThis removes only its local record and authentication cache. Other accounts, games and saves are unaffected; the Microsoft account itself is not deleted.",
+  "相关性最高": "Most relevant",
+  "下载量最多": "Most downloaded",
+  "更新时间最新": "Recently updated",
+  "下载模式": "Download mode",
+  "稳定": "Stable",
+  "均衡": "Balanced",
+  "高速": "Fast",
+  "并发 {0}/{1}": "Concurrency {0}/{1}",
+  "下载设置": "Download settings"
 }

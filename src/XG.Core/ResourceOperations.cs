@@ -225,25 +225,26 @@ public sealed class ResourceOperations
     }
 
     public void Report(string kind, string instance, long bytes, long total, string? file = null,
-        int completedFiles = 0, int totalFiles = 0, long fileBytes = 0, long fileTotalBytes = 0, bool measureSpeed = true)
+        int completedFiles = 0, int totalFiles = 0, long fileBytes = 0, long fileTotalBytes = 0, bool measureSpeed = true, long? networkBytes = null)
     {
         var i = current.Value is { } scope ? operations.FindIndex(x => x.Id == scope.Id) : -1;
         if (i < 0 || Current?.Paused == true || Terminal(operations[i].State)) return;
         var item = operations[i];
         var now = System.Diagnostics.Stopwatch.GetTimestamp();
         var speed = 0.0;
-        if (!measureSpeed) samples[item.Id] = (bytes, now);
+        var sampledBytes = networkBytes ?? bytes;
+        if (!measureSpeed) samples[item.Id] = (sampledBytes, now);
         else if (samples.TryGetValue(item.Id, out var previous))
         {
             var elapsed = System.Diagnostics.Stopwatch.GetElapsedTime(previous.Timestamp, now).TotalSeconds;
             if (elapsed >= .25)
             {
-                speed = Math.Max(0, bytes - previous.Bytes) / elapsed;
-                samples[item.Id] = (bytes, now);
+                speed = Math.Max(0, sampledBytes - previous.Bytes) / elapsed;
+                samples[item.Id] = (sampledBytes, now);
             }
             else speed = item.BytesPerSecond;
         }
-        else samples[item.Id] = (bytes, now);
+        else samples[item.Id] = (sampledBytes, now);
         operations[i] = item with { Bytes = bytes, TotalBytes = total, BytesPerSecond = speed,
             CurrentFile = file, CompletedFiles = completedFiles, TotalFiles = totalFiles,
             FileBytes = fileBytes, FileTotalBytes = fileTotalBytes };

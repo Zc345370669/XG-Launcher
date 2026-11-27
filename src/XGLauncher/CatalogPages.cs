@@ -197,7 +197,7 @@ public sealed partial class MainWindow
         view.Total.IsIndeterminate = false;
         view.Percent.Text = $"{Math.Floor(progress.Percent):0}%";
         view.Summary.Text = ResourceTransferText(item, model.Resources.Items.Where(child => child.ParentId == item.Id).ToArray());
-        view.Counts.Text = item.TotalFiles > 0 ? $"{item.CompletedFiles}/{item.TotalFiles}" : "";
+        view.Counts.Text = (item.TotalFiles > 0 ? $"{item.CompletedFiles}/{item.TotalFiles}" : "") + " · " + Localizer.Text($"并发 {model.Downloads.Activity.Active}/{model.Downloads.Activity.Limit}");
         view.Current.Text = FriendlyResource(item.CurrentFile, item.CurrentStage ?? item.Kind);
         // 旧任务可能缺少加载器显示元数据，只从该任务恢复目标对应的实例回补。
         var loader = model.Store.Entries.FirstOrDefault(x => x.Id == item.Recovery?.InstanceId)?.Loader;
@@ -209,7 +209,7 @@ public sealed partial class MainWindow
 
     private Control DownloadSettings()
     {
-        var limit = Picker(["1", "2", "3", "4", "5", "6"], model.Downloads.Concurrency - 1, "文件下载并发数");
+        var limit = Picker(Enumerable.Range(1,32).Select(x=>x.ToString()).ToArray(), model.Downloads.Concurrency - 1, "文件下载并发数");
         limit.SelectionChanged += (_, _) =>
         {
             if (limit.SelectedIndex >= 0 && model.Downloads.Concurrency != limit.SelectedIndex + 1) model.Downloads.SetConcurrency(limit.SelectedIndex + 1);
@@ -221,7 +221,10 @@ public sealed partial class MainWindow
         {
             if (speed.SelectedIndex >= 0 && model.Downloads.SpeedLimitMiB != rates[speed.SelectedIndex]) model.Downloads.SetSpeedLimit(rates[speed.SelectedIndex]);
         };
-        var panel = new WrapPanel { ItemSpacing = 6, Children = { limit, speed } };
+        var modes = new[] { "稳定", "均衡", "高速", "手动" };
+        var mode=Picker(modes,Math.Max(0,Array.IndexOf(modes,model.Downloads.Mode)),"下载模式");
+        mode.SelectionChanged+=(_,_)=> { if(mode.SelectedItem is string value) { model.Downloads.SetMode(value);limit.SelectedIndex=model.Downloads.Concurrency-1; } };
+        var panel = new WrapPanel { ItemSpacing = 6, Children = { mode, limit, speed } };
         panel.AttachedToVisualTree += (_, _) =>
         {
             limit.SelectedIndex = model.Downloads.Concurrency - 1;

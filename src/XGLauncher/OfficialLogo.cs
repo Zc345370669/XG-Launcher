@@ -14,11 +14,13 @@ public sealed partial class MainWindow
         {
             using var stream = AssetLoader.Open(new Uri("avares://XGLauncher/Assets/XG.png"));
             using var original = SkiaSharp.SKBitmap.Decode(stream) ?? throw new InvalidDataException("缺少正式 XG Logo。");
-            using var output = new SkiaSharp.SKBitmap(original.Width, original.Height);
+            // The square brand asset has transparent padding above and below the wordmark.
+            var logoHeight = Math.Min(original.Height, (int)Math.Ceiling(original.Width * .65));
+            using var output = new SkiaSharp.SKBitmap(original.Width, logoHeight);
             var color = ThemePalette.Text.Color;
             using (var canvas = new SkiaSharp.SKCanvas(output))
             {
-                canvas.DrawBitmap(original, 0, 0);
+                canvas.DrawBitmap(original, 0, (logoHeight - original.Height) / 2f);
                 canvas.DrawColor(new SkiaSharp.SKColor(color.R, color.G, color.B), SkiaSharp.SKBlendMode.SrcIn);
             }
             using var encoded = output.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);

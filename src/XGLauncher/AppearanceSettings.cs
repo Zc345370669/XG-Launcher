@@ -11,10 +11,9 @@ namespace XGLauncher;
 
 public sealed partial class MainWindow
 {
-    private sealed record AppearancePreferences(string Theme = "雾蓝", double Opacity = .96, bool Blur = false);
+    private sealed record AppearancePreferences(string Theme = "雾蓝");
     private AppearancePreferences appearance = new();
     private readonly List<(Button Button, string Name)> themeCards = [];
-    private TextBlock? appearanceEffectStatus;
     private string AppearancePath => Path.Combine(model.Store.Root, "appearance.json");
     private void LoadAppearance()
     {
@@ -24,16 +23,7 @@ public sealed partial class MainWindow
     }
     private void ApplyAppearance(bool save = true)
     {
-        appearance = appearance with { Opacity = WindowEffects.SafeOpacity(appearance.Opacity) };
-        ThemePalette.Select(ThemePalette.All.FirstOrDefault(x => x.Name == appearance.Theme) ?? ThemePalette.All[0], appearance.Opacity);
-        WindowEffects.Apply(this, appearance.Opacity, appearance.Blur);
-        if (appearanceEffectStatus != null) appearanceEffectStatus.Text = ActualTransparencyLevel == WindowTransparencyLevel.None
-            ? "当前系统不支持透明效果，已使用不透明显示；设置会保留。"
-            : appearance.Blur && ActualTransparencyLevel != WindowTransparencyLevel.AcrylicBlur
-                ? "当前系统未提供毛玻璃，已使用普通透明显示。" : "透明度实时应用；窗口圆角由系统管理。";
-        Background = ActualTransparencyLevel == WindowTransparencyLevel.None ? ThemePalette.Background : Brushes.Transparent;
-        if (windowShell != null) windowShell.Background = ActualTransparencyLevel == WindowTransparencyLevel.None ? ThemePalette.Background : ThemePalette.WindowBackground;
-        TransparencyBackgroundFallback = ThemePalette.Background;
+        ThemePalette.Select(ThemePalette.All.FirstOrDefault(x => x.Name == appearance.Theme) ?? ThemePalette.All[0]);
         foreach (var (button, name) in themeCards)
         {
             button.BorderThickness = new(name == ThemePalette.Current.Name ? 2 : 1);
@@ -72,18 +62,7 @@ public sealed partial class MainWindow
             button.HorizontalContentAlignment = HorizontalAlignment.Stretch;
             themeCards.Add((button, palette.Name)); cards.Children.Add(button);
         }
-        var opacity = new Slider { Minimum = 85, Maximum = 100, Value = appearance.Opacity * 100, TickFrequency = 1, IsSnapToTickEnabled = true, MinWidth = 140 };
-        Avalonia.Automation.AutomationProperties.SetName(opacity, "窗口不透明度");
-        var percent = Label($"{opacity.Value:0}%");
-        opacity.ValueChanged += (_, _) => { appearance = appearance with { Opacity = opacity.Value / 100 }; percent.Text = $"{opacity.Value:0}%"; ApplyAppearance(); };
-        var blur = new CheckBox { IsChecked = appearance.Blur, Content = "轻微毛玻璃效果" };
-        blur.IsCheckedChanged += (_, _) => { appearance = appearance with { Blur = blur.IsChecked == true }; ApplyAppearance(); };
-        opacity.IsEnabled = true;
-        blur.IsEnabled = WindowEffects.MayRequestBlur(OperatingSystem.IsWindows(), Environment.OSVersion.Version);
-        ToolTip.SetTip(blur, blur.IsEnabled ? "由系统决定毛玻璃是否可用，不支持时自动回退。" : "当前平台的窗口合成不支持此毛玻璃选项。");
-        appearanceEffectStatus = Label("", 12);
         ApplyAppearance(false);
-        return Column(SettingRow("语言", language), Label("主题", 17, true), cards,
-            Label("窗口不透明度", 14, true), opacity, percent, blur, appearanceEffectStatus);
+        return Column(SettingRow("语言", language), Label("主题", 17, true), cards);
     }
 }

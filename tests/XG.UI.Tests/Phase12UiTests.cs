@@ -45,7 +45,7 @@ internal static class Phase12UiTests
 
         Click("设置"); Click("界面");
         var settings = window.GetVisualDescendants().OfType<SettingsSurface>().Single();
-        Check(!settings.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title is "下载限速" or "文件下载并发数"), "settings duplicated download controls");
+        Check(settings.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title == "下载模式"), "settings download mode missing");
         var reference = ThemePalette.Panel;
         foreach (var palette in ThemePalette.All)
         {
@@ -63,18 +63,14 @@ internal static class Phase12UiTests
                 Invoke(dialog.GetVisualDescendants().OfType<Button>().First(x => Equals(x.Content, "关闭"))); Pump();
             }
         }
-        var slider = settings.GetVisualDescendants().OfType<Slider>().Single(); slider.Value = 85; Pump();
-        Check(ThemePalette.WindowBackground.Color.A == (byte)Math.Round(.85 * 255) && window.Opacity == 1, "opacity preference/effective fallback mismatch");
-        slider.Value = 100; Pump(); Check(ThemePalette.WindowBackground.Color.A == 255, "opacity 100 not opaque");
-        var blur = settings.GetVisualDescendants().OfType<CheckBox>().Single(x => Equals(x.Content, "轻微毛玻璃效果"));
-        blur.IsChecked = true; Pump();
-        if (!OperatingSystem.IsWindows()) Check(window.TransparencyLevelHint.Contains(WindowTransparencyLevel.None), "unsupported blur fallback missing");
+        Check(window.Opacity == 1 && window.TransparencyLevelHint.SequenceEqual(new[] { WindowTransparencyLevel.None }) &&
+            ((ISolidColorBrush)window.Background!).Color.A == 255, "appearance enabled window transparency");
         // Persisted theme is restored by a new actual window, without resetting download settings.
         var selected = ThemePalette.Current.Name;
         var restart = new MainWindow(model.Store.Root); restart.Show(); Pump();
         Check(ThemePalette.Current.Name == selected, "restart theme restore"); restart.Close(); Pump();
         Click("下载管理"); Check(window.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Count(x => x.Title is "下载限速" or "文件下载并发数") == 2, "central download settings missing");
-        Console.WriteLine("PASS six real theme cards, live shared palette, Fluent dark mode, persisted restart, themed dialog, 85–100% background opacity and Linux blur fallback; deduplicated settings");
+        Console.WriteLine("PASS six real theme cards, live shared palette, Fluent dark mode, persisted restart, themed dialog, opaque main-window theme surface; deduplicated settings");
 
         var badgeRoot = Path.Combine(model.Store.Root, "badge-fixture"); Directory.CreateDirectory(badgeRoot);
         InstanceStore.WriteJson(Path.Combine(badgeRoot, "resource-operations.json"), Enumerable.Range(0, 101)

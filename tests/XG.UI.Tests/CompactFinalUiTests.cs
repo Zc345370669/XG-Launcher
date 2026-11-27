@@ -34,11 +34,10 @@ internal static class CompactFinalUiTests
         Wait(() => versions.ItemsSource!.Cast<Instance>().Count() == 1);
         Check(versions.ItemsSource!.Cast<Instance>().Single().Id == installed.Id, "uninstalled entry masquerades as installed");
         Check(owner.GetVisualDescendants().OfType<Image>().Single(x => x.Name == "CompactOfficialLogo").Source != null, "official logo not loaded");
-        var accountRow = owner.GetVisualDescendants().OfType<Grid>().Single(x => x.Name == "CompactAccountBar");
         var versionRow = owner.GetVisualDescendants().OfType<Grid>().Single(x => x.Name == "CompactVersionRow");
-        Check(accountRow.Background == null && versionRow.Background == null && accountRow.Children.Count == 1, "outer card added to compact selectors");
-        Check(owner.GetVisualDescendants().OfType<Grid>().Single(x => x.Name == "LauncherTitleBar").GetVisualDescendants().OfType<Button>().Count(x => x.IsEffectivelyVisible) == 2, "compact caption has extra buttons");
-        var accountPicker = owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CompactAccounts");
+        Check(versionRow.Background == null, "outer card added to compact selectors");
+        Check(owner.GetVisualDescendants().OfType<Grid>().Single(x => x.Name == "LauncherTitleBar").GetVisualDescendants().OfType<Button>().Count(x => x.IsEffectivelyVisible) == 3, "compact caption has extra buttons");
+        var accountPicker = owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CaptionAccounts");
         Check(!model.Accounts.Profiles.Any() && accountPicker.SelectedItem == null, "fresh empty account list manufactured a default account");
         Add("Steve"); Add("Alex");
         Check(model.Accounts.Profiles.Count == 2 && model.Accounts.SelectedProfile?.Name == "Alex", "offline add not persisted/shared");
@@ -47,7 +46,7 @@ internal static class CompactFinalUiTests
         Check(model.Accounts.Profiles.Count == 2, "invalid name mutated account list");
         Capture("compact-final-account-bar");
         accountPicker.Open(); Pump(); Capture("compact-final-account-list");
-        Check(owner.GetVisualDescendants().OfType<Button>().Count(x => AutomationProperties.GetName(x)?.StartsWith("删除账号 ") == true) == 1, "selected account exposed minus or unselected missing minus");
+        Check(owner.GetVisualDescendants().OfType<Button>().Count(x => AutomationProperties.GetName(x)?.StartsWith("删除账号 ") == true) == 2, "not every account row exposes its own removal button");
         Check(!owner.GetVisualDescendants().OfType<ListBox>().SelectMany(x => x.ItemsSource?.Cast<object>() ?? []).OfType<string>().Any(x => x.Contains("添加")), "add action is an account list item");
         ClickMinus("Steve");
         var confirm = owner.OwnedWindows.OfType<LauncherDialog>().Single();
@@ -55,25 +54,31 @@ internal static class CompactFinalUiTests
         Capture("compact-final-delete-confirm", confirm);
         Invoke(confirm.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "取消")));
         Check(model.Accounts.Profiles.Count == 2 && model.Accounts.SelectedProfile?.Name == "Alex", "cancel changed account state");
-        model.Accounts.SelectProfileAsync(model.Accounts.Profiles.Single(x => x.Name == "Steve")).GetAwaiter().GetResult(); Pump();
+        accountPicker.Open(); Pump();
+        var steve = owner.GetVisualDescendants().OfType<TextBlock>().Single(x => x.IsEffectivelyVisible && x.Text == "Steve");
+        var stevePoint = steve.TranslatePoint(new Point(Math.Min(10, steve.Bounds.Width / 2), steve.Bounds.Height / 2), owner)!.Value;
+        owner.MouseDown(stevePoint, MouseButton.Left); owner.MouseUp(stevePoint, MouseButton.Left); Pump();
+        Wait(() => model.Accounts.SelectedProfile?.Name == "Steve" && !accountPicker.IsOpen);
         accountPicker.Open(); Pump(); ClickMinus("Alex"); Confirm();
         Wait(() => model.Accounts.Profiles.Count == 1 && model.Accounts.SelectedProfile?.Name == "Steve");
         Check(((LauncherAccount?)accountPicker.SelectedItem)?.Name == "Steve", "current deletion fallback not synchronized");
         accountPicker.Open(); Pump();
-        Check(!owner.GetVisualDescendants().OfType<Button>().Any(x => AutomationProperties.GetName(x)?.StartsWith("删除账号 ") == true), "selected last account has remove button");
-        accountPicker.Close(); model.Accounts.RemoveProfileAsync(model.Accounts.SelectedProfile!).GetAwaiter().GetResult(); Pump();
+        Check(owner.GetVisualDescendants().OfType<Button>().Count(x => AutomationProperties.GetName(x)?.StartsWith("删除账号 ") == true) == 1, "last selected account missing its delete button");
+        ClickMinus("Steve");
+        var lastConfirmation = owner.OwnedWindows.OfType<LauncherDialog>().Single();
+        Check(lastConfirmation.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text?.Contains("Steve") == true && x.Text.Contains("离线账号")), "delete confirmation omitted account name/type");
+        Invoke(lastConfirmation.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "取消")));
+        Check(model.Accounts.Profiles.Count == 1 && model.Accounts.SelectedProfile?.Name == "Steve", "cancel last-account deletion changed identity");
+        accountPicker.Open(); Pump(); ClickMinus("Steve"); Confirm();
         Wait(() => !model.Accounts.Profiles.Any()); Check(accountPicker.SelectedItem == null, "last account removal left selection");
         Check(new MicrosoftAccounts(root).Profiles.Count == 0, "empty account list was not persisted");
         Capture("compact-final-empty-account-list");
         Add("Steve");
         owner.ToggleMode(); Pump();
-        var accountButton = (Button)typeof(MainWindow).GetField("account", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(owner)!;
-        Check(Equals(accountButton.Content, "Steve"), "full caption did not synchronize offline account");
-        Invoke(accountButton);
-        var fullDialog = owner.OwnedWindows.OfType<LauncherDialog>().Single();
-        var fullList = fullDialog.GetVisualDescendants().OfType<ItemsControl>().Single(x => x.Name == "FullAccountsList");
-        Check(fullList.ItemsSource!.Cast<LauncherAccount>().Any(x => x.Name == "Steve") && fullList.GetVisualDescendants().OfType<LucideIcon>().Any(x => x.Icon == "check" && x.IsVisible), "full account picker is a separate store");
-        fullDialog.Close(); Pump(); owner.ToggleMode(); Pump();
+        Check(accountPicker.IconOnly && accountPicker.SelectedItem is LauncherAccount { Name: "Steve" }, "full caption did not synchronize offline account");
+        accountPicker.Open(); Pump();
+        Check(owner.GetVisualDescendants().OfType<LucideIcon>().Any(x => x.Name == "SelectedCheck" && x.IsEffectivelyVisible && x.Opacity == 1), "selected account mark is missing");
+        accountPicker.Close(); owner.ToggleMode(); Pump();
         foreach (var palette in ThemePalette.All)
         {
             ThemePalette.Select(palette); Pump();
@@ -98,25 +103,26 @@ internal static class CompactFinalUiTests
         Check(primary.IsEnabled && Equals(primary.Content, "启动游戏"), "failed launch cannot retry");
         launchStates.Remove(installed.Id); owner.ToggleMode(); owner.ToggleMode(); Pump();
         owner.Width = 330; owner.Height = 400; Pump(); Capture("compact-final-narrow");
-        Check(accountRow.Bounds.Bottom <= owner.ClientSize.Height && primary.Bounds.Width > 200, "narrow layout overflows");
+        Check(versionRow.TranslatePoint(new Point(0, versionRow.Bounds.Height), owner)!.Value.Y <= owner.ClientSize.Height && primary.Bounds.Width > 200, "narrow layout overflows");
         owner.Close(); Pump();
         var restored = new MicrosoftAccounts(root);
         Check(restored.SelectedProfile?.Name == "Steve" && restored.Profiles.Count == 1, "account registry did not survive restart");
         var json = File.ReadAllText(Path.Combine(root, "accounts.json"));
         Check(!json.Contains("AccessToken") && !json.Contains("refresh_token"), "account metadata contains credentials");
-        Console.WriteLine("PASS compact final installed-only receipt selector, formal logo, unframed selector rows, two caption icons, add icon/offline persistence, minus mouse hit isolation, delete cancel/confirm/current fallback/last empty, full account sync, six themes and narrow layout (Linux headless fixtures)");
+        Console.WriteLine("PASS compact final installed-only receipt selector, formal logo, unframed selector rows, caption user/mode/close icons, inline account form/offline persistence, minus mouse hit isolation, delete cancel/confirm/current fallback/last empty, full account sync, six themes and narrow layout (Linux headless fixtures)");
 
         void Add(string name)
         {
-            Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "AddAccount"));
+            owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CaptionAccounts").OpenAuxiliary(); Pump();
             Check(!owner.OwnedWindows.Any(), "inline account form opened a dialog");
+            Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "CompactOfflineOption")); Pump();
             owner.GetVisualDescendants().OfType<TextBox>().Single(x => x.Name == "CompactOfflineName").Text = name;
             Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "CompactAddOffline"));
             Wait(() => model.Accounts.SelectedProfile?.Name == name); Pump();
         }
         void ClickMinus(string name)
         {
-            var button = owner.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x)?.StartsWith("删除账号 " + name + " ") == true);
+            var button = owner.GetVisualDescendants().OfType<Button>().Single(x => AutomationProperties.GetName(x)?.Equals("删除账号 " + name) == true);
             button.BringIntoView(); Pump();
             var point = button.TranslatePoint(new Point(button.Bounds.Width / 2, button.Bounds.Height / 2), owner)!.Value;
             owner.MouseDown(point, MouseButton.Left); owner.MouseUp(point, MouseButton.Left); Pump();

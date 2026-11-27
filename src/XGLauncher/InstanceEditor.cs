@@ -21,6 +21,7 @@ public sealed partial class MainWindow
         var loader = Picker(["原版", "NeoForge", "Forge", "Fabric", "Quilt"], title: "加载器类型");
         loader.SelectedItem = existing?.Loader ?? "原版";
         var choices = Picker([], title: "加载器版本", searchable: true);
+        choices.IsVisible = loader.SelectedItem as string != "原版";
         var javaMode = Picker(["自动（推荐）", "手动选择"], string.IsNullOrWhiteSpace(existing?.Java) ? 0 : 1, "Java");
         var java = Input("手动覆盖 Java 路径（可选）", model.Store.ResolveJavaPath(existing?.Java));
         var automatic = Picker(["自动", "手动"], existing is { AutomaticMemory: not true } ? 1 : 0, "内存分配");
@@ -168,6 +169,7 @@ public sealed partial class MainWindow
             activeLoader = kind;
             choices.ItemsSource = Array.Empty<string>();
             choices.IsEnabled = false;
+            choices.IsVisible = kind != "原版";
             retryLoader.IsVisible = false;
             loaderStatus.Text = "";
             try

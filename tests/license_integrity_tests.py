@@ -32,7 +32,7 @@ class LicenseIntegrityTests(unittest.TestCase):
 
     def test_optional_nsis_pinned_and_zlib(self):
         self.assertIn('v3.11', (ROOT / 'build-windows.ps1').read_text())
-        workflow = next((ROOT / '.github/workflows').glob('*')).read_text()
+        workflow = (ROOT / '.github/workflows/build-windows.yml').read_text()
         self.assertNotIn('choco install nsis', workflow)
         self.assertIn('dist/win-x64/XG-Launcher/XGLauncher.exe', workflow)
         self.assertIn('if ($BuildInstaller)', (ROOT / 'build-windows.ps1').read_text())

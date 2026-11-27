@@ -9,6 +9,44 @@ namespace XG.Core;
 /// </summary>
 public sealed class PackImporter(HttpClient http, InstanceStore store)
 {
+    /// <summary>先校验清单结构再访问字段，避免 Array/Null 落入 GetProperty 并留下半导入状态。</summary>
+    private static void ValidateManifest(JsonElement root)
+    {
+        if (root.ValueKind != JsonValueKind.Object) throw new InvalidDataException("整合包清单根节点必须是对象。");
+        static JsonElement Required(JsonElement parent, string name, JsonValueKind kind)
+        {
+            if (parent.ValueKind != JsonValueKind.Object || !parent.TryGetProperty(name, out var value) || value.ValueKind != kind)
+                throw new InvalidDataException("整合包清单字段类型无效：" + name);
+            return value;
+        }
+        if (!Required(root, "formatVersion", JsonValueKind.Number).TryGetInt32(out var format) || format != 1 ||
+            Required(root, "game", JsonValueKind.String).GetString() != "minecraft") throw new InvalidDataException("无法识别整合包清单格式。");
+        _ = Required(root, "name", JsonValueKind.String);
+        var dependencies = Required(root, "dependencies", JsonValueKind.Object);
+        _ = Required(dependencies, "minecraft", JsonValueKind.String);
+        if (dependencies.EnumerateObject().Any(x => x.Value.ValueKind != JsonValueKind.String)) throw new InvalidDataException("整合包清单加载器版本必须是字符串。");
+        var files = Required(root, "files", JsonValueKind.Array);
+        if (files.GetArrayLength() > 50000) throw new InvalidDataException("整合包清单文件数量过多。");
+        foreach (var file in files.EnumerateArray())
+        {
+            if (file.ValueKind != JsonValueKind.Object) throw new InvalidDataException("整合包清单 files 中的条目必须是对象。");
+            if (file.TryGetProperty("env", out var env))
+            {
+                if (env.ValueKind != JsonValueKind.Object) throw new InvalidDataException("整合包清单 env 必须是对象。");
+                if (env.TryGetProperty("client", out var client))
+                {
+                    if (client.ValueKind != JsonValueKind.String) throw new InvalidDataException("整合包清单 env.client 必须是字符串。");
+                    if (client.GetString() is "unsupported" or "optional") continue;
+                }
+            }
+            _ = Required(file, "path", JsonValueKind.String);
+            _ = Required(Required(file, "hashes", JsonValueKind.Object), "sha512", JsonValueKind.String);
+            if (!Required(file, "fileSize", JsonValueKind.Number).TryGetInt64(out var size) || size < 0) throw new InvalidDataException("整合包清单 fileSize 无效。");
+            var urls = Required(file, "downloads", JsonValueKind.Array);
+            if (urls.GetArrayLength() == 0 || urls.EnumerateArray().Any(x => x.ValueKind != JsonValueKind.String)) throw new InvalidDataException("整合包清单 downloads 必须包含下载地址字符串。");
+        }
+    }
+
     private readonly SemaphoreSlim[] cacheLocks = Enumerable.Range(0, 32).Select(_ => new SemaphoreSlim(1)).ToArray();
 
     /// <summary>
@@ -28,6 +66,7 @@ public sealed class PackImporter(HttpClient http, InstanceStore store)
         using var source = index.Open();
         using var document = await JsonDocument.ParseAsync(source);
         var raw = document.RootElement;
+        ValidateManifest(raw);
         if (raw.GetProperty("formatVersion").GetInt32() != 1 || raw.GetProperty("game").GetString() != "minecraft")
             throw new InvalidDataException("无法识别整合包格式。");
         var dependencies = raw.GetProperty("dependencies");
@@ -67,21 +106,36 @@ public sealed class PackImporter(HttpClient http, InstanceStore store)
                 downloads.Add((item, safe));
             }
             var total = downloads.Sum(x => x.Item.Size);
-            long complete = 0;
-            for (var indexOfFile = 0; indexOfFile < downloads.Count; indexOfFile++)
+            var received = new long[downloads.Count];
+            var completed = new bool[downloads.Count];
+            var sync = new object();
+            var sample = System.Diagnostics.Stopwatch.StartNew();
+            var next = -1;
+            var control = resources?.Current;
+            async Task Worker()
             {
-                var (item, target) = downloads[indexOfFile];
-                var position = indexOfFile;
-                progress(item.Name);
-                void Report(long bytes, long size) => resources?.Report("整合包", instance.Name, complete + bytes, total,
-                    item.Name, position, downloads.Count, bytes, size);
-                Task Download(CancellationToken token) => WriteVerifiedAsync(item, target, Report, stage, token,
-                    Path.Combine(store.Root, "pack-download-cache"));
-                if (resources?.Current is { } control) await control.RunFileAsync(Download);
-                else await Download(default);
-                complete += item.Size;
-                resources?.Report("整合包", instance.Name, complete, total, item.Name, position + 1, downloads.Count, item.Size, item.Size);
+                while (true)
+                {
+                    var position=Interlocked.Increment(ref next);if(position>=downloads.Count)return;
+                    if(control!=null)await control.WaitIfPausedAsync();
+                    var (item,target)=downloads[position];
+                    progress(item.Name);
+                    void Report(long bytes,long size)
+                    {
+                        lock(sync) {
+                            received[position]=Math.Max(received[position],Math.Clamp(bytes,0,item.Size));
+                            if(sample.ElapsedMilliseconds<100&&!completed.All(x=>x))return;
+                            sample.Restart();resources?.Report("整合包",instance.Name,received.Sum(),total,item.Name,completed.Count(x=>x),downloads.Count,bytes,size);
+                        }
+                    }
+                    Task Download(CancellationToken token)=>WriteVerifiedAsync(item,target,Report,stage,token,Path.Combine(store.Root,"pack-download-cache"));
+                    if(control!=null)await control.RunFileAsync(Download);else await Download(default);
+                    lock(sync)completed[position]=true;
+                    Report(item.Size,item.Size);
+                }
             }
+            // 清单中的独立文件允许并行；overrides解压及实例提交必须等待所有校验成功。
+            await Task.WhenAll(Enumerable.Range(0,Math.Min(downloads.Count,Math.Min(8,DownloadTuning.Activity(http).Maximum))).Select(_=>Worker()));
             resources?.Current?.Token.ThrowIfCancellationRequested();
             stage?.Invoke("安装中");
             long overrideBytes = 0;

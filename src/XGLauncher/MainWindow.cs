@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -23,7 +22,6 @@ public sealed partial class MainWindow : Window
     private readonly ContentControl page = new();
     private readonly StackPanel navigation = Column();
     private readonly TextBlock status = Label("");
-    private readonly Button account;
     private int section;
     private int drawnNavigation = -1;
     private int modTab;
@@ -55,14 +53,12 @@ public sealed partial class MainWindow : Window
         if (OperatingSystem.IsWindows()) FontFamily = new FontFamily("Microsoft YaHei UI");
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         var logoUri = new Uri("avares://XGLauncher/Assets/XG.png");
-        using var stream = AssetLoader.Open(logoUri);
-        var logo = new Image { Source = new Bitmap(stream), Width = 39, Height = 35 };
+        var logo = OfficialLogo(32, 28);
         using var icon = AssetLoader.Open(logoUri);
         Icon = new WindowIcon(icon);
         try { model = new LauncherModel(dataRoot, catalog, gameMetadata); }
         catch (Exception ex)
         {
-            account = new Button();
             model = null!;
             Content = new Border { Padding = new(24), Child = Column(
                 Label("无法打开启动器目录，请选择一个可写位置。\n" + new XG.Core.GameLogSanitizer(null).Redact(ex.Message)),
@@ -86,7 +82,6 @@ public sealed partial class MainWindow : Window
         model.Game.ConfirmJavaInstallation = major => ConfirmAsync($"缺少 Java {major} x64。是否下载 Eclipse Temurin 官方安装器并安装到发行商默认目录？\nWindows 将请求管理员授权；不会修改 PATH 或 JAVA_HOME。");
         Localizer.Load(model.Store.Root);
         LoadAppearance();
-        account = Action("账号", () => AccountsAsync());
         var top = CreateTitleBar(logo);
         var body = new Grid { ColumnDefinitions = new("154,*") };
         var menu = new ScrollViewer { Content = navigation, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
@@ -113,7 +108,6 @@ public sealed partial class MainWindow : Window
         layout.Children.Add(modalShade);
         Content = windowShell;
         ApplyAppearance(false);
-        PropertyChanged += (_, e) => { if (e.Property.Name == "ActualTransparencyLevel") ApplyAppearance(false); };
         Closed += (_, _) =>
         {
             windowClosed = true;
@@ -300,56 +294,6 @@ public sealed partial class MainWindow : Window
             Refresh();
         };
         return card;
-    }
-
-    private static Control ProfileView(MinecraftIdentity identity)
-    {
-        var avatar = new Image { Width = 22, Height = 22 };
-        if (identity.Skin is { } skin)
-        {
-            avatar.DetachedFromVisualTree += (_, _) =>
-            {
-                if (avatar.Source is CroppedBitmap { Source: Bitmap bitmap }) bitmap.Dispose();
-                avatar.Source = null;
-            };
-            _ = LoadAvatarAsync(avatar, skin);
-        }
-        var profile = Row(avatar, Label(identity.Name));
-        ToolTip.SetTip(profile, identity.Id.ToString("D"));
-        return profile;
-    }
-
-    private static readonly HttpClient AvatarClient = new(new HttpClientHandler { AllowAutoRedirect = false })
-        { Timeout = TimeSpan.FromSeconds(8) };
-
-    private static async Task LoadAvatarAsync(Image image, Uri skin)
-    {
-        try
-        {
-            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
-            using var response = await AvatarClient.GetAsync(skin, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
-            if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength > 262144) return;
-            await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token);
-            using var bytes = new MemoryStream();
-            var buffer = new byte[8192];
-            int count;
-            while ((count = await stream.ReadAsync(buffer, timeout.Token)) > 0)
-            {
-                if (bytes.Length + count > 262144) return;
-                bytes.Write(buffer, 0, count);
-            }
-            if (TopLevel.GetTopLevel(image) is null || bytes.Length < 24) return;
-            var png = bytes.GetBuffer();
-            if (!png.AsSpan(0, 8).SequenceEqual(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }) ||
-                System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(16, 4)) != 64 ||
-                System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(20, 4)) is not (32 or 64)) return;
-            bytes.Position = 0;
-            var bitmap = new Bitmap(bytes);
-            if (bitmap.PixelSize.Width == 64 && bitmap.PixelSize.Height is 32 or 64)
-                image.Source = new CroppedBitmap(bitmap, new PixelRect(8, 8, 8, 8));
-            else bitmap.Dispose();
-        }
-        catch (Exception) { /* A missing avatar must not interrupt a verified account. */ }
     }
 
     private static TextBlock Label(string text, double size = 13, bool bold = false, bool localize = true)

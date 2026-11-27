@@ -19,7 +19,7 @@ internal static class ResponsiveUiTests
     {
         if (!OperatingSystem.IsWindows()) window.FontFamily = new FontFamily("Noto Sans CJK SC");
         var title = window.GetVisualDescendants().OfType<Grid>().Single(grid => grid.Name == "LauncherTitleBar");
-        Check(title.GetVisualDescendants().OfType<Button>().Count() == 5, "title bar must contain account, mode switch and three caption buttons");
+        Check(title.GetVisualDescendants().OfType<Button>().Count(x=>x.IsEffectivelyVisible) == 5, "title bar must contain account, mode switch and three caption buttons");
         Check(title.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text == "瞎搞启动器"), "Chinese title missing");
         Check(!title.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text is "XG Launcher" or "v0.1.0"), "duplicate title text");
         Click("最大化");
@@ -164,7 +164,7 @@ internal static class ResponsiveUiTests
         var scroll = settings.ContentScroll;
         WaitFor(() => scroll.Extent.Height > scroll.Viewport.Height && scroll.Viewport.Height > 0);
         Capture("05-settings");
-        Check(!window.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title is "下载限速" or "文件下载并发数"), "duplicate download settings remain");
+        Check(window.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title == "下载模式"), "settings download mode missing");
         Click("备份与恢复");
         try { WaitFor(() => settings.ActiveSection == 3 && Math.Abs(scroll.Offset.Y - settings.Sections[3].Bounds.Top) < 2); } catch { Console.WriteLine($"Scroll diagnostic active={settings.ActiveSection}, offset={scroll.Offset.Y}, target={settings.Sections[3].Bounds.Top}, viewport={scroll.Viewport.Height}, extent={scroll.Extent.Height}"); throw; }
         Click("常规");

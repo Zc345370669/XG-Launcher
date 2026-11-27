@@ -24,10 +24,25 @@ internal static class GlobalUiFixTests
         root = Path.Combine(root, "global-ui"); Directory.CreateDirectory(root);
         InstanceStore.WriteJson(Path.Combine(root,"official-versions.json"), new[] { new GameService.OfficialVersion("1.21.1","release"), new GameService.OfficialVersion("1.20.1","release") });
         using var fixture = new Stalled(); using var http = new HttpClient(fixture);
+        File.WriteAllText(Path.Combine(root, "appearance.json"), """{"Theme":"深海蓝","Opacity":0.85,"Blur":true}""");
         var owner = new MainWindow(root, null, http) { FontFamily = new FontFamily("Noto Sans CJK SC") }; owner.Show(); Pump(); owner.ToggleMode(); Pump();
         var model = (LauncherModel)typeof(MainWindow).GetField("model",BindingFlags.NonPublic|BindingFlags.Instance)!.GetValue(owner)!;
         var combo = Find<UnifiedExpandableSelect>(owner,"CompactInstances");
         Check(combo.Title == "下载游戏实例" && combo.PlaceholderText == "选择游戏版本并安装", "empty game header contract wrong");
+        foreach (var size in new[] { new Size(320, 330), new Size(360, 400), new Size(500, 570) })
+        {
+            owner.Width = size.Width; owner.Height = size.Height; Pump();
+            var logo = Find<Image>(owner, "CompactOfficialLogo");
+            var title = combo.GetVisualDescendants().OfType<TextBlock>().Single(x => x.Text == "下载游戏实例");
+            var subtitle = combo.GetVisualDescendants().OfType<TextBlock>().Single(x => x.Text == "选择游戏版本并安装");
+            var logoBottom = logo.TranslatePoint(new Point(0, logo.Bounds.Height), owner)!.Value.Y;
+            var comboTop = combo.TranslatePoint(default, owner)!.Value.Y;
+            var titleBottom = title.TranslatePoint(new Point(0, title.Bounds.Height), owner)!.Value.Y;
+            var subtitleTop = subtitle.TranslatePoint(default, owner)!.Value.Y;
+            Check(comboTop - logoBottom is >= 8 and <= 20 && subtitleTop >= titleBottom && title.FontSize > subtitle.FontSize &&
+                combo.Bounds.Width >= size.Width - 44, "compact logo, version text or responsive width is misaligned");
+        }
+        owner.Width = 360; owner.Height = 400; Pump();
         Invoke(combo.GetVisualDescendants().OfType<Button>().First()); Pump();
         Check(owner.IsCompact && combo.IsAuxiliaryOpen && !owner.OwnedWindows.Any(), "compact installer navigated or opened dialog");
         Check(owner.Opacity==1,"whole-scene opacity makes popup contents bleed");
@@ -84,18 +99,37 @@ internal static class GlobalUiFixTests
 
         owner.ToggleMode(); Pump(); Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x=>AutomationProperties.GetName(x)=="设置"));
         var settings=owner.GetVisualDescendants().OfType<SettingsSurface>().Single(); settings.ScrollToSection(1,false); Pump();
-        var opacity=owner.GetVisualDescendants().OfType<Slider>().Single(); Check(opacity.IsEnabled,"opacity slider still disabled");
-        opacity.Value=91; Pump();
-        Check(File.ReadAllText(Path.Combine(root,"appearance.json")).Contains("0.91") && owner.Opacity==1 && Math.Abs(ThemePalette.WindowBackground.Color.A-Math.Round(.91*255))<1,"opacity not live/persisted");
-        owner.ToggleMode(); owner.ToggleMode(); Pump(); Check(Math.Abs(opacity.Value-91)<.001,"mode reset opacity");
-        Check(!WindowEffects.MayRequestBlur(false,new Version(10,0,26100)) && !WindowEffects.MayRequestBlur(true,new Version(10,0,15063)) && WindowEffects.MayRequestBlur(true,new Version(10,0,22621)),"blur platform gates wrong");
         var backdrop=Find<Border>(owner,"WindowShell");
+        Check(ThemePalette.Current.Dark, "legacy theme was not restored");
         foreach(var palette in ThemePalette.All)
         {
-            ThemePalette.Select(palette,.91); Pump(); var color=((ISolidColorBrush)backdrop.Background!).Color; var expected=Color.Parse(palette.Background);
-            Check(color.R==expected.R&&color.G==expected.G&&color.B==expected.B&&color.A==(owner.ActualTransparencyLevel==WindowTransparencyLevel.None?255:(byte)Math.Round(.91*255)),"shared backdrop color/opacity diverged");
+            ThemePalette.Select(palette);
+            for (var mode = 0; mode < 2; mode++)
+            {
+                Pump();
+                var color = ((ISolidColorBrush)backdrop.Background!).Color;
+                Check(color == Color.Parse(palette.Background) && ((ISolidColorBrush)owner.Background!).Color == color &&
+                    owner.Opacity == 1 && owner.TransparencyLevelHint.SequenceEqual(new[] { WindowTransparencyLevel.None }),
+                    "legacy appearance or mode switch left the client area translucent");
+                if (palette == ThemePalette.All[0] || palette.Dark)
+                {
+                    foreach (var scale in new[] { 1d, 1.25, 1.5, 1.75, 2 })
+                    {
+                        var pixels = new PixelSize((int)(owner.ClientSize.Width * scale), (int)(owner.ClientSize.Height * scale));
+                        using var frame = new RenderTargetBitmap(pixels, new Vector(96 * scale, 96 * scale));
+                        frame.Render(owner);
+                        using var buffer = new MemoryStream();
+                        frame.Save(buffer); buffer.Position = 0;
+                        using var bitmap = SkiaSharp.SKBitmap.Decode(buffer);
+                        foreach (var point in new[] { new Point(6, 20), new Point(6, 80),
+                            new Point(owner.ClientSize.Width - 5, owner.ClientSize.Height - 5) })
+                            Check(bitmap.GetPixel((int)(point.X * scale), (int)(point.Y * scale)).Alpha == 255,
+                                $"rendered client area lost opacity at raster scale {scale}");
+                    }
+                }
+                owner.ToggleMode();
+            }
         }
-        Check(WindowEffects.SafeOpacity(.1)==.85&&WindowEffects.SafeOpacity(double.NaN)==.96,"opacity safety bounds wrong");
 
         var legal=owner.GetVisualDescendants().OfType<LegalBrowser>().Single(); legal.ShowCredits();
         settings.ScrollToSection(5,false); Pump(); var creditScroll=legal.CreditsScroll!;
@@ -114,8 +148,8 @@ internal static class GlobalUiFixTests
         Check(IdleScrollbar.IdleDelay==TimeSpan.FromMilliseconds(1500),"scroll fade deadline not 1.5 seconds");
         Capture(owner,"global-credits-no-cards"); owner.Close(); Pump();
         var restored=new MainWindow(root); restored.Show(); Pump();
-        Check(restored.Opacity==1 && Math.Abs(ThemePalette.WindowBackground.Color.A-Math.Round(.91*255))<1,"opacity lost on restart"); restored.Close(); Pump();
-        Console.WriteLine("PASS global UI real inline installer/shared HTTP task/dedup/cancel, nested selectors/Escape, stage track circle/name retained without duplicate fill, pointer hover/press full-round fill/no scale, opacity live persistence/restart/platform fallback, frameless Lucide credits horizontal wheel and global 1.5s idle scrollbar (Linux headless)");
+        Check(restored.Opacity == 1 && ((ISolidColorBrush)restored.Background!).Color.A == 255,"restart applied legacy opacity"); restored.Close(); Pump();
+        Console.WriteLine("PASS global UI real inline installer/shared HTTP task/dedup/cancel, nested selectors/Escape, stage track circle/name retained without duplicate fill, pointer hover/press full-round fill/no scale, legacy transparency ignored across themes, modes and restart, frameless Lucide credits horizontal wheel and global 1.5s idle scrollbar (Linux headless)");
         void Capture(Window window,string name) { if(shots==null)return;Directory.CreateDirectory(shots);using var f=window.CaptureRenderedFrame();f!.Save(Path.Combine(shots,name+"-linux-headless.png")); }
     }
     sealed class Stalled:HttpMessageHandler

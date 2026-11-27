@@ -27,6 +27,7 @@ var temp = Path.Combine(Path.GetTempPath(), "xg-ui-" + Guid.NewGuid().ToString("
 Directory.CreateDirectory(temp);
 try
 {
+    await AccountRemovalRegressionTests.RunAsync(temp);
     AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
     DownloadSummaryTests.Run(Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     if (args.Contains("--shutdown-only")) { WindowShutdownTests.Run(temp); return; }
@@ -38,6 +39,7 @@ try
     if (args.Contains("--global-ui-only")) { GlobalUiFixTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
     if (args.Contains("--rail-baseline")) { StageRailAlignmentTests.Baseline(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
     if (args.Contains("--stage-rail-only")) { StageRailAlignmentTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); StageNodesFinalTests.Run(temp, Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); StageEndpointTests.Run(Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS")); return; }
+    IntegratedUiTests.Run(temp);
     LucideUiTests.Run(Environment.GetEnvironmentVariable("XG_UI_SCREENSHOTS"));
     if (CatalogIcons.Decode([]) != null || CatalogIcons.Decode("invalid-icon"u8.ToArray()) != null)
         throw new Exception("Invalid catalogue icon was accepted.");
@@ -166,6 +168,8 @@ try
     WindowShutdownTests.Run(temp);
     LauncherUpdateUiTests.Run(temp);
     LocalFinalUiTests.Run(temp);
+    DialogRemediationTests.Run(temp);
+
     Console.WriteLine("PASS headless window creation, six navigation pages, persisted instance and launch button");
 }
 finally { Directory.Delete(temp, true); }

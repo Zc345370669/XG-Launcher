@@ -46,12 +46,13 @@ internal static class DualModeUiTests
             Check(((ISolidColorBrush)owner.Background!).Color.A is 0 or 255, "transparent client background");
         }
         ThemePalette.Select(previousTheme);
-        Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "AddAccount"));
+        owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CaptionAccounts").OpenAuxiliary(); Pump();
         Check(!owner.OwnedWindows.Any(), "compact add opened account manager");
+        Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "CompactOfflineOption")); Pump();
         owner.GetVisualDescendants().OfType<TextBox>().Single(x => x.Name == "CompactOfflineName").Text = "ModePlayer";
         Invoke(owner.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "CompactAddOffline"));
         Wait(() => model.Accounts.SelectedProfile?.Name == "ModePlayer");
-        Check(model.Player == "ModePlayer" && owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CompactAccounts").SelectedItem is LauncherAccount { Name: "ModePlayer" }, "account not synchronized");
+        Check(model.Player == "ModePlayer" && owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x => x.Name == "CaptionAccounts").SelectedItem is LauncherAccount { Name: "ModePlayer" }, "account not synchronized");
 
         var gate = new TaskCompletionSource();
         var operation = resources.RunAsync(third.Name, "实例安装", "fixture", third.Name, async mark =>

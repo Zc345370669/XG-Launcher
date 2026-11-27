@@ -79,7 +79,7 @@ internal static class WindowResponsiveStageTests
                     {
                         var layout=owner.GetVisualDescendants().OfType<Grid>().Single(x=>x.Name=="CompactLayout");
                         var picker=owner.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Single(x=>x.Name=="CompactInstances");
-                        Check(picker.Bounds.Width<=owner.ClientSize.Width&&layout.RowDefinitions.Count==2,"compact changed to columns or overflowed");
+                        Check(picker.Bounds.Width<=owner.ClientSize.Width&&layout.Children.Count==1,"compact changed to columns or overflowed");
                         foreach(var scale in new[]{1d,1.25,1.5,1.75,2})
                         { using var bitmap=new RenderTargetBitmap(new PixelSize((int)(size.Width*scale),(int)(size.Height*scale)),new Vector(96*scale,96*scale));bitmap.Render(owner); }
                         Capture(owner,shots,$"responsive-compact-{size.Width}-{size.Height}-{(palette.Dark?"dark":"light")}");

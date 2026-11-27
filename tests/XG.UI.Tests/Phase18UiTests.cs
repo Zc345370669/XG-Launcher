@@ -44,7 +44,7 @@ internal static class Phase18UiTests {
    throw new Exception("folder import action missing");
   if(dialog.GetVisualDescendants().OfType<Button>().Single(x=>Equals(x.Content,"导入游戏")).IsEnabled)
    throw new Exception("empty import can be submitted");
-  if(!owner.GetModalShade().IsVisible)throw new Exception("modal owner shade missing");
+  if(owner.GetModalShade().IsVisible)throw new Exception("modal owner must not dim");
   Capture(dialog,"phase18-import-wizard");dialog.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });Pump();if(owner.GetModalShade().IsVisible)throw new Exception("modal shade was not removed");
   var fixture=Path.Combine(Path.GetTempPath(),"xg-smart-ui-"+Guid.NewGuid().ToString("N"));
   Directory.CreateDirectory(fixture);
@@ -55,6 +55,8 @@ internal static class Phase18UiTests {
     Directory.CreateDirectory(directory);
     File.WriteAllText(Path.Combine(directory,version+".json"),$$"""{"id":"{{version}}","mainClass":"fixture.Main"}""");
    }
+   var repaired = new List<string>();
+   owner.ImportedRepairOverride = instance => { repaired.Add(instance.Version); return Task.CompletedTask; };
    var task=owner.GameImportWizardAsync(_=>Task.FromResult<string?>(fixture));Pump();
    var detected=owner.OwnedWindows.OfType<Window>().Single(x=>x.Title=="导入游戏");
    Invoke(detected.GetVisualDescendants().OfType<Button>().Single(x=>Equals(x.Content,"选择游戏或其他启动器的目录")));
@@ -66,6 +68,9 @@ internal static class Phase18UiTests {
    Pump();Invoke(submit);
    WaitUntil(()=>task.IsCompleted);
    task.GetAwaiter().GetResult();
+   WaitUntil(()=>repaired.Count == 2);
+   if(!repaired.Order().SequenceEqual(new[]{"1.20.6","1.21.1"}))throw new Exception("multi-selection skipped automatic repair");
+   owner.ImportedRepairOverride = null;
    if(!owner.GetVisualDescendants().OfType<TextBlock>().Any(x=>x.Text=="1.20.6"))
     throw new Exception("instance list was not refreshed by import");
   } finally {Directory.Delete(fixture,true);}
@@ -79,7 +84,7 @@ internal static class Phase18UiTests {
    }
    if(!condition())throw new Exception("timed out waiting for smart import UI");
   }
-  Console.WriteLine("PASS smart import UI: automatic folder scan, two results, multi-selection submit, list refresh, disabled empty submit, Esc and modal shade (Linux headless fixture)");
+  Console.WriteLine("PASS smart import UI: automatic folder scan, two results, multi-selection submit, list refresh, disabled empty submit, Esc and unchanged owner background (Linux headless fixture)");
   var rail=new StageRail();var window=new Window{Width=700,Height=130,Content=rail};window.Show();Pump();
   StageProgress[] first=[new("游戏本体","下载中",0,40,.5,true),new("Minecraft Assets","等待中",40,70,0,true),new("资源与依赖","等待中",70,95,0,true),new("Java 环境","等待中",95,100,0,true)];
   rail.Update(first,"游戏本体","下载中");Pump();Capture(window,"phase18-stages-current");

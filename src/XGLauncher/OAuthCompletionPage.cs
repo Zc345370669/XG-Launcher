@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace XGLauncher;
 
@@ -32,14 +33,16 @@ internal sealed class OAuthCompletionPage : IAsyncDisposable
         <p>认证尚未确认完成，请返回 XG Launcher 查看最终结果。</p>
         <p>Authorization is still being verified. Check XG Launcher for the final result.</p></html>
         """;
+    internal const string AutoCloseScript = "window.close();";
+    internal static string AutoCloseHash => "sha256-" + Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(AutoCloseScript)));
     internal const string Html = """
         <!doctype html><html lang="zh-CN"><meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>认证已完成 · XG Launcher</title>
         <h1>认证已完成</h1>
-        <p>你可以返回 XG Launcher，并关闭此浏览器标签页。</p>
+        <p>登录已完成，可以关闭此页面。若浏览器禁止自动关闭，请手动关闭此标签页并返回 XG Launcher。</p>
         <p>此页面仅表示浏览器授权回调已结束。账号、游戏所有权与玩家档案验证结果请查看启动器。</p>
-        <p>Browser authorization has ended. Return to XG Launcher for the final account verification result.</p></html>
+        <p>Browser authorization has ended. Return to XG Launcher for the final account verification result.</p><script>window.close();</script></html>
         """;
 
     internal OAuthCompletionPage()
@@ -115,10 +118,11 @@ internal sealed class OAuthCompletionPage : IAsyncDisposable
             }
             else { code = "404 Not Found"; body = "Not found."; }
         }
+        var scriptPolicy = body == Html ? $"; script-src '{AutoCloseHash}'" : "";
         var bytes = Encoding.UTF8.GetBytes(body);
         var response = Encoding.ASCII.GetBytes($"HTTP/1.1 {code}\r\n{location}" +
             "Content-Type: text/html; charset=utf-8\r\nCache-Control: no-store\r\nPragma: no-cache\r\n" +
-            "Referrer-Policy: no-referrer\r\nContent-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'\r\n" +
+            "Referrer-Policy: no-referrer\r\nContent-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" + scriptPolicy + "\r\n" +
             "X-Content-Type-Options: nosniff\r\nConnection: close\r\nContent-Length: " + bytes.Length + "\r\n\r\n");
         await stream.WriteAsync(response, token);
         await stream.WriteAsync(bytes, token);

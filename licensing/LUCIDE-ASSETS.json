@@ -255,6 +255,13 @@
       "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/shapes.svg",
       "sha256": "480e2301a977f7f2fc7133c330f48d8318b5fd3761b27a9c582997eb5aa47f1f",
       "bytes": 405
+    },
+    {
+      "name": "user-round",
+      "path": "src/XGLauncher/Assets/Lucide/user-round.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/de8d11aac831d519d2377ff516868244475fac06/icons/user-round.svg",
+      "sha256": "84870f26f3faf8da45da84174517519e81b9e8f00319c78954fcbb74f50038a1",
+      "bytes": 279
     }
   ],
   "aliases": [

@@ -6,12 +6,13 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform;
-using Avalonia.Styling;
 
 namespace XGLauncher;
 
 public sealed partial class MainWindow
 {
+    private UnifiedExpandableSelect? titleAccounts;
+    private const double CaptionButtonSize = 38;
     private Image? captionLogo;
     private Border? captionFrame;
     private Button? modeButton;
@@ -24,9 +25,8 @@ public sealed partial class MainWindow
         var text = IsCompact ? "切换完整模式" : "切换精简模式";
         ToolTip.SetTip(modeButton, text);
         AutomationProperties.SetName(modeButton, text);
-        account.IsVisible = !IsCompact;
         if (captionLogo != null) captionLogo.IsVisible = !IsCompact;
-        if (captionFrame != null) { captionFrame.BorderThickness = IsCompact ? new(0) : new(0, 0, 0, 1); captionFrame.Background = IsCompact ? Brushes.Transparent : ThemePalette.Panel; }
+        if (captionFrame != null) { captionFrame.BorderThickness = IsCompact ? new(0) : new(0, 0, 0, 1); captionFrame.Background = IsCompact ? ThemePalette.Background : ThemePalette.Panel; }
         maximizeButton!.IsVisible = minimizeButton!.IsVisible = !IsCompact;
     }
 
@@ -65,22 +65,15 @@ public sealed partial class MainWindow
             AutomationProperties.SetName(maximize, label);
         };
 
-        account.MaxWidth = 175;
-        account.Styles.Add(new Style(x => x.OfType<TextBlock>())
+        var actions = new StackPanel
         {
-            Setters = { new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis),
-                new Setter(TextBlock.TextWrappingProperty, TextWrapping.NoWrap) }
-        });
-        account.PropertyChanged += (_, args) =>
-        { if (args.Property == ContentControl.ContentProperty && account.Content is string text) ToolTip.SetTip(account, text); };
-        account.MinHeight = 34;
-        account.VerticalAlignment = VerticalAlignment.Center;
-        account.Margin = new(0, 0, 8, 0);
-        var actions = new StackPanel { Orientation = Orientation.Horizontal };
-        foreach (var button in new[] { account, modeButton, minimize, maximize, close }) actions.Children.Add(button);
+            Orientation = Orientation.Horizontal, Spacing = 2, Margin = new(0, 0, 5, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        titleAccounts = CreateAccountSelector();
+        actions.Children.Add(titleAccounts);
+        foreach (var button in new[] { modeButton, minimize, maximize, close }) actions.Children.Add(button);
         var grid = new Grid { Name = "LauncherTitleBar", Height = WindowChrome.CaptionHeight, ColumnDefinitions = new("*,Auto") };
-        // 窄完整窗口先收拢账号入口，仍保留可见可点的标题和所有窗口按钮。
-        grid.SizeChanged += (_, _) => account.MaxWidth = grid.Bounds.Width < 700 ? 100 : 175;
         grid.Children.Add(caption);
         Grid.SetColumn(actions, 1);
         grid.Children.Add(actions);
@@ -95,10 +88,10 @@ public sealed partial class MainWindow
     {
         var button = new Button
         {
-            Width = 43, Height = 42, CornerRadius = new(7), Padding = new(0),
+            Width = CaptionButtonSize, Height = CaptionButtonSize, CornerRadius = new(7), Padding = new(0),
             Background = Brushes.Transparent, BorderThickness = new(0),
             HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center,
-            Content = new LucideIcon(path, 15)
+            Content = new LucideIcon(path, 17)
 
         };
         button.Classes.Add("xg-caption");

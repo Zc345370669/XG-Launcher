@@ -2,6 +2,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Layout;
+using Avalonia.Media;
 using XG.Core;
 
 namespace XGLauncher;
@@ -18,7 +20,6 @@ public sealed partial class MainWindow
     {
         var name = Input("离线玩家名字", ""); name.Name = "CompactOfflineName";
         var error = Label("", 11); error.Name = "CompactAccountError"; error.IsVisible = false;
-        Button offline = null!, microsoft = null!;
         var adding = false;
         async Task Add()
         {
@@ -33,8 +34,21 @@ public sealed partial class MainWindow
             catch (Exception ex) { error.Text = new GameLogSanitizer(null).Redact(ex.Message); error.IsVisible = true; }
             finally { adding = false; }
         }
-        offline = Action("添加离线账号", Add); offline.Name = "CompactAddOffline";
-        microsoft = Action("Microsoft 正版登录", async () =>
+        var offline = Action("添加离线账号", Add);
+        offline.Name = "CompactAddOffline";
+        offline.HorizontalAlignment = HorizontalAlignment.Stretch;
+        var offlineEditor = Column(name, offline);
+        offlineEditor.Spacing = 6;
+        offlineEditor.Margin = new(10, 2, 10, 6);
+        offlineEditor.IsVisible = false;
+        var offlineChoice = AccountOption("离线账号", "user-round", () =>
+        {
+            offlineEditor.IsVisible = !offlineEditor.IsVisible;
+            if (offlineEditor.IsVisible) name.Focus();
+            return Task.CompletedTask;
+        });
+        offlineChoice.Name = "CompactOfflineOption";
+        var microsoft = AccountOption("Microsoft 正版登录", "building", async () =>
         {
             if (compactAuthenticationPending) return;
             compactAuthenticationPending = true;
@@ -52,16 +66,38 @@ public sealed partial class MainWindow
         microsoft.Name = "CompactMicrosoftLogin"; microsoft.IsEnabled = MicrosoftAccounts.ClientId != null && !compactAuthenticationPending;
         offline.IsEnabled = !compactAuthenticationPending;
         name.KeyDown += async (_, e) => { if (e.Key == Key.Enter) { e.Handled = true; await Add(); } };
-        var form = Column(Label("离线玩家名字", 12, true), name, offline, microsoft, error);
-        form.Spacing = 8; form.Margin = new(12, 16, 18, 16);
+        error.Margin = new(10, 2, 10, 6);
+        var form = Column(offlineChoice, offlineEditor, microsoft, error);
+        form.Spacing = 0;
+        form.Margin = new(3);
         void SyncAuthentication()
         {
-            offline.IsEnabled = !compactAuthenticationPending;
+            offline.IsEnabled = offlineChoice.IsEnabled = !compactAuthenticationPending;
             microsoft.IsEnabled = MicrosoftAccounts.ClientId != null && !compactAuthenticationPending;
             error.Text = compactAuthenticationFeedback; error.IsVisible = !string.IsNullOrEmpty(error.Text);
         }
         form.AttachedToVisualTree += (_, _) => { CompactAuthenticationChanged += SyncAuthentication; SyncAuthentication(); };
         form.DetachedFromVisualTree += (_, _) => CompactAuthenticationChanged -= SyncAuthentication;
         return form;
+    }
+
+    private Button AccountOption(string text, string icon, Func<Task> execute)
+    {
+        var button = Action(text, execute);
+        var label = Label(text);
+        label.TextWrapping = TextWrapping.NoWrap;
+        label.TextTrimming = TextTrimming.CharacterEllipsis;
+        var content = new Grid { ColumnDefinitions = new("17,*"), ColumnSpacing = 8 };
+        content.Children.Add(new LucideIcon(icon, 17) { VerticalAlignment = VerticalAlignment.Center });
+        Grid.SetColumn(label, 1);
+        content.Children.Add(label);
+        button.Content = content;
+        button.MinHeight = 38;
+        button.HorizontalAlignment = HorizontalAlignment.Stretch;
+        button.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+        button.Background = Brushes.Transparent;
+        button.BorderThickness = new(0);
+        button.Padding = new(10, 0);
+        return button;
     }
 }

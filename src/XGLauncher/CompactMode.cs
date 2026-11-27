@@ -41,13 +41,10 @@ public sealed partial class MainWindow
         // 无游戏和新增实例都在同一无缝组合框中安装，不改为跳转完整模式或另建下载器。
         compactInstances.ExpansionFactory = () => CompactDownloadForm(compactInstances);
         compactInstances.ExpansionChanged += (_, _) => UpdateCompact();
-        var accounts = CreateAccountSelector("CompactAccounts");
-        var accountRow = new Grid { Name = "CompactAccountBar" };
-        accountRow.Children.Add(accounts);
         // 启动入口仍受已校验实例及账号选择约束，进度和启动Busy状态来自同一模型。
         compactPrimary = Action("启动游戏", async () =>
         {
-            if (model.Accounts.SelectedProfile == null) { accounts.OpenAuxiliary(); return; }
+            if (model.Accounts.SelectedProfile == null) { titleAccounts?.OpenAuxiliary(); return; }
             if (model.Selected is { } selected && compactChoices.Any(x => x.Id == selected.Id))
                 await LaunchInstanceAsync(selected);
         }, true);
@@ -76,18 +73,21 @@ public sealed partial class MainWindow
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
             if (IsCompact) ToggleMode(); section = 4; downloadTab = 0; Refresh();
         };
-        var logo = OfficialLogo(126, 88); logo.Name = "CompactOfficialLogo"; logo.Margin = new(10, 2, 10, 8);
+        var logo = OfficialLogo(150, 98);
+        logo.Name = "CompactOfficialLogo";
         var body = Column(logo, versionRow, compactProgress, compactPrimary, compactStatus);
+        body.Spacing = 12;
+        body.VerticalAlignment = VerticalAlignment.Center;
         compactStatus.IsVisible = false;
-        body.Spacing = 10;
-        var grid = new Grid { Name = "CompactLayout", RowDefinitions = new("Auto,Auto"), Margin = new(20, 14, 20, 16), RowSpacing = 16,
-            VerticalAlignment = VerticalAlignment.Top };
-        var core = new ScrollViewer { Content = body, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
-        // 保持单列控件自然高度，避免拉高窗口后把启动区与账号栏分隔成大块空白。
-        grid.SizeChanged += (_, _) => core.MaxHeight = Math.Max(100, ClientSize.Height - WindowChrome.CaptionHeight - 30 - accountRow.Bounds.Height - 16);
-        SizeChanged += (_, _) => core.MaxHeight = Math.Max(100, ClientSize.Height - WindowChrome.CaptionHeight - 30 - accountRow.Bounds.Height - 16);
-        grid.Children.Add(core);
-        Grid.SetRow(accountRow, 1); grid.Children.Add(accountRow);
+
+        var grid = new Grid { Name = "CompactLayout", Margin = new(20, 10, 20, 18) };
+        grid.Children.Add(new ScrollViewer
+        {
+            Content = body,
+            VerticalContentAlignment = VerticalAlignment.Stretch,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled
+        });
         return grid;
     }
 
@@ -95,17 +95,6 @@ public sealed partial class MainWindow
     {
         compactInstances.OpenAuxiliary();
         return Task.CompletedTask;
-    }
-
-    private Button CompactIcon(string label, string icon, Func<Task> command)
-    {
-        var button = Action(label, command);
-        button.Content = new LucideIcon(icon, 18); button.Padding = new(0);
-        button.Background = Brushes.Transparent; button.BorderThickness = new(0); button.CornerRadius = new(7);
-        button.HorizontalContentAlignment = HorizontalAlignment.Center;
-        button.VerticalContentAlignment = VerticalAlignment.Center;
-        ToolTip.SetTip(button, label); Avalonia.Automation.AutomationProperties.SetName(button, label);
-        return button;
     }
 
     private void UpdateCompact()

@@ -23,9 +23,12 @@ internal static class IsolatedGameImport
         foreach (var entry in Directory.EnumerateFileSystemEntries(selected))
         {
             var first = Path.GetFileName(entry);
-            if (first is "versions" or "PCL" or "hmclversion.cfg" or "runtimes" or "runtime" or "launcher_accounts.json" or "launcher_profiles.json"
-                or "launcher_profiles_microsoft_store.json" or "accounts.json" or "minecraftinstance.json" or "profile.json" or "instance.json"
-                || first == ".xg-installation.json") continue;
+            // 只过滤启动器根级认证资料，保留游戏 config 内正常的模组配置。
+            var privateName = first.ToLowerInvariant();
+            if (privateName is "versions" or "pcl" or "hmclversion.cfg" or "runtimes" or "runtime" or "launcher_accounts.json" or "launcher_profiles.json"
+                or "launcher_profiles_microsoft_store.json" or "launcher_accounts_microsoft_store.json" or "accounts.json" or "hmcl_accounts.json"
+                or "credentials.json" or "auth.json" or "app.db" or "app.db-wal" or "app.db-shm" or "minecraftinstance.json" or "profile.json" or "instance.json"
+                or ".xg-installation.json" || privateName.StartsWith("microsoft-msal.bin", StringComparison.Ordinal)) continue;
             if (!keepData && first is not ("libraries" or "assets")
                 && (Directory.Exists(entry) || Path.GetExtension(first) is not (".json" or ".jar"))) continue;
             if (File.GetAttributes(entry).HasFlag(FileAttributes.ReparsePoint)) throw new IOException("导入不跟随文件或目录链接。");

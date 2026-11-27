@@ -1,6 +1,6 @@
 # v0.1.0-alpha 已知问题与验证边界
 
-- Microsoft正版登录可能在Minecraft Services返回HTTP403，尚未确认解决。维护者已提交服务访问申请，正在等待审核；保留现有错误反馈，应用注册与服务资格仍需合法核实。
+- Microsoft正版登录可能在Minecraft Services返回HTTP403，尚未确认解决。维护者反馈现有 App ID 已通过 API Allow List，且有真实登录成功记录；本轮保留该配置与原有诊断，未用测试账号重新核验线上服务。
 - MSAL回调完成不代表Xbox、XSTS、Minecraft所有权和玩家档案检查全部成功。完成页不能清除浏览器、代理或系统已经产生的历史记录。
 - 当前开发验证在Linux执行；Windows EXE交叉发布成功不等于实际Windows GUI通过。真实游戏启动、正版账号、安全缓存、真实网络安装、多显示器、系统DPI切换和原生合成效果尚需Windows验证。
 - Windows11圆角只是DWM偏好，实际效果由窗口条件和合成器决定；Windows10及不支持的路径保留直角边界。毛玻璃受平台能力限制，不支持时回退。
