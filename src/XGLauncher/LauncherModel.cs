@@ -38,7 +38,7 @@ internal sealed partial class LauncherModel : IDisposable
     public HashSet<Guid> Busy { get; } = [];
     public LauncherModel(string? root = null, Modrinth? catalog = null, HttpClient? gameMetadata = null)
     {
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.2");
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("XGLauncher/0.1.3");
         var portable = root is null ? PortableStorage.Resolve() : null;
         PortableSession = portable != null;
         root ??= Path.Combine(portable!, "data");

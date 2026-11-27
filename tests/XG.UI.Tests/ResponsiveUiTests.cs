@@ -164,7 +164,6 @@ internal static class ResponsiveUiTests
         var scroll = settings.ContentScroll;
         WaitFor(() => scroll.Extent.Height > scroll.Viewport.Height && scroll.Viewport.Height > 0);
         Capture("05-settings");
-        Check(window.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title == "下载模式"), "settings download mode missing");
         Click("备份与恢复");
         try { WaitFor(() => settings.ActiveSection == 3 && Math.Abs(scroll.Offset.Y - settings.Sections[3].Bounds.Top) < 2); } catch { Console.WriteLine($"Scroll diagnostic active={settings.ActiveSection}, offset={scroll.Offset.Y}, target={settings.Sections[3].Bounds.Top}, viewport={scroll.Viewport.Height}, extent={scroll.Extent.Height}"); throw; }
         Click("常规");

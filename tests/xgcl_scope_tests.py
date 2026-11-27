@@ -11,7 +11,7 @@ class ScopeTests(unittest.TestCase):
  def test_resource_matches_current_license(self):self.assertIn('XGLauncher-MIT.txt',(R/'src/XGLauncher/XGLauncher.csproj').read_text());self.assertIn('<PackageLicenseExpression>MIT',(R/'Directory.Build.props').read_text())
  def test_readme_intro_and_current_license(self):
   t=(R/'README.md').read_text()
-  for p in ['docs/history/README.md','v0.1.2','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
+  for p in ['docs/history/README.md','v0.1.3','标准 MIT License','第三方并不因此成为 MIT']:self.assertIn(p,t)
  def test_release_provides_native_source_and_notices(self):
   import subprocess,sys,tempfile,zipfile
   for script in ['build-windows.ps1','scripts/publish-portable-windows.sh']:self.assertIn('prepare-single-exe.py',(R/script).read_text())

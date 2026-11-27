@@ -14,11 +14,11 @@
   "reviewed_files": [
     {
       "path": "src/XGLauncher/MainWindow.cs",
-      "sha256": "248c26e56d3cc60045192cc6736f17d00e7846ae7bf777b0fe28b6e64ba0a276"
+      "sha256": "e93077ff1f566bf7c019b4404c437be81fef05738f5a72e4409f13d23c9be2c9"
     },
     {
       "path": "src/XGLauncher/TitleBar.cs",
-      "sha256": "f8000491d107823ec2de29efb634b2c79ec34e60e345f75437cbd7c12c1759de"
+      "sha256": "1e7383226dc36c8bc851937f2bfd58c5b205b2a59efe1079c743508fa6be8ee8"
     },
     {
       "path": "src/XGLauncher/GameImportWizard.cs",
@@ -37,5 +37,6 @@
   "local_only_final_note": "Local-only revision: official Java MSI/default-directory discovery, .minecraft isolation and update UI integration. No new third-party source or icon geometry imported; historical qualifications remain.",
   "smart_import_note": "Launcher UI source hashes updated for the import workflow and dialog surfaces. Lucide SVG assets and upstream attribution retained.",
   "account_import_ui_review_note": "Local incremental review of GitHub 4e8a01ce: account-specific cache eviction, primary-owner dialogs, import filtering and diagnostics; no third-party implementation or SVG geometry copied. Existing provenance qualifications remain.",
-  "v012_local_note": "Current owned-file integrity refresh; user-round.svg added from the same pinned Lucide commit and declared separately in LUCIDE-ASSETS.json. Existing upstream license text and historical qualifications retained."
+  "v012_local_note": "Current owned-file integrity refresh; user-round.svg added from the same pinned Lucide commit and declared separately in LUCIDE-ASSETS.json. Existing upstream license text and historical qualifications retained.",
+  "v013_source_note": "Reviewed launcher source hashes updated after the caption UI changes. Pinned SVG and license bytes unchanged."
 }

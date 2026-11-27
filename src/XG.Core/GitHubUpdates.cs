@@ -100,7 +100,7 @@ public sealed class GitHubUpdates(HttpClient http)
     private async Task<HttpResponseMessage> SendAsync(Uri uri, CancellationToken token)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, uri);
-        request.Headers.UserAgent.ParseAdd("XGLauncher/0.1.2");
+        request.Headers.UserAgent.ParseAdd("XGLauncher/0.1.3");
         if (uri.Host == "api.github.com")
         {
             request.Headers.Accept.ParseAdd("application/vnd.github+json");

@@ -45,7 +45,10 @@ internal static class Phase12UiTests
 
         Click("设置"); Click("界面");
         var settings = window.GetVisualDescendants().OfType<SettingsSurface>().Single();
-        Check(settings.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => x.Title == "下载模式"), "settings download mode missing");
+        string[] downloadSettingTitles = ["下载模式", "文件下载并发数", "下载限速"];
+        Check(!settings.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Any(x => downloadSettingTitles.Contains(x.Title)) &&
+            !settings.GetVisualDescendants().OfType<TextBlock>().Any(x => x.Text == "下载设置"),
+            "download settings still duplicated in the general settings page");
         var reference = ThemePalette.Panel;
         foreach (var palette in ThemePalette.All)
         {
@@ -69,7 +72,10 @@ internal static class Phase12UiTests
         var selected = ThemePalette.Current.Name;
         var restart = new MainWindow(model.Store.Root); restart.Show(); Pump();
         Check(ThemePalette.Current.Name == selected, "restart theme restore"); restart.Close(); Pump();
-        Click("下载管理"); Check(window.GetVisualDescendants().OfType<UnifiedExpandableSelect>().Count(x => x.Title is "下载限速" or "文件下载并发数") == 2, "central download settings missing");
+        Click("下载管理");
+        var downloadSettings = window.GetVisualDescendants().OfType<UnifiedExpandableSelect>()
+            .Where(x => downloadSettingTitles.Contains(x.Title)).Select(x => x.Title);
+        Check(downloadSettings.SequenceEqual(downloadSettingTitles), "download management must expose one set of all download settings");
         Console.WriteLine("PASS six real theme cards, live shared palette, Fluent dark mode, persisted restart, themed dialog, opaque main-window theme surface; deduplicated settings");
 
         var badgeRoot = Path.Combine(model.Store.Root, "badge-fixture"); Directory.CreateDirectory(badgeRoot);

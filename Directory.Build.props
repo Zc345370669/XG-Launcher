@@ -7,9 +7,9 @@
     <RepositoryUrl>https://github.com/Zc345370669/XG-Launcher</RepositoryUrl>
     <Copyright>Copyright (c) 2026 XG Launcher</Copyright>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.1.2</Version>
-    <AssemblyVersion>0.1.2.0</AssemblyVersion>
-    <FileVersion>0.1.2.0</FileVersion>
+    <Version>0.1.3</Version>
+    <AssemblyVersion>0.1.3.0</AssemblyVersion>
+    <FileVersion>0.1.3.0</FileVersion>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <NuGetLockFilePath Condition="'$(XgWindowsPublish)' == 'true'">$(MSBuildProjectDirectory)/packages.win-x64.lock.json</NuGetLockFilePath>
   </PropertyGroup>

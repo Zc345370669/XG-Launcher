@@ -2,7 +2,7 @@
 
 Minecraft Java 版启动器，适用于 Windows 10/11 x64。
 
-**当前本地开发版本：v0.1.2（尚未上传或发布）** · [下载 Windows 版](https://github.com/Zc345370669/XG-Launcher/releases/latest) · [本地更新说明](CHANGELOG_v0.1.2.md) · [历史版本](docs/history/README.md)
+**当前版本：v0.1.3** · [下载 Windows 版](https://github.com/Zc345370669/XG-Launcher/releases/latest) · [更新说明](CHANGELOG_v0.1.3.md) · [历史版本](docs/history/README.md)
 
 ## 使用
 

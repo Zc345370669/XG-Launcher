@@ -19,7 +19,7 @@ public sealed partial class MainWindow
     private string? pendingUpdatePlan;
     internal Func<HttpClient> UpdateHttpFactory { get; set; } = () => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
         { Timeout = TimeSpan.FromMinutes(10) };
-    private static string CurrentVersion => typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0] ?? "0.1.2";
+    private static string CurrentVersion => typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0] ?? "0.1.3";
 
     private Button VersionUpdateLink(string version)
     {

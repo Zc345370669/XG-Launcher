@@ -27,8 +27,6 @@ public sealed partial class MainWindow
         general.Children.Add(Action("检查并迁移旧游戏目录", PreviewLegacyGameMigrationAsync));
         general.Children.Add(Action("迁移游戏数据",MigrateWorkspaceAsync));
         var legacyRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XGLauncher", "data");
-        general.Children.Add(Label("下载设置", 16, true));
-        general.Children.Add(DownloadSettings());
         var appearance = AppearanceSettings();
         var notify = new CheckBox { Content = "下载完成提示", IsChecked = notificationsEnabled };
         notify.IsCheckedChanged += (_, _) => {
